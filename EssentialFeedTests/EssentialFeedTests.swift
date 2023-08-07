@@ -23,6 +23,18 @@ final class EssentialFeedTests: XCTestCase {
         sut.load()
         
         XCTAssertEqual(client.requestedURL, url)
+        XCTAssertEqual(client.requestedURLs.count, 1)
+    }
+    
+    func test_loadTwice_requestDataFromURLTwice() {
+        let url = URL(string: "https://a-new-url")!
+        let (sut, client) = makeSUT(url: url)
+        
+        sut.load()
+        sut.load()
+        
+        XCTAssertEqual(client.requestedURL, url)
+        XCTAssertEqual(client.requestedURLs.count, 2)
     }
     
     //MARK: - Helpers
@@ -35,8 +47,10 @@ final class EssentialFeedTests: XCTestCase {
     
     private class HTTPClientSpy: HTTPClient {
         var requestedURL: URL?
+        var requestedURLs: [URL] = []
         
         func get(from url: URL) {
+            requestedURLs.append(url)
             requestedURL = url
         }
     }
