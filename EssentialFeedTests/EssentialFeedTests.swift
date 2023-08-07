@@ -13,7 +13,7 @@ final class EssentialFeedTests: XCTestCase {
         
         let (_, client) = makeSUT()
         
-        XCTAssertNil(client.requestedURL)
+        XCTAssertTrue(client.requestedURLs.isEmpty)
     }
     
     func test_load_requestDataFromURL() {
@@ -22,7 +22,7 @@ final class EssentialFeedTests: XCTestCase {
         
         sut.load()
         
-        XCTAssertEqual(client.requestedURL, url)
+        XCTAssertEqual(client.requestedURLs, [url])
         XCTAssertEqual(client.requestedURLs.count, 1)
     }
     
@@ -33,7 +33,7 @@ final class EssentialFeedTests: XCTestCase {
         sut.load()
         sut.load()
         
-        XCTAssertEqual(client.requestedURL, url)
+        XCTAssertEqual(client.requestedURLs, [url, url])
         XCTAssertEqual(client.requestedURLs.count, 2)
     }
     
@@ -46,12 +46,10 @@ final class EssentialFeedTests: XCTestCase {
     }
     
     private class HTTPClientSpy: HTTPClient {
-        var requestedURL: URL?
         var requestedURLs: [URL] = []
         
         func get(from url: URL) {
             requestedURLs.append(url)
-            requestedURL = url
         }
     }
 }
