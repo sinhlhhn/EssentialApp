@@ -7,6 +7,15 @@
 
 import Foundation
 
+public enum HTTPClientResult {
+    case success(HTTPURLResponse)
+    case failure(Error)
+}
+
+public protocol HTTPClient {
+    func get(from url: URL, completion: @escaping (HTTPClientResult) -> Void)
+}
+
 public final class RemoteFeedLoader {
     private let client: HTTPClient
     private let url: URL
@@ -31,13 +40,4 @@ public final class RemoteFeedLoader {
             }
         }
     }
-}
-
-public enum HTTPClientResult {
-    case success(HTTPURLResponse)
-    case failure(Error)
-}
-
-public protocol HTTPClient {
-    func get(from url: URL, completion: @escaping (HTTPClientResult) -> Void)
 }
