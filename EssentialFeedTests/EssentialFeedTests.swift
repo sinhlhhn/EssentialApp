@@ -33,7 +33,7 @@ final class EssentialFeedTests: XCTestCase {
         XCTAssertNil(client.requestedURL)
     }
     
-    func test_init_requestDataFromURL() {
+    func test_load_requestDataFromURL() {
         let url = URL(string: "https://a-new-url")!
         let (sut, client) = makeSUT(url: url)
         
