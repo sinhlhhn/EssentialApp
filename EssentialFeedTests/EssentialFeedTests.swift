@@ -21,8 +21,8 @@ class RemoteFeedLoader {
     }
 }
 
-class HTTPClient {
-    func get(from url: URL) {}
+protocol HTTPClient {
+    func get(from url: URL)
 }
 
 final class EssentialFeedTests: XCTestCase {
