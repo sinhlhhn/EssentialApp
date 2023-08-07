@@ -6,10 +6,21 @@
 //
 
 import XCTest
-@testable import EssentialFeed
+
+class RemoteFeedLoader {
+    
+}
+
+class HTTPClient {
+    var requestedURL: String?
+}
 
 final class EssentialFeedTests: XCTestCase {
-    func test() {
+    func test_init_doesNotRequestDataFrom() {
         
+        let client = HTTPClient()
+        _ = RemoteFeedLoader()
+        
+        XCTAssertNil(client.requestedURL)
     }
 }
