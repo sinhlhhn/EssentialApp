@@ -34,19 +34,25 @@ class HTTPClientSpy: HTTPClient {
 final class EssentialFeedTests: XCTestCase {
     func test_init_doesNotRequestDataFromURL() {
         
-        let client = HTTPClientSpy()
-        _ = RemoteFeedLoader(client: client)
+        let (_, client) = makeSUT()
         
         XCTAssertNil(client.requestedURL)
     }
     
     func test_init_requestDataFromURL() {
         
-        let client = HTTPClientSpy()
-        let sut = RemoteFeedLoader(client: client)
+        let (sut, client) = makeSUT()
         
         sut.load()
         
         XCTAssertNotNil(client.requestedURL)
+    }
+    
+    //MARK: - Helpers
+    
+    private func makeSUT(client: HTTPClient = HTTPClientSpy()) -> (RemoteFeedLoader, HTTPClientSpy) {
+        let client = HTTPClientSpy()
+        let sut = RemoteFeedLoader(client: client)
+        return (sut, client)
     }
 }
