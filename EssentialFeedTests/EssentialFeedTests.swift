@@ -14,9 +14,7 @@ class RemoteFeedLoader {
 }
 
 class HTTPClient {
-    static let shared = HTTPClient()
-    
-    private init() {}
+    static var shared = HTTPClient()
     var requestedURL: URL?
     
     func get(from url: URL) {
