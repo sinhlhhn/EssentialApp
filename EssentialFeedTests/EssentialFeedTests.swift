@@ -87,14 +87,12 @@ final class EssentialFeedTests: XCTestCase {
         }
         
         func completion(statusCode: Int, at index: Int = 0) {
-            if statusCode != 200 {
-                let response = HTTPURLResponse(
-                    url: requestedURLs[index],
-                    statusCode: statusCode,
-                    httpVersion: nil,
-                    headerFields: nil)!
-                messages[index].completion(.success(response))
-            }
+            let response = HTTPURLResponse(
+                url: requestedURLs[index],
+                statusCode: statusCode,
+                httpVersion: nil,
+                headerFields: nil)!
+            messages[index].completion(.success(response))
         }
     }
 }
