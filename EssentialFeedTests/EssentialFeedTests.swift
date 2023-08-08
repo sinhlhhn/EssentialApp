@@ -69,7 +69,7 @@ final class EssentialFeedTests: XCTestCase {
         let (sut, client) = makeSUT()
 
         expect(sut, toCompletionWith: .success([])) {
-            let emptyJSON = Data("{\"item\": []}".utf8)
+            let emptyJSON = Data("{\"items\": []}".utf8)
             client.completion(statusCode: 200, data: emptyJSON)
         }
     }
