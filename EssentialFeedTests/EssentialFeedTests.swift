@@ -51,7 +51,8 @@ final class EssentialFeedTests: XCTestCase {
         
         [199, 201, 300, 400].enumerated().forEach { index, statusCode in
             expect(sut, toCompletionWith: .failure(.invalidData)) {
-                client.completion(statusCode: statusCode, at: index)
+                let data = makeItemJSON([])
+                client.completion(statusCode: statusCode, data: data, at: index)
             }
         }
     }
@@ -69,7 +70,7 @@ final class EssentialFeedTests: XCTestCase {
         let (sut, client) = makeSUT()
 
         expect(sut, toCompletionWith: .success([])) {
-            let emptyJSON = Data("{\"items\": []}".utf8)
+            let emptyJSON = makeItemJSON([])
             client.completion(statusCode: 200, data: emptyJSON)
         }
     }
@@ -155,7 +156,7 @@ final class EssentialFeedTests: XCTestCase {
             messages[index].completion(.failure(error))
         }
         
-        func completion(statusCode: Int, data: Data = Data(), at index: Int = 0) {
+        func completion(statusCode: Int, data: Data, at index: Int = 0) {
             let response = HTTPURLResponse(
                 url: requestedURLs[index],
                 statusCode: statusCode,
