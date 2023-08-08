@@ -40,7 +40,7 @@ final class EssentialFeedTests: XCTestCase {
     func test_load_deliverOnClientError() {
         let (sut, client) = makeSUT()
         
-        expect(sut, toCompletionError: .connectivity) {
+        expect(sut, toCompletionWith: .failure(.connectivity)) {
             let clientError = NSError(domain: "", code: 0)
             client.completion(with: clientError)
         }
@@ -50,7 +50,7 @@ final class EssentialFeedTests: XCTestCase {
         let (sut, client) = makeSUT()
         
         [199, 201, 300, 400].enumerated().forEach { index, statusCode in
-            expect(sut, toCompletionError: .invalidData) {
+            expect(sut, toCompletionWith: .failure(.invalidData)) {
                 client.completion(statusCode: statusCode, at: index)
             }
         }
@@ -58,8 +58,8 @@ final class EssentialFeedTests: XCTestCase {
     
     func test_load_deliverOn200HTTPResponseWithInvalidData() {
         let (sut, client) = makeSUT()
-        
-        expect(sut, toCompletionError: .invalidData) {
+
+        expect(sut, toCompletionWith: .failure(.invalidData)) {
             let invalidData = Data()
             client.completion(statusCode: 200, data: invalidData)
         }
@@ -75,16 +75,16 @@ final class EssentialFeedTests: XCTestCase {
     
     private func expect(
         _ sut: RemoteFeedLoader,
-        toCompletionError error: RemoteFeedLoader.Error,
+        toCompletionWith result: RemoteFeedLoader.Result,
         when action: () -> Void,
         file: StaticString = #filePath,
         line: UInt = #line) {
-        var captureErrors = [RemoteFeedLoader.Error]()
-        sut.load { captureErrors.append($0) }
+        var captureResults = [RemoteFeedLoader.Result]()
+            sut.load { captureResults.append($0) }
         
         action()
         
-        XCTAssertEqual(captureErrors, [error], file: file, line: line)
+            XCTAssertEqual(captureResults, [result], file: file, line: line)
     }
     
     private class HTTPClientSpy: HTTPClient {
