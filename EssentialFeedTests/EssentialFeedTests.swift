@@ -65,6 +65,15 @@ final class EssentialFeedTests: XCTestCase {
         }
     }
     
+    func test_load_deliverOn200HTTPResponseWithEmptyJSONList() {
+        let (sut, client) = makeSUT()
+
+        expect(sut, toCompletionWith: .success([])) {
+            let emptyJSON = Data("{\"item\": []}".utf8)
+            client.completion(statusCode: 200, data: emptyJSON)
+        }
+    }
+    
     //MARK: - Helpers
     
     private func makeSUT(client: HTTPClient = HTTPClientSpy(), url: URL = URL(string: "https://a-url")!) -> (RemoteFeedLoader, HTTPClientSpy) {

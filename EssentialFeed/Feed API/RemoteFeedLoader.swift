@@ -40,7 +40,7 @@ public final class RemoteFeedLoader {
             switch result {
             case .success(let data, _):
                 if let _ = try? JSONSerialization.jsonObject(with: data) {
-//                    completion(.success([]))
+                    completion(.success([]))
                 } else {
                     completion(.failure(.invalidData))
                 }
