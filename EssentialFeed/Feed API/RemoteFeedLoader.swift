@@ -10,7 +10,6 @@ import Foundation
 public final class RemoteFeedLoader {
     private let client: HTTPClient
     private let url: URL
-    private var test: String = ""
     
     public enum Result: Equatable {
         case success([FeedItem])
