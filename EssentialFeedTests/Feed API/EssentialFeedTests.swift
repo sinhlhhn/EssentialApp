@@ -118,6 +118,7 @@ final class EssentialFeedTests: XCTestCase {
         let sut = RemoteFeedLoader(client: client, url: url)
         
         trackForMemoryLeak(sut, file: file, line: line)
+        trackForMemoryLeak(client, file: file, line: line)
         
         return (sut, client)
     }
