@@ -40,7 +40,7 @@ final class EssentialFeedTests: XCTestCase {
     func test_load_deliverOnClientError() {
         let (sut, client) = makeSUT()
         
-        expect(sut, toCompletionWith: .failure(.connectivity)) {
+        expect(sut, toCompletionWith: .failure(RemoteFeedLoader.Error.connectivity)) {
             let clientError = NSError(domain: "", code: 0)
             client.completion(with: clientError)
         }
@@ -50,7 +50,7 @@ final class EssentialFeedTests: XCTestCase {
         let (sut, client) = makeSUT()
         
         [199, 201, 300, 400].enumerated().forEach { index, statusCode in
-            expect(sut, toCompletionWith: .failure(.invalidData)) {
+            expect(sut, toCompletionWith: .failure(RemoteFeedLoader.Error.invalidData)) {
                 let data = makeItemJSON([])
                 client.completion(statusCode: statusCode, data: data, at: index)
             }
@@ -60,7 +60,7 @@ final class EssentialFeedTests: XCTestCase {
     func test_load_deliverOn200HTTPResponseWithInvalidData() {
         let (sut, client) = makeSUT()
 
-        expect(sut, toCompletionWith: .failure(.invalidData)) {
+        expect(sut, toCompletionWith: .failure(RemoteFeedLoader.Error.invalidData)) {
             let invalidData = Data()
             client.completion(statusCode: 200, data: invalidData)
         }
@@ -101,7 +101,7 @@ final class EssentialFeedTests: XCTestCase {
         let client = HTTPClientSpy()
         var sut: RemoteFeedLoader? = RemoteFeedLoader(client: client, url: url)
         
-        var captureResults = [RemoteFeedLoader.Result<RemoteFeedLoader.Error>]()
+        var captureResults = [RemoteFeedLoader.Result]()
         sut?.load { captureResults.append($0) }
         
         sut = nil
@@ -155,7 +155,7 @@ final class EssentialFeedTests: XCTestCase {
     
     private func expect(
         _ sut: RemoteFeedLoader,
-        toCompletionWith expectResult: RemoteFeedLoader.Result<RemoteFeedLoader.Error>,
+        toCompletionWith expectResult: RemoteFeedLoader.Result,
         when action: () -> Void,
         file: StaticString = #filePath,
         line: UInt = #line) {
@@ -165,7 +165,7 @@ final class EssentialFeedTests: XCTestCase {
                 switch (receiveResult, expectResult) {
                 case let (.success(receiveItem), .success(expectItem)):
                     XCTAssertEqual(receiveItem, expectItem, file: file, line: line)
-                case let (.failure(receiveError), .failure(expectError)):
+                case let (.failure(receiveError as RemoteFeedLoader.Error), .failure(expectError as RemoteFeedLoader.Error)):
                     XCTAssertEqual(receiveError, expectError, file: file, line: line)
                 default:
                     XCTFail("Expect result \(expectResult) got receive result \(receiveResult) instead", file: file, line: line)
