@@ -8,8 +8,8 @@
 import Foundation
 
 enum LoadFeedResult {
-    case success(FeedItem)
-    case error(Error)
+    case success([FeedItem])
+    case failure(Error)
 }
 
 protocol FeedLoader {
