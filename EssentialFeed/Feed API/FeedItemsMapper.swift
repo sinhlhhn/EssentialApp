@@ -29,7 +29,7 @@ struct FeedItemsMapper {
         }
     }
     
-    static func map(_ data: Data, _ response: HTTPURLResponse) -> RemoteFeedLoader.Result {
+    static func map(_ data: Data, _ response: HTTPURLResponse) -> RemoteFeedLoader.Result<RemoteFeedLoader.Error> {
         guard response.statusCode == OK_200,
                 let root = try? JSONDecoder().decode(Root.self, from: data) else {
             return .failure(.invalidData)
