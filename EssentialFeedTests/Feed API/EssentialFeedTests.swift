@@ -159,6 +159,8 @@ final class EssentialFeedTests: XCTestCase {
         when action: () -> Void,
         file: StaticString = #filePath,
         line: UInt = #line) {
+            
+            let expectation = XCTestExpectation(description: "get data asynchronously")
             sut.load { receiveResult in
                 switch (receiveResult, expectResult) {
                 case let (.success(receiveItem), .success(expectItem)):
@@ -168,9 +170,13 @@ final class EssentialFeedTests: XCTestCase {
                 default:
                     XCTFail("Expect result \(expectResult) got receive result \(receiveResult) instead", file: file, line: line)
                 }
+                
+                expectation.fulfill()
             }
             
             action()
+            
+            wait(for: [expectation], timeout: 1)
         }
     
     private class HTTPClientSpy: HTTPClient {
