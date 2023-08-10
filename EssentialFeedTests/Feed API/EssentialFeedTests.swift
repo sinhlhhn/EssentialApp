@@ -163,8 +163,7 @@ final class EssentialFeedTests: XCTestCase {
         when action: () -> Void,
         file: StaticString = #filePath,
         line: UInt = #line) {
-            
-            let expectation = XCTestExpectation(description: "get data asynchronously")
+            let expectation = expectation(description: "get data asynchronously")
             sut.load { receiveResult in
                 switch (receiveResult, expectResult) {
                 case let (.success(receiveItem), .success(expectItem)):
