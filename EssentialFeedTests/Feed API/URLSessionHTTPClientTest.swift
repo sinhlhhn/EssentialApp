@@ -35,7 +35,7 @@ final class URLSessionHTTPClientTest: XCTestCase {
         
         let sut = URLSessionHTTPClient()
         
-        let exp = expectation(description: "get error async")
+        let exp = expectation(description: "Wait for completion")
         sut.get(from: url) { result in
             switch result {
             case let .failure(receiveError):
