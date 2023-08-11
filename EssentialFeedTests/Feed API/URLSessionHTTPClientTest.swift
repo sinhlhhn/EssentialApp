@@ -16,6 +16,7 @@ class URLSessionHTTPClient {
     }
     
     func get(from url: URL, completion: @escaping (HTTPClientResult) -> Void) {
+        let url = URL(string: "https://any-url1")!
         session.dataTask(with: url) { data, response, error in
             if let error = error {
                 completion(.failure(error))
