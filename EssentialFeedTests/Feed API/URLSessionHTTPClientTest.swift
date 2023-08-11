@@ -15,10 +15,14 @@ class URLSessionHTTPClient {
         self.session = session
     }
     
+    private class UnexpectedValuesRepresentation: Error {}
+    
     func get(from url: URL, completion: @escaping (HTTPClientResult) -> Void) {
         session.dataTask(with: url) { data, response, error in
             if let error = error {
                 completion(.failure(error))
+            } else {
+                completion(.failure(UnexpectedValuesRepresentation()))
             }
         }.resume()
     }
@@ -65,6 +69,24 @@ final class URLSessionHTTPClientTest: XCTestCase {
                 XCTAssertEqual(error.domain, (receiveError as NSError).domain)
             default:
                 XCTFail("Expected failure with \(error), got \(result) instead")
+            }
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 1)
+    }
+    
+    func test_getFromURL_failsOnAllNilValues() {
+        URLProtocolStub.stub(data: nil, response: nil, error: nil)
+        
+        let exp = expectation(description: "Wait for completion")
+        
+        makeSUT().get(from: anyURL()) { result in
+            switch result {
+            case .failure:
+                break
+            default:
+                XCTFail("Expected failure with nil, got \(result) instead")
             }
             exp.fulfill()
         }
@@ -125,8 +147,20 @@ final class URLSessionHTTPClientTest: XCTestCase {
             if let error = URLProtocolStub.stub?.error {
                 client?.urlProtocol(self, didFailWithError: error)
             }
+            
+            client?.urlProtocolDidFinishLoading(self)
         }
         
         override func stopLoading() { }
     }
 }
+
+
+//            if let data = URLProtocolStub.stub?.data {
+//                client?.urlProtocol(self, didLoad: data)
+//            }
+//
+//            if let response = URLProtocolStub.stub?.response {
+//                client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+//            }
+//
