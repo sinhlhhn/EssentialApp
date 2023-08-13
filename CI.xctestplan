@@ -1,14 +1,15 @@
 {
   "configurations" : [
     {
-      "id" : "E7B1DEE3-88BA-4021-9374-E1F87727B832",
-      "name" : "Configuration 1",
+      "id" : "21B62179-1336-4B39-98E1-F77F08F485C4",
+      "name" : "Test Scheme Action",
       "options" : {
-        "targetForVariableExpansion" : null
+
       }
     }
   ],
   "defaultOptions" : {
+    "codeCoverage" : false,
     "testExecutionOrdering" : "random"
   },
   "testTargets" : [
