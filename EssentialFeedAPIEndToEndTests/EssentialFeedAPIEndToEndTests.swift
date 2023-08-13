@@ -11,19 +11,7 @@ import EssentialFeed
 final class EssentialFeedAPIEndToEndTests: XCTestCase {
 
     func test_endToEnd() {
-        let url = URL(string: "https://essentialdeveloper.com/feed-case-study/test-api/feed")!
-        let client = URLSessionHTTPClient()
-        let sut = RemoteFeedLoader(client: client, url: url)
-        
-        var receivedResult: LoadFeedResult?
-        
-        let exp = expectation(description: "Wait for completion")
-        sut.load { result in
-            receivedResult = result
-            exp.fulfill()
-        }
-        
-        wait(for: [exp], timeout: 10)
+        let receivedResult = getFromURL()
         
         switch receivedResult {
         case let .success(items):
@@ -39,6 +27,26 @@ final class EssentialFeedAPIEndToEndTests: XCTestCase {
         default:
             XCTFail("Expected success, got result \(String(describing: receivedResult))")
         }
+    }
+    
+    //MARK: -Helpers
+    
+    private func getFromURL() -> LoadFeedResult? {
+        let url = URL(string: "https://essentialdeveloper.com/feed-case-study/test-api/feed")!
+        let client = URLSessionHTTPClient()
+        let sut = RemoteFeedLoader(client: client, url: url)
+        
+        var receivedResult: LoadFeedResult?
+        
+        let exp = expectation(description: "Wait for completion")
+        sut.load { result in
+            receivedResult = result
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 10)
+        
+        return receivedResult
     }
     
     private func id(at index: Int) -> UUID {
