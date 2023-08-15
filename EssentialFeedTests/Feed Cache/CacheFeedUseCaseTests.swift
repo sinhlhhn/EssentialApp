@@ -14,16 +14,26 @@ final class LocalFeedLoader {
         self.store = store
     }
     
-    func save() {
-        store.deleteCacheFeed()
+    func save(completion: @escaping (Error) -> Void) {
+        store.deleteCacheFeed { error in
+            completion(error)
+        }
     }
 }
 
 final class FeedStore {
     var deleteCachedFeedCallCount = 0
+    var insertCallCount = 0
     
-    func deleteCacheFeed() {
+    var deleteCompletion: [(Error) -> Void] = []
+    
+    func deleteCacheFeed(completion: @escaping (Error) -> Void) {
+        deleteCompletion.append(completion)
         deleteCachedFeedCallCount += 1
+    }
+    
+    func completeDeletion(with error: Error, at index: Int = 0) {
+        deleteCompletion[index](error)
     }
 }
 
@@ -38,9 +48,23 @@ final class CacheFeedUseCaseTests: XCTestCase {
     func test_save_requestCacheDeletion() {
         let (sut, store) = makeSUT()
         
-        sut.save()
+        sut.save { _ in }
         
         XCTAssertEqual(store.deleteCachedFeedCallCount, 1)
+    }
+    
+    func test_save_doesNotRequestCacheInsertionOnDeletionError() {
+        let (sut, store) = makeSUT()
+        let deletionError = anyError() as NSError
+        
+        var receivedError: NSError?
+        sut.save { error in
+            receivedError = error as NSError
+        }
+        store.completeDeletion(with: deletionError)
+        
+        XCTAssertEqual(store.insertCallCount, 0)
+        XCTAssertEqual(receivedError?.code, deletionError.code)
     }
     
     //MARK: - Helpers
@@ -51,5 +75,9 @@ final class CacheFeedUseCaseTests: XCTestCase {
         trackForMemoryLeak(store, file: file, line: line)
         trackForMemoryLeak(sut, file: file, line: line)
         return (sut, store)
+    }
+    
+    private func anyError() -> Error {
+        NSError(domain: "any-error", code: 1)
     }
 }
