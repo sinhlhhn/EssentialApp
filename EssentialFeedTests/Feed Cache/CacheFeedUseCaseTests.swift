@@ -10,7 +10,7 @@ import XCTest
 final class LocalFeedLoader {
     private let store: FeedStore
     
-    init(store: FeedStore = FeedStore()) {
+    init(store: FeedStore) {
         self.store = store
     }
     
@@ -30,18 +30,24 @@ final class FeedStore {
 final class CacheFeedUseCaseTests: XCTestCase {
     
     func test_init_doesNotDeleteCacheUponCreation() {
-        let store = FeedStore()
-        _ = LocalFeedLoader()
+        let (_, store) = makeSUT()
         
         XCTAssertEqual(store.deleteCachedFeedCallCount, 0)
     }
     
     func test_save_requestCacheDeletion() {
-        let store = FeedStore()
-        let sut = LocalFeedLoader(store: store)
+        let (sut, store) = makeSUT()
         
         sut.save()
         
         XCTAssertEqual(store.deleteCachedFeedCallCount, 1)
+    }
+    
+    //MARK: - Helpers
+    
+    private func makeSUT() -> (LocalFeedLoader, FeedStore) {
+        let store = FeedStore()
+        let sut = LocalFeedLoader(store: store)
+        return (sut, store)
     }
 }
