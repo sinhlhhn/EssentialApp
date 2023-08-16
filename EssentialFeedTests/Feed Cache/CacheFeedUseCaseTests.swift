@@ -112,12 +112,16 @@ final class CacheFeedUseCaseTests: XCTestCase {
         
         let deletionError = anyError() as NSError
         
+        let exp = expectation(description: "wait for completion")
         var receivedError: NSError?
         sut.save(items: items) { error in
             receivedError = error as? NSError
+            exp.fulfill()
         }
         
         store.completeDeletion(with: deletionError)
+        
+        wait(for: [exp], timeout: 1)
         
         XCTAssertEqual(receivedError?.code, deletionError.code)
     }
@@ -128,13 +132,17 @@ final class CacheFeedUseCaseTests: XCTestCase {
         
         let insertionError = anyError() as NSError
         
+        let exp = expectation(description: "wait for completion")
         var receivedError: NSError?
         sut.save(items: items) { error in
             receivedError = error as? NSError
+            exp.fulfill()
         }
         
         store.completeSuccessDeletion()
         store.completeInsertion(with: insertionError)
+        
+        wait(for: [exp], timeout: 1)
         
         XCTAssertEqual(receivedError?.code, insertionError.code)
     }
