@@ -6,6 +6,7 @@
 //
 
 import XCTest
+import EssentialFeed
 
 final class LocalFeedLoader {
     private let store: FeedStore
@@ -14,9 +15,13 @@ final class LocalFeedLoader {
         self.store = store
     }
     
-    func save(completion: @escaping (Error) -> Void) {
-        store.deleteCacheFeed { error in
-            completion(error)
+    func save(items: [FeedItem], completion: @escaping (Error?) -> Void) {
+        store.deleteCacheFeed { [unowned self] error in
+            if let error = error {
+                completion(error)
+            } else {
+                self.store.insert(items: items)
+            }
         }
     }
 }
@@ -25,15 +30,25 @@ final class FeedStore {
     var deleteCachedFeedCallCount = 0
     var insertCallCount = 0
     
-    var deleteCompletion: [(Error) -> Void] = []
+    var deleteCompletion: [(Error?) -> Void] = []
+    var insertions = [FeedItem]()
     
-    func deleteCacheFeed(completion: @escaping (Error) -> Void) {
+    func deleteCacheFeed(completion: @escaping (Error?) -> Void) {
         deleteCompletion.append(completion)
         deleteCachedFeedCallCount += 1
     }
     
     func completeDeletion(with error: Error, at index: Int = 0) {
         deleteCompletion[index](error)
+    }
+    
+    func completeSuccessDeletion(at index: Int = 0) {
+        deleteCompletion[index](nil)
+    }
+    
+    func insert(items: [FeedItem]) {
+        insertCallCount += 1
+        insertions = items
     }
 }
 
@@ -46,25 +61,37 @@ final class CacheFeedUseCaseTests: XCTestCase {
     }
     
     func test_save_requestCacheDeletion() {
+        let items = [uniqueItem(), uniqueItem()]
         let (sut, store) = makeSUT()
         
-        sut.save { _ in }
+        sut.save(items: items) { _ in }
         
         XCTAssertEqual(store.deleteCachedFeedCallCount, 1)
     }
     
     func test_save_doesNotRequestCacheInsertionOnDeletionError() {
+        let items = [uniqueItem(), uniqueItem()]
         let (sut, store) = makeSUT()
         let deletionError = anyError() as NSError
         
         var receivedError: NSError?
-        sut.save { error in
-            receivedError = error as NSError
+        sut.save(items: items) { error in
+            receivedError = error as? NSError
         }
         store.completeDeletion(with: deletionError)
         
         XCTAssertEqual(store.insertCallCount, 0)
         XCTAssertEqual(receivedError?.code, deletionError.code)
+    }
+    
+    func test_save_requestNewCacheInsertionOnSuccessDeletion() {
+        let items = [uniqueItem(), uniqueItem()]
+        let (sut, store) = makeSUT()
+        
+        sut.save(items: items) { _ in }
+        store.completeSuccessDeletion()
+        
+        XCTAssertEqual(store.insertCallCount, 1)
     }
     
     //MARK: - Helpers
@@ -79,5 +106,9 @@ final class CacheFeedUseCaseTests: XCTestCase {
     
     private func anyError() -> Error {
         NSError(domain: "any-error", code: 1)
+    }
+    
+    private func uniqueItem() -> FeedItem {
+        FeedItem(id: UUID(), description: "any des", location: nil, imageURL: URL(string: "https://any-url")!)
     }
 }
