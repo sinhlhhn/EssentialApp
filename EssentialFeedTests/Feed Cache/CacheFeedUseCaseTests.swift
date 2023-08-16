@@ -78,14 +78,10 @@ final class CacheFeedUseCaseTests: XCTestCase {
         let (sut, store) = makeSUT()
         let deletionError = anyError() as NSError
         
-        var receivedError: NSError?
-        sut.save(items: items) { error in
-            receivedError = error as? NSError
-        }
+        sut.save(items: items) { _ in }
         store.completeDeletion(with: deletionError)
         
         XCTAssertEqual(store.receivedMessage, [.deleteCacheFeed])
-        XCTAssertEqual(receivedError?.code, deletionError.code)
     }
     
     func test_save_requestNewCacheInsertionWithTimestampOnSuccessDeletion() {
@@ -97,6 +93,22 @@ final class CacheFeedUseCaseTests: XCTestCase {
         store.completeSuccessDeletion()
         
         XCTAssertEqual(store.receivedMessage, [.deleteCacheFeed, .insert(items, currentDate)])
+    }
+    
+    func test_save_failsOnSuccessDeletion() {
+        let items = [uniqueItem(), uniqueItem()]
+        let (sut, store) = makeSUT()
+        
+        let deletionError = anyError() as NSError
+        
+        var receivedError: NSError?
+        sut.save(items: items) { error in
+            receivedError = error as? NSError
+        }
+        
+        store.completeDeletion(with: deletionError)
+        
+        XCTAssertEqual(receivedError?.code, deletionError.code)
     }
     
     //MARK: - Helpers
