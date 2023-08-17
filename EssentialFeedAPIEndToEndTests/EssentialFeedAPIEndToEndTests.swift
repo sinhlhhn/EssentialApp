@@ -14,13 +14,13 @@ final class EssentialFeedAPIEndToEndTests: XCTestCase {
         let receivedResult = getFromURL()
         
         switch receivedResult {
-        case let .success(items):
-            XCTAssertEqual(items.count, 8)
-            items.enumerated().forEach { index, item in
-                XCTAssertEqual(item.id, id(at: index))
-                XCTAssertEqual(item.description, description(at: index))
-                XCTAssertEqual(item.location, location(at: index))
-                XCTAssertEqual(item.imageURL, imageURL(at: index))
+        case let .success(imageFeed):
+            XCTAssertEqual(imageFeed.count, 8)
+            imageFeed.enumerated().forEach { index, feed in
+                XCTAssertEqual(feed.id, id(at: index))
+                XCTAssertEqual(feed.description, description(at: index))
+                XCTAssertEqual(feed.location, location(at: index))
+                XCTAssertEqual(feed.imageURL, imageURL(at: index))
             }
         case let .failure(error):
             XCTFail("Expected success, got error \(error)")
