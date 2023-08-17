@@ -7,13 +7,6 @@
 
 import Foundation
 
-struct RemoteFeedLoaderItem: Decodable {
-    let id: UUID
-    let description: String?
-    let location: String?
-    let image: URL
-}
-
 struct FeedItemsMapper {
     private static let OK_200 = 200
     
