@@ -23,7 +23,8 @@ public final class LocalFeedLoader {
         store.retrieve { result in
             switch result {
             case .success: break
-            case .empty: break
+            case .empty:
+                completion(.success([]))
             case let .failure(error):
                 completion(.failure(error))
             }

@@ -56,7 +56,7 @@ final class FeedStoreSpy: FeedStore {
         retrievalCompletion[index](.failure(error))
     }
     
-    func completeSuccessRetrieval(at index: Int = 0) {
+    func completeRetrievalWithEmptyCache(at index: Int = 0) {
         retrievalCompletion[index](.empty)
     }
 }
