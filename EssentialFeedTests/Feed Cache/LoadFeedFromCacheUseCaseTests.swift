@@ -30,8 +30,14 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
         
         let exp = expectation(description: "wait for complition")
         var receivedError: NSError?
-        sut.load { error in
-            receivedError = error as? NSError
+        sut.load { result in
+            switch result {
+            case let .failure(error):
+                receivedError = error as NSError
+            default:
+                XCTFail("Expected failure, got \(result) instead")
+            }
+            
             exp.fulfill()
         }
         
@@ -41,6 +47,23 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
         
         XCTAssertEqual(retrieveError.code, receivedError?.code)
     }
+    
+//    func test_load_deliversEmptyImageOnEmptyCache() {
+//        let (sut, store) = makeSUT()
+//        var receivedImages = [FeedImage]()
+//
+//        let exp = expectation(description: "wait for complition")
+//        sut.load { error in
+//
+//            exp.fulfill()
+//        }
+//
+//        store.completeSuccessRetrieval()
+//
+//        wait(for: [exp], timeout: 1)
+//
+//        XCTAssertEqual(receivedImages, [])
+//    }
     
     //MARK: - Helpers
     
