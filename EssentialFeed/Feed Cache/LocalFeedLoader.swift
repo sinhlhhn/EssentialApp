@@ -28,6 +28,9 @@ public final class LocalFeedLoader {
             case .empty, .success:
                 completion(.success([]))
             case let .failure(error):
+                store.deleteCacheFeed { _ in
+                    
+                }
                 completion(.failure(error))
             }
         }
