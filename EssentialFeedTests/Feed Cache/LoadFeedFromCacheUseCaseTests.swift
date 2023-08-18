@@ -183,28 +183,4 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
 
         wait(for: [exp], timeout: 1)
     }
-    
-    private func anyError() -> NSError {
-        NSError(domain: "any-error", code: 1)
-    }
-    
-    private func uniqueImage() -> FeedImage {
-        FeedImage(id: UUID(), description: "any des", location: nil, url: URL(string: "https://any-url")!)
-    }
-    
-    private func uniqueImageFeed() -> (models: [FeedImage], locals: [LocalFeedImage]) {
-        let feed = [uniqueImage(), uniqueImage()]
-        let locals = feed.map { LocalFeedImage(id: $0.id, description: $0.description, location: $0.location, url: $0.imageURL) }
-        return (feed, locals)
-    }
-}
-
-private extension Date {
-    func adding(days: Int) -> Date {
-        Calendar(identifier: .gregorian).date(byAdding: .day, value: days, to: self)!
-    }
-    
-    func adding(seconds: TimeInterval) -> Date {
-        self + seconds
-    }
 }
