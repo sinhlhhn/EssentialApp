@@ -34,10 +34,15 @@ public final class LocalFeedLoader {
                 }
                 completion(.success([]))
             case let .failure(error):
-                store.deleteCacheFeed { _ in
-                    
-                }
                 completion(.failure(error))
+            }
+        }
+    }
+    
+    public func validate() {
+        store.retrieve { [unowned self] _ in
+            self.store.deleteCacheFeed { _ in
+                
             }
         }
     }
