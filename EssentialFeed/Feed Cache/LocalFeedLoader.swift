@@ -29,9 +29,6 @@ public final class LocalFeedLoader {
             case .empty:
                 completion(.success([]))
             case .success:
-                store.deleteCacheFeed { _ in
-                    
-                }
                 completion(.success([]))
             case let .failure(error):
                 completion(.failure(error))
@@ -40,9 +37,15 @@ public final class LocalFeedLoader {
     }
     
     public func validate() {
-        store.retrieve { [unowned self] _ in
-            self.store.deleteCacheFeed { _ in
-                
+        store.retrieve { [unowned self] result in
+            switch result {
+            case .failure:
+                self.store.deleteCacheFeed { _ in
+                    
+                }
+            case .empty:
+                break
+            default: break
             }
         }
     }
