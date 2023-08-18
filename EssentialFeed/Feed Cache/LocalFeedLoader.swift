@@ -25,7 +25,12 @@ public final class LocalFeedLoader {
             switch result {
             case let .success(localImages, timestamp) where self.validate(timestamp):
                 completion(.success(localImages.toModels()))
-            case .empty, .success:
+            case .empty:
+                completion(.success([]))
+            case .success:
+                store.deleteCacheFeed { _ in
+                    
+                }
                 completion(.success([]))
             case let .failure(error):
                 store.deleteCacheFeed { _ in
