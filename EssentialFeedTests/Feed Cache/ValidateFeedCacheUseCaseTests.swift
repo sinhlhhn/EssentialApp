@@ -36,29 +36,42 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
         XCTAssertEqual(store.receivedMessage, [.retrieve])
     }
     
-    func test_validateCache_doesNotDeleteOnLessThanSevenDaysOldCache() {
+    func test_validateCache_doesNotDeleteOnNonExpiredCache() {
         let fixCurrentDate = Date()
         let (sut, store) = makeSUT(currentDate: { fixCurrentDate })
         let feed = uniqueImageFeed()
-        let lessThanSevenDaysOldTimestamp = fixCurrentDate.adding(days: -7).adding(seconds: 1)
+        let nonExpiredTimestamp = fixCurrentDate.minusFeedCacheMaxAge().adding(seconds: 1)
 
         sut.validate()
 
-        store.completeRetrieval(with: feed.locals, timestamp: lessThanSevenDaysOldTimestamp)
+        store.completeRetrieval(with: feed.locals, timestamp: nonExpiredTimestamp)
 
         XCTAssertEqual(store.receivedMessage, [.retrieve])
     }
     
-    func test_validateCache_deletesOnSevenDaysOldCache() {
+    func test_validateCache_deletesOnCacheExpiration() {
         let fixCurrentDate = Date()
         let (sut, store) = makeSUT(currentDate: { fixCurrentDate })
         let feed = uniqueImageFeed()
-        let sevenDaysOldTimestamp = fixCurrentDate.adding(days: -7)
+        let cacheExpirationTimestamp = fixCurrentDate.minusFeedCacheMaxAge()
         
         sut.validate()
 
-        store.completeRetrieval(with: feed.locals, timestamp: sevenDaysOldTimestamp)
+        store.completeRetrieval(with: feed.locals, timestamp: cacheExpirationTimestamp)
         
+        XCTAssertEqual(store.receivedMessage, [.retrieve, .deleteCacheFeed])
+    }
+    
+    func test_validateCache_deleteOnExpiredCache() {
+        let fixCurrentDate = Date()
+        let (sut, store) = makeSUT(currentDate: { fixCurrentDate })
+        let feed = uniqueImageFeed()
+        let expiredTimestamp = fixCurrentDate.minusFeedCacheMaxAge().adding(seconds: -1)
+
+        sut.validate()
+
+        store.completeRetrieval(with: feed.locals, timestamp: expiredTimestamp)
+
         XCTAssertEqual(store.receivedMessage, [.retrieve, .deleteCacheFeed])
     }
     
