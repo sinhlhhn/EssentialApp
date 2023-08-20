@@ -9,8 +9,11 @@ import XCTest
 import EssentialFeed
 
 private final class CodableFeedStore {
+    let storeURL: URL
     
-    private let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("Image.store")
+    init(url: URL) {
+        self.storeURL = url
+    }
     
     private struct Cache: Codable {
         let feed: [CodableFeedImage]
@@ -40,7 +43,7 @@ private final class CodableFeedStore {
     }
     
     func retrieve(completion: @escaping FeedStore.RetrievalCompletion) {
-        guard let data = try? Data(contentsOf: url) else {
+        guard let data = try? Data(contentsOf: storeURL) else {
             completion(.empty)
             return
         }
@@ -52,7 +55,7 @@ private final class CodableFeedStore {
     
     func insert(_ feed: [LocalFeedImage], currentDate: Date, completion: @escaping FeedStore.InsertionCompletion) {
         let encoder = try! JSONEncoder().encode(Cache(feed: feed.map(CodableFeedImage.init), timestamp: currentDate))
-        try! encoder.write(to: url)
+        try! encoder.write(to: storeURL)
         completion(nil)
     }
 }
@@ -135,7 +138,8 @@ final class CodableFeedStoreTests: XCTestCase {
     //MARK: - Helpers
     
     private func makeSUT() -> CodableFeedStore {
-        let sut = CodableFeedStore()
+        let storeURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("Image.store")
+        let sut = CodableFeedStore(url: storeURL)
         trackForMemoryLeak(sut)
         return sut
     }
