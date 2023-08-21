@@ -8,7 +8,7 @@
 import XCTest
 import EssentialFeed
 
-private final class CodableFeedStore {
+private final class CodableFeedStore: FeedStore {
     let storeURL: URL
     
     init(url: URL) {
