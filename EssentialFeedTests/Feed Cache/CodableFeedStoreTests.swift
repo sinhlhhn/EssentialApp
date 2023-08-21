@@ -68,6 +68,11 @@ private final class CodableFeedStore {
     }
     
     func deleteCacheFeed(completion: @escaping FeedStore.DeletionCompletion) {
+        guard FileManager.default.fileExists(atPath: storeURL.path) else {
+            completion(nil)
+            return
+        }
+        try! FileManager.default.removeItem(at: storeURL)
         completion(nil)
     }
 }
@@ -179,6 +184,23 @@ final class CodableFeedStoreTests: XCTestCase {
         expect(sut, toRetrieveWithResult: .empty)
     }
     
+    func test_delete_emptiesPreviouslyInsertedCached() {
+        let sut = makeSUT()
+        let feed = uniqueImageFeed().locals
+        let timestamp = Date.init()
+        
+        insert(feed, timestamp: timestamp, to: sut)
+        let exp = expectation(description: "wait for deletion")
+        sut.deleteCacheFeed { deleteError in
+            XCTAssertNil(deleteError)
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 1)
+        
+        expect(sut, toRetrieveWithResult: .empty)
+    }
+    
     //MARK: - Helpers
     
     private func makeSUT(storeURL: URL? = nil, file: StaticString = #filePath, line: UInt = #line) -> CodableFeedStore {
@@ -187,7 +209,7 @@ final class CodableFeedStoreTests: XCTestCase {
         return sut
     }
     
-    private func expect(_ sut: CodableFeedStore, toRetrieveWithResult expectedResult: LoadCacheResult) {
+    private func expect(_ sut: CodableFeedStore, toRetrieveWithResult expectedResult: LoadCacheResult, file: StaticString = #filePath, line: UInt = #line) {
         let exp = expectation(description: "wait for retrieval")
         sut.retrieve { receivedResult in
             switch (receivedResult, expectedResult) {
@@ -199,7 +221,7 @@ final class CodableFeedStoreTests: XCTestCase {
             case (.empty, .empty), (.failure, .failure): break
                 
             default:
-                XCTFail("Expected retrieving \(expectedResult), got \(receivedResult) instead")
+                XCTFail("Expected retrieving \(expectedResult), got \(receivedResult) instead", file: file, line: line)
             }
             
             exp.fulfill()
