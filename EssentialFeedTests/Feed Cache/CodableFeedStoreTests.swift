@@ -111,25 +111,27 @@ final class CodableFeedStoreTests: XCTestCase {
     }
     
     func test_retrieve_deliverFailureOnRetrievalError() {
-        let sut = makeSUT()
+        let storeURL = testSpecificStoreURL()
+        let sut = makeSUT(storeURL: storeURL)
         
-        try! "invalidData".write(to: testSpecificStoreURL(), atomically: true, encoding: .utf8)
+        try! "invalidData".write(to: storeURL, atomically: false, encoding: .utf8)
         
         expect(sut, toRetrieveWithResult: .failure(anyError()))
     }
     
     func test_retrieve_hasNoSideEffectOnRetrievalError() {
-        let sut = makeSUT()
+        let storeURL = testSpecificStoreURL()
+        let sut = makeSUT(storeURL: storeURL)
         
-        try! "invalidData".write(to: testSpecificStoreURL(), atomically: true, encoding: .utf8)
+        try! "invalidData".write(to: storeURL, atomically: false, encoding: .utf8)
         
         expect(sut, toRetrieveWithResultTwice: .failure(anyError()))
     }
     
     //MARK: - Helpers
     
-    private func makeSUT() -> CodableFeedStore {
-        let sut = CodableFeedStore(url: testSpecificStoreURL())
+    private func makeSUT(storeURL: URL? = nil) -> CodableFeedStore {
+        let sut = CodableFeedStore(url: storeURL ?? testSpecificStoreURL())
         trackForMemoryLeak(sut)
         return sut
     }
