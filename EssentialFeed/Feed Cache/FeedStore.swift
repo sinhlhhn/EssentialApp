@@ -8,7 +8,7 @@
 import Foundation
 
 public enum LoadCacheResult {
-    case success([LocalFeedImage], Date)
+    case find([LocalFeedImage], Date)
     case failure(Error)
     case empty
 }

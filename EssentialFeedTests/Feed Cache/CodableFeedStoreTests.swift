@@ -49,7 +49,7 @@ private final class CodableFeedStore {
         }
         
         let decoder = try! JSONDecoder().decode(Cache.self, from: data)
-        completion(.success(decoder.localFeed, decoder.timestamp))
+        completion(.find(decoder.localFeed, decoder.timestamp))
         
     }
     
@@ -121,7 +121,7 @@ final class CodableFeedStoreTests: XCTestCase {
             XCTAssertNil(insertionError, "Expected feed to be inserted successfully")
             sut.retrieve { result in
                 switch result {
-                case let .success(receivedImages, receivedTimestamp):
+                case let .find(receivedImages, receivedTimestamp):
                     XCTAssertEqual(feed, receivedImages)
                     XCTAssertEqual(timestamp, receivedTimestamp)
                 default:
