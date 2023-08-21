@@ -173,14 +173,9 @@ final class CodableFeedStoreTests: XCTestCase {
     func test_delete_hasNoSideEffectOnEmptyCache() {
         let sut = makeSUT()
         
-        let exp = expectation(description: "wait for deletion")
-        sut.deleteCacheFeed { deleteError in
-            XCTAssertNil(deleteError)
-            exp.fulfill()
-        }
+        let deletionError = delete(from: sut)
         
-        wait(for: [exp], timeout: 1)
-        
+        XCTAssertNil(deletionError)
         expect(sut, toRetrieveWithResult: .empty)
     }
     
@@ -190,15 +185,23 @@ final class CodableFeedStoreTests: XCTestCase {
         let timestamp = Date.init()
         
         insert(feed, timestamp: timestamp, to: sut)
+        let deletionError = delete(from: sut)
+        
+        XCTAssertNil(deletionError)
+        expect(sut, toRetrieveWithResult: .empty)
+    }
+    
+    private func delete(from sut: CodableFeedStore) -> Error? {
         let exp = expectation(description: "wait for deletion")
-        sut.deleteCacheFeed { deleteError in
-            XCTAssertNil(deleteError)
+        var deletionError: Error?
+        sut.deleteCacheFeed { receivedError in
+            deletionError = receivedError
             exp.fulfill()
         }
         
         wait(for: [exp], timeout: 1)
         
-        expect(sut, toRetrieveWithResult: .empty)
+        return deletionError
     }
     
     //MARK: - Helpers
