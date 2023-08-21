@@ -191,19 +191,6 @@ final class CodableFeedStoreTests: XCTestCase {
         expect(sut, toRetrieveWithResult: .empty)
     }
     
-    private func delete(from sut: CodableFeedStore) -> Error? {
-        let exp = expectation(description: "wait for deletion")
-        var deletionError: Error?
-        sut.deleteCacheFeed { receivedError in
-            deletionError = receivedError
-            exp.fulfill()
-        }
-        
-        wait(for: [exp], timeout: 1)
-        
-        return deletionError
-    }
-    
     //MARK: - Helpers
     
     private func makeSUT(storeURL: URL? = nil, file: StaticString = #filePath, line: UInt = #line) -> CodableFeedStore {
@@ -231,6 +218,19 @@ final class CodableFeedStoreTests: XCTestCase {
         }
         
         wait(for: [exp], timeout: 1)
+    }
+    
+    private func delete(from sut: CodableFeedStore) -> Error? {
+        let exp = expectation(description: "wait for deletion")
+        var deletionError: Error?
+        sut.deleteCacheFeed { receivedError in
+            deletionError = receivedError
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 1)
+        
+        return deletionError
     }
     
     private func insert(_ feed: [LocalFeedImage], timestamp: Date, to sut: CodableFeedStore) {
