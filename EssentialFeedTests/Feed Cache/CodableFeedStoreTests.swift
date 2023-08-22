@@ -92,13 +92,9 @@ final class CodableFeedStoreTests: XCTestCase {
         let feed = uniqueImageFeed().locals
         let timestamp = Date.init()
         
-        let exp = expectation(description: "wait for insertion")
-        sut.insert(feed, currentDate: timestamp) { insertionError in
-            XCTAssertNotNil(insertionError)
-            exp.fulfill()
-        }
+        let insertionError = insert(feed, timestamp: timestamp, to: sut)
         
-        wait(for: [exp], timeout: 1)
+        XCTAssertNotNil(insertionError)
     }
     
     func test_delete_hasNoSideEffectOnEmptyCache() {
@@ -174,15 +170,19 @@ final class CodableFeedStoreTests: XCTestCase {
         return deletionError
     }
     
-    private func insert(_ feed: [LocalFeedImage], timestamp: Date, to sut: FeedStore) {
+    @discardableResult
+    private func insert(_ feed: [LocalFeedImage], timestamp: Date, to sut: FeedStore) -> Error? {
         let exp = expectation(description: "wait for insertion")
         
-        sut.insert(feed, currentDate: timestamp) { insertionError in
-            XCTAssertNil(insertionError, "Expected feed to be inserted successfully")
+        var insertionError: Error?
+        sut.insert(feed, currentDate: timestamp) { receivedError in
+            insertionError = receivedError
             exp.fulfill()
         }
         
         wait(for: [exp], timeout: 1)
+        
+        return insertionError
     }
     
     private func expect(_ sut: FeedStore, toRetrieveWithResultTwice expectedResult: LoadCacheResult) {
