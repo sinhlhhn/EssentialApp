@@ -72,6 +72,27 @@ final class CodableFeedStoreTests: XCTestCase {
         expect(sut, toRetrieveWithResultTwice: .failure(anyError()))
     }
     
+    func test_insert_deliversNoErrorOnEmptyCache() {
+        let sut = makeSUT()
+        let feed = uniqueImageFeed().locals
+        let timestamp = Date.init()
+        
+        let insertionError = insert(feed, timestamp: timestamp, to: sut)
+        
+        XCTAssertNil(insertionError)
+    }
+    
+    func test_insert_deliversNoErrorOnNonEmptyCache() {
+        let sut = makeSUT()
+        let feed = uniqueImageFeed().locals
+        let timestamp = Date.init()
+        
+        insert(feed, timestamp: timestamp, to: sut)
+        let insertionError = insert(feed, timestamp: timestamp, to: sut)
+        
+        XCTAssertNil(insertionError)
+    }
+    
     func test_insert_overridesPreviouslyInsertedCache() {
         let sut = makeSUT()
         let firstFeed = uniqueImageFeed().locals
@@ -97,12 +118,39 @@ final class CodableFeedStoreTests: XCTestCase {
         XCTAssertNotNil(insertionError)
     }
     
-    func test_delete_hasNoSideEffectOnEmptyCache() {
+    func test_insert_hasNoSideEffectOnInsertionError() {
+        let invalidURL = URL(string: "invalid-url")
+        let sut = makeSUT(storeURL: invalidURL)
+        let feed = uniqueImageFeed().locals
+        let timestamp = Date.init()
+        
+        insert(feed, timestamp: timestamp, to: sut)
+        
+        expect(sut, toRetrieveWithResult: .empty)
+    }
+    
+    func test_delete_deliversNoErrorOnEmptyCache() {
         let sut = makeSUT()
         
         let deletionError = delete(from: sut)
         
         XCTAssertNil(deletionError)
+    }
+    
+    func test_delete_deliversNoErrorOnNonEmptyCache() {
+        let sut = makeSUT()
+        
+        insert(uniqueImageFeed().locals, timestamp: Date(), to: sut)
+        let deletionError = delete(from: sut)
+        
+        XCTAssertNil(deletionError)
+    }
+    
+    func test_delete_hasNoSideEffectOnEmptyCache() {
+        let sut = makeSUT()
+        
+        delete(from: sut)
+        
         expect(sut, toRetrieveWithResult: .empty)
     }
     
@@ -124,6 +172,13 @@ final class CodableFeedStoreTests: XCTestCase {
         let deletionError = delete(from: sut)
         
         XCTAssertNotNil(deletionError)
+    }
+    
+    func test_delete_hasNoSideEffectOnDeletionError() {
+        let sut = makeSUT(storeURL: noDeletePermissionURL())
+        
+        delete(from: sut)
+        
         expect(sut, toRetrieveWithResult: .empty)
     }
     
@@ -183,6 +238,7 @@ final class CodableFeedStoreTests: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
     
+    @discardableResult
     private func delete(from sut: FeedStore) -> Error? {
         let exp = expectation(description: "wait for deletion")
         var deletionError: Error?
