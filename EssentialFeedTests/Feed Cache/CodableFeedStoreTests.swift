@@ -123,17 +123,13 @@ final class CodableFeedStoreTests: XCTestCase, FailableFeedStoreSpecs {
     func test_delete_deliverErrorOnDeletionError() {
         let sut = makeSUT(storeURL: noDeletePermissionURL())
         
-        let deletionError = delete(from: sut)
-        
-        XCTAssertNotNil(deletionError)
+        assertThatDeleteDeliverErrorOnDeletionError(on: sut)
     }
     
     func test_delete_hasNoSideEffectOnDeletionError() {
         let sut = makeSUT(storeURL: noDeletePermissionURL())
         
-        delete(from: sut)
-        
-        expect(sut, toRetrieveWithResult: .empty)
+        assertThatDeleteHasNoSideEffectOnDeletionError(on: sut)
     }
     
     func test_storeSideEffect_runSerially() {
