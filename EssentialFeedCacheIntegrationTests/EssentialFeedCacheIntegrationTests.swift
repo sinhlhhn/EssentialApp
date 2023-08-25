@@ -33,13 +33,7 @@ final class EssentialFeedCacheIntegrationTests: XCTestCase {
         let sutToLoad = makeSUT()
         let feed = uniqueImageFeed().models
         
-        let saveExp = expectation(description: "wait for save")
-        sutToSave.save(feed) { saveError in
-            XCTAssertNil(saveError)
-            saveExp.fulfill()
-        }
-        
-        wait(for: [saveExp], timeout: 1)
+        save(feed, with: sutToSave)
         
         expect(sutToLoad, toCompleteWithItem: feed)
     }
@@ -51,21 +45,8 @@ final class EssentialFeedCacheIntegrationTests: XCTestCase {
         let firstFeed = uniqueImageFeed().models
         let lastFeed = uniqueImageFeed().models
         
-        let firstSaveExp = expectation(description: "wait for save")
-        sutToPerformFirstSave.save(firstFeed) { saveError in
-            XCTAssertNil(saveError)
-            firstSaveExp.fulfill()
-        }
-        
-        wait(for: [firstSaveExp], timeout: 1)
-        
-        let lastSaveExp = expectation(description: "wait for save")
-        sutToPerformFirstSave.save(lastFeed) { saveError in
-            XCTAssertNil(saveError)
-            lastSaveExp.fulfill()
-        }
-        
-        wait(for: [lastSaveExp], timeout: 1)
+        save(firstFeed, with: sutToPerformFirstSave)
+        save(lastFeed, with: sutToPerformLastSave)
         
         expect(sutToPerformLoad, toCompleteWithItem: lastFeed)
     }
@@ -92,6 +73,16 @@ final class EssentialFeedCacheIntegrationTests: XCTestCase {
             default:
                 XCTFail("Expected success with empty item, got \(result) instead")
             }
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 1)
+    }
+    
+    private func save(_ feed: [FeedImage], with sut: LocalFeedLoader, file: StaticString = #filePath, line: UInt = #line) {
+        let exp = expectation(description: "wait for save")
+        sut.save(feed) { saveError in
+            XCTAssertNil(saveError)
             exp.fulfill()
         }
         
