@@ -1,17 +1,15 @@
 {
   "configurations" : [
     {
-      "id" : "21B62179-1336-4B39-98E1-F77F08F485C4",
-      "name" : "Test Scheme Action",
+      "id" : "783DBACB-EC8D-426B-8874-7AE33B7FD71C",
+      "name" : "Configuration 1",
       "options" : {
 
       }
     }
   ],
   "defaultOptions" : {
-    "codeCoverage" : false,
-    "testExecutionOrdering" : "random",
-    "threadSanitizerEnabled" : true
+    "testExecutionOrdering" : "random"
   },
   "testTargets" : [
     {
@@ -24,15 +22,15 @@
     {
       "target" : {
         "containerPath" : "container:EssentialFeed.xcodeproj",
-        "identifier" : "2ECF23EA2A7CFB97009F2ACB",
-        "name" : "EssentialFeedTests"
+        "identifier" : "22C0D8EC2A9862D2000D978D",
+        "name" : "EssentialFeedCacheIntegrationTests"
       }
     },
     {
       "target" : {
         "containerPath" : "container:EssentialFeed.xcodeproj",
-        "identifier" : "22C0D8EC2A9862D2000D978D",
-        "name" : "EssentialFeedCacheIntegrationTests"
+        "identifier" : "2ECF23EA2A7CFB97009F2ACB",
+        "name" : "EssentialFeedTests"
       }
     },
     {
