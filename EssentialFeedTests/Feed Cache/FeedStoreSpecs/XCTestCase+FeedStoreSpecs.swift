@@ -11,11 +11,11 @@ import EssentialFeed
 extension FeedStoreSpecs where Self: XCTestCase {
     
     func assertThatRetrieveDeliversEmptyOnEmptyCache(on sut: FeedStore, file: StaticString = #filePath, line: UInt = #line) {
-        expect(sut, toRetrieveWithResult: .success(.empty), file: file, line: line)
+        expect(sut, toRetrieveWithResult: .success(.none), file: file, line: line)
     }
     
     func assertThatRetrieveHasNoSideEffectOnEmptyCache(on sut: FeedStore, file: StaticString = #filePath, line: UInt = #line) {
-        expect(sut, toRetrieveWithResultTwice: .success(.empty))
+        expect(sut, toRetrieveWithResultTwice: .success(.none))
     }
     
     func assertThatRetrieveDeliversFoundValueOnNonEmptyCache(on sut: FeedStore, file: StaticString = #filePath, line: UInt = #line) {
@@ -24,7 +24,7 @@ extension FeedStoreSpecs where Self: XCTestCase {
         
         insert(feed, timestamp: timestamp, to: sut)
         
-        expect(sut, toRetrieveWithResult: .success(.find(feed, timestamp)))
+        expect(sut, toRetrieveWithResult: .success(.some((feed, timestamp))))
     }
     
     func assertThatRetrieveHasNoSideEffectOnNonEmptyCache(on sut: FeedStore, file: StaticString = #filePath, line: UInt = #line) {
@@ -33,7 +33,7 @@ extension FeedStoreSpecs where Self: XCTestCase {
         
         insert(feed, timestamp: timestamp, to: sut)
         
-        expect(sut, toRetrieveWithResultTwice: .success(.find(feed, timestamp)))
+        expect(sut, toRetrieveWithResultTwice: .success(.some((feed, timestamp))))
     }
     
     func assertThatInsertDeliversNoErrorOnEmptyCache(on sut: FeedStore, file: StaticString = #filePath, line: UInt = #line) {
@@ -65,7 +65,7 @@ extension FeedStoreSpecs where Self: XCTestCase {
         insert(firstFeed, timestamp: firstTimestamp, to: sut)
         insert(secondFeed, timestamp: secondTimestamp, to: sut)
         
-        expect(sut, toRetrieveWithResult: .success(.find(secondFeed, secondTimestamp)))
+        expect(sut, toRetrieveWithResult: .success(.some((secondFeed, secondTimestamp))))
     }
     
     func assertThatDeleteDeliversNoErrorOnEmptyCache(on sut: FeedStore, file: StaticString = #filePath, line: UInt = #line) {
@@ -84,7 +84,7 @@ extension FeedStoreSpecs where Self: XCTestCase {
     func assertThatDeleteHasNoSideEffectOnEmptyCache(on sut: FeedStore, file: StaticString = #filePath, line: UInt = #line) {
         delete(from: sut)
         
-        expect(sut, toRetrieveWithResult: .success(.empty))
+        expect(sut, toRetrieveWithResult: .success(.none))
     }
     
     func assertThatDeleteEmptiesPreviouslyInsertedCached(on sut: FeedStore, file: StaticString = #filePath, line: UInt = #line) {
@@ -95,7 +95,7 @@ extension FeedStoreSpecs where Self: XCTestCase {
         let deletionError = delete(from: sut)
         
         XCTAssertNil(deletionError)
-        expect(sut, toRetrieveWithResult: .success(.empty))
+        expect(sut, toRetrieveWithResult: .success(.none))
     }
     
     func assertThatStoreSideEffectRunSerially(on sut: FeedStore, file: StaticString = #filePath, line: UInt = #line) {
@@ -128,12 +128,11 @@ extension FeedStoreSpecs where Self: XCTestCase {
         let exp = expectation(description: "wait for retrieval")
         sut.retrieve { receivedResult in
             switch (receivedResult, expectedResult) {
-                
-            case let (.success(.find(receivedImages, receivedTimestamp)), .success(.find(expectedImages, expectedTimestamp))):
+            case let (.success(.some((receivedImages, receivedTimestamp))), .success(.some((expectedImages, expectedTimestamp)))):
                 XCTAssertEqual(receivedImages, expectedImages)
                 XCTAssertEqual(receivedTimestamp, expectedTimestamp)
                 
-            case (.success(.empty), .success(.empty)), (.failure, .failure): break
+            case (.success(.none), .success(.none)), (.failure, .failure): break
                 
             default:
                 XCTFail("Expected retrieving \(expectedResult), got \(receivedResult) instead", file: file, line: line)
