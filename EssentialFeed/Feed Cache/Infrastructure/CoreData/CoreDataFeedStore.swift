@@ -8,12 +8,22 @@
 import CoreData
 
 public final class CoreDataFeedStore: FeedStore {
+    private static let modelName = "FeedStore"
+    private static let model = NSManagedObjectModel(name: modelName, in: Bundle(for: CoreDataFeedStore.self))
     
     private let container: NSPersistentContainer
     private let context: NSManagedObjectContext
     
+    public struct ModelNotFound: Error {
+        public let modelName: String
+    }
+    
     public init(storeURL: URL, bundle: Bundle = .main) throws {
-        self.container = try NSPersistentContainer.load(modelName: "FeedStore", url: storeURL, in: bundle)
+        guard let model = CoreDataFeedStore.model else {
+            throw ModelNotFound(modelName: CoreDataFeedStore.modelName)
+        }
+        
+        self.container = try NSPersistentContainer.load(modelName: CoreDataFeedStore.modelName, model: model, url: storeURL)
         self.context = container.newBackgroundContext()
     }
     
@@ -23,7 +33,7 @@ public final class CoreDataFeedStore: FeedStore {
                 try ManagedCache.find(in: context).map(context.delete).map(context.save)
                 completion(nil)
             } catch {
-//                completion(error)
+                completion(error)
             }
         }
     }
@@ -38,7 +48,7 @@ public final class CoreDataFeedStore: FeedStore {
                 try context.save()
                 completion(nil)
             } catch {
-//                completion(error)
+                completion(error)
             }
         }
     }
@@ -52,7 +62,7 @@ public final class CoreDataFeedStore: FeedStore {
                     completion(.empty)
                 }
             } catch {
-//                completion(.failure(error))
+                completion(.failure(error))
             }
         }
     }
