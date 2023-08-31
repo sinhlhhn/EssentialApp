@@ -161,7 +161,7 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
         return (sut, store)
     }
     
-    private func expect(_ sut: LocalFeedLoader, toCompletionWith expectedResult: LoadFeedResult, when action: () -> (), file: StaticString = #filePath, line: UInt = #line) {
+    private func expect(_ sut: LocalFeedLoader, toCompletionWith expectedResult: FeedLoader.Result, when action: () -> (), file: StaticString = #filePath, line: UInt = #line) {
 
         let exp = expectation(description: "wait for complition")
         sut.load { receivedResult in
