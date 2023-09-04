@@ -7,9 +7,17 @@
 
 import XCTest
 
-final class FeedViewController {
-    init(loader: LoaderSpy) {
-        
+final class FeedViewController: UIViewController {
+    var loader: LoaderSpy?
+    
+    convenience init(loader: LoaderSpy) {
+        self.init()
+        self.loader = loader
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        loader?.load()
     }
 }
 
@@ -19,9 +27,16 @@ final class FeedViewControllerTests: XCTestCase {
         let loader = LoaderSpy()
         let _ = FeedViewController(loader: loader)
         
-        loader.load()
-        
         XCTAssertEqual(loader.loadCallCount, 0)
+    }
+    
+    func test_viewDidLoad_loadFeed() {
+        let loader = LoaderSpy()
+        let sut = FeedViewController(loader: loader)
+        
+        sut.loadViewIfNeeded()
+        
+        XCTAssertEqual(loader.loadCallCount, 1)
     }
     
     
@@ -31,6 +46,6 @@ class LoaderSpy {
     var loadCallCount = 0
     
     func load() {
-        
+        loadCallCount += 1
     }
 }
