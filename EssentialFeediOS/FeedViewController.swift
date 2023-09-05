@@ -32,8 +32,8 @@ public final class FeedViewController: UITableViewController {
             if let items = try? result.get() {
                 self?.tableModel = items
                 self?.tableView.reloadData()
-                self?.refreshControl?.endRefreshing()
             }
+            self?.refreshControl?.endRefreshing()
         }
     }
     
