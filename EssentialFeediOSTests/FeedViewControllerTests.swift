@@ -60,6 +60,19 @@ final class FeedViewControllerTests: XCTestCase {
         assertThat(sut, isRendering: [image0, image1, image2, image3])
     }
     
+    func test_loadFeedCompletion_doesNotAlterCurrentStateOnError() {
+        let image = makeImage(description: nil, location: nil)
+        let (sut, loader) = makeSUT()
+        
+        sut.loadViewIfNeeded()
+        loader.completeLoading(with: [image], at: 0)
+        
+        sut.simulateUserInitiatedFeedReload()
+        loader.completeLoadingWithError(with: NSError(domain: "", code: 1), at: 1)
+        
+        assertThat(sut, isRendering: [image])
+    }
+    
     //MARK: -Helpers
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (FeedViewController, LoaderSpy) {
@@ -73,7 +86,10 @@ final class FeedViewControllerTests: XCTestCase {
     }
     
     private func assertThat(_ sut: FeedViewController, isRendering images: [FeedImage], file: StaticString = #filePath, line: UInt = #line) {
-        XCTAssertEqual(sut.numberOfRenderedFeedImageViews(), images.count, "Expected \(images.count) images, got \(String(describing: sut.numberOfRenderedFeedImageViews)) instead", file: file, line: line)
+        guard sut.numberOfRenderedFeedImageViews() == images.count else {
+            XCTFail("Expected \(images.count) images, got \(sut.numberOfRenderedFeedImageViews()) instead", file: file, line: line)
+            return
+        }
         
         images.enumerated().forEach {
             assertThat(sut, hasViewConfigFor: $0.element, in: $0.offset, file: file, line: line)
@@ -113,6 +129,10 @@ final class FeedViewControllerTests: XCTestCase {
         
         func completeLoading(with images: [FeedImage] = [], at index: Int) {
             completions[index](.success(images))
+        }
+        
+        func completeLoadingWithError(with error: NSError, at index: Int) {
+            completions[index](.failure(error))
         }
     }
 }
