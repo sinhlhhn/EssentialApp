@@ -42,6 +42,14 @@ final class FeedViewControllerTests: XCTestCase {
         XCTAssertFalse(sut.isShowingLoadingIndicator)
     }
     
+    func test_loadFeedCompletion_triggerCellForRowAtIndexPath() {
+        let image0 = makeImage(description: "any description", location: "any location")
+        let (sut, loader) = makeSUT()
+        
+        sut.loadViewIfNeeded()
+        loader.completeLoading(with: [image0], at: 0)
+    }
+    
     func test_loadFeedCompletion_rendersSuccessfullyLoadedFeed() {
         let image0 = makeImage(description: "any description", location: "any location")
         let image1 = makeImage(description: nil, location: "any location")
