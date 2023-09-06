@@ -126,6 +126,28 @@ final class FeedViewControllerTests: XCTestCase {
         XCTAssertEqual(view1?.isShowingImageLoadingIndicator, false, "Expected no loading indicator for second view once second image loading completes with error")
     }
     
+    func test_feedImageView_rendersImageLoadedFromURL() {
+        let (sut, loader) = makeSUT()
+        
+        sut.loadViewIfNeeded()
+        loader.completeLoading(with: [makeImage(), makeImage()], at: 0)
+        
+        let view0 = sut.simulateFeedImageViewVisible(at: 0)
+        let view1 = sut.simulateFeedImageViewVisible(at: 1)
+        
+        XCTAssertEqual(view0?.renderedImage, .none, "Expected no image for the first view while loading first image")
+        XCTAssertEqual(view1?.renderedImage, .none, "Expected no image for the second view while loading second image")
+        
+        let image0 = UIImage.make(with: .red).pngData()!
+        loader.completeLoadingImage(with: image0,at: 0)
+        XCTAssertEqual(view0?.renderedImage, image0, "Expected image for the first view once the first image loading complete successfully")
+        XCTAssertEqual(view1?.renderedImage, .none, "Expected no image state change for the second view once first image loading complete successfully")
+        
+        loader.completeLoadingImageWithError(at: 1)
+        XCTAssertEqual(view0?.renderedImage, image0, "Expected no image state change for first view once second image loading completes with error")
+        XCTAssertEqual(view1?.renderedImage, .none, "Expected no image for second view once second image loading completes with error")
+    }
+    
     //MARK: -Helpers
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (FeedViewController, LoaderSpy) {
@@ -217,8 +239,7 @@ final class FeedViewControllerTests: XCTestCase {
             }
         }
         
-        func completeLoadingImage(at index: Int) {
-            let data = Data()
+        func completeLoadingImage(with data: Data = Data(), at index: Int) {
             imageRequests[index].completion(.success(data))
         }
         
@@ -257,6 +278,10 @@ private extension FeedImageCell {
     var isShowingImageLoadingIndicator: Bool {
         feedImageContainer.isShimmering
     }
+    
+    var renderedImage: Data? {
+        feedImage.image?.pngData()
+    }
 }
 
 private extension UITableViewController {
@@ -293,5 +318,18 @@ private extension UITableViewController {
         let ds = tableView.dataSource
         let index = IndexPath(row: row, section: feedImageSection)
         return ds?.tableView(tableView, cellForRowAt: index)
+    }
+}
+
+private extension UIImage {
+    static func make(with color: UIColor) -> UIImage {
+        let rect = CGRect(x: 0, y: 0, width: 1, height: 1)
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1
+        
+        return UIGraphicsImageRenderer(size: rect.size, format: format).image { rendererContext in
+            color.setFill()
+            rendererContext.fill(rect)
+        }
     }
 }
