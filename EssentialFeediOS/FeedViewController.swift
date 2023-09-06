@@ -8,13 +8,19 @@
 import UIKit
 import EssentialFeed
 
+public protocol FeedImageDataLoader {
+    func loadImageData(from url: URL)
+}
+
 public final class FeedViewController: UITableViewController {
-    var loader: FeedLoader?
+    private var feedLoader: FeedLoader?
+    private var imageLoader: FeedImageDataLoader?
     private var tableModel = [FeedImage]()
     
-    public convenience init(loader: FeedLoader) {
+    public convenience init(loader: FeedLoader, imageLoader: FeedImageDataLoader) {
         self.init()
-        self.loader = loader
+        self.feedLoader = loader
+        self.imageLoader = imageLoader
     }
     
     public override func viewDidLoad() {
@@ -28,7 +34,7 @@ public final class FeedViewController: UITableViewController {
     
     @objc private func load() {
         refreshControl?.beginRefreshing()
-        loader?.load { [weak self] result in
+        feedLoader?.load { [weak self] result in
             if let items = try? result.get() {
                 self?.tableModel = items
                 self?.tableView.reloadData()
@@ -42,12 +48,14 @@ public final class FeedViewController: UITableViewController {
     }
     
     public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let model = tableModel[indexPath.row]
+        let cellModel = tableModel[indexPath.row]
         let cell = FeedImageCell()
-        cell.locationContainer.isHidden = model.location == nil
-        cell.locationLabel.text = model.location
-        cell.descriptionLabel.isHidden = model.description == nil
-        cell.descriptionLabel.text = model.description
+        cell.locationContainer.isHidden = cellModel.location == nil
+        cell.locationLabel.text = cellModel.location
+        cell.descriptionLabel.isHidden = cellModel.description == nil
+        cell.descriptionLabel.text = cellModel.description
+        
+        imageLoader?.loadImageData(from: cellModel.imageURL)
         
         return cell
     }
