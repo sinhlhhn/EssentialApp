@@ -148,6 +148,27 @@ final class FeedViewControllerTests: XCTestCase {
         XCTAssertEqual(view1?.renderedImage, .none, "Expected no image for second view once second image loading completes with error")
     }
     
+    func test_feedImageView_showsButtonRetryOnImageURLLoadError() {
+        let (sut, loader) = makeSUT()
+        
+        sut.loadViewIfNeeded()
+        loader.completeLoading(with: [makeImage(), makeImage()], at: 0)
+        
+        let view0 = sut.simulateFeedImageViewVisible(at: 0)
+        let view1 = sut.simulateFeedImageViewVisible(at: 1)
+        XCTAssertEqual(view0?.isShowingRetryAction, false, "Expected no retry action for the first view while loading first image")
+        XCTAssertEqual(view1?.isShowingRetryAction, false, "Expected no retry action for the second view while loading second image")
+        
+        let image0 = UIImage.make(with: .red).pngData()!
+        loader.completeLoadingImage(with: image0, at: 0)
+        XCTAssertEqual(view0?.isShowingRetryAction, false, "Expected no retry action for the first view once loading first image complete successfully")
+        XCTAssertEqual(view1?.isShowingRetryAction, false, "Expected no retry action state change for the second view once loading first image complete successfully")
+        
+        loader.completeLoadingImageWithError(at: 1)
+        XCTAssertEqual(view0?.isShowingRetryAction, false, "Expected no retry action state change for the first view once loading second image complete with error")
+        XCTAssertEqual(view1?.isShowingRetryAction, true, "Expected retry action for the second view once loading second image complete with error")
+    }
+    
     //MARK: -Helpers
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (FeedViewController, LoaderSpy) {
@@ -281,6 +302,10 @@ private extension FeedImageCell {
     
     var renderedImage: Data? {
         feedImage.image?.pngData()
+    }
+    
+    var isShowingRetryAction: Bool {
+        !retryButton.isHidden
     }
 }
 
