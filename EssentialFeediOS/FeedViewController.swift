@@ -66,7 +66,11 @@ public final class FeedViewController: UITableViewController {
         cancelTasks[indexPath] = imageLoader?.loadImageData(from: cellModel.imageURL) { [weak cell] result in
             switch result {
             case let .success(data):
-                cell?.feedImage.image = UIImage(data: data)
+                guard let image = UIImage(data: data) else {
+                    cell?.retryButton.isHidden = false
+                    break
+                }
+                cell?.feedImage.image = image
             case .failure(_):
                 cell?.retryButton.isHidden = false
             }
