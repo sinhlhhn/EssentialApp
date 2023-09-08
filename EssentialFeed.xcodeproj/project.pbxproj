@@ -54,6 +54,7 @@
 		22DEC2A32A863350000150DF /* XCTestCase+MemoryLeakTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22DEC2A22A863350000150DF /* XCTestCase+MemoryLeakTracking.swift */; };
 		22E1FF3B2A8382E90094DEC1 /* EssentialFeed.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 22E1FF3A2A8382E90094DEC1 /* EssentialFeed.xctestplan */; };
 		22EA30EA2AAB06BE00A7A8E1 /* FeedImageDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EA30E92AAB06BE00A7A8E1 /* FeedImageDataLoader.swift */; };
+		22EA30F12AAB087D00A7A8E1 /* FeedViewController+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EA30F02AAB087D00A7A8E1 /* FeedViewController+TestHelpers.swift */; };
 		22FDB1AA2A86938A00174801 /* URLSessionHTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FDB1A92A86938A00174801 /* URLSessionHTTPClient.swift */; };
 		2ECF23EC2A7CFB97009F2ACB /* EssentialFeed.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2ECF23E32A7CFB97009F2ACB /* EssentialFeed.framework */; };
 		2ECF23F12A7CFB97009F2ACB /* LoadFeedFromRemoteUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ECF23F02A7CFB97009F2ACB /* LoadFeedFromRemoteUseCaseTests.swift */; };
@@ -160,6 +161,7 @@
 		22DEC2A22A863350000150DF /* XCTestCase+MemoryLeakTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+MemoryLeakTracking.swift"; sourceTree = "<group>"; };
 		22E1FF3A2A8382E90094DEC1 /* EssentialFeed.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EssentialFeed.xctestplan; sourceTree = "<group>"; };
 		22EA30E92AAB06BE00A7A8E1 /* FeedImageDataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedImageDataLoader.swift; sourceTree = "<group>"; };
+		22EA30F02AAB087D00A7A8E1 /* FeedViewController+TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FeedViewController+TestHelpers.swift"; sourceTree = "<group>"; };
 		22FDB1A92A86938A00174801 /* URLSessionHTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionHTTPClient.swift; sourceTree = "<group>"; };
 		2ECF23E32A7CFB97009F2ACB /* EssentialFeed.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = EssentialFeed.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2ECF23EB2A7CFB97009F2ACB /* EssentialFeedTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EssentialFeedTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -314,7 +316,7 @@
 		22AC37352AA0E95900D5DBFE /* EssentialFeediOSTests */ = {
 			isa = PBXGroup;
 			children = (
-				22AC37362AA0E95900D5DBFE /* FeedViewControllerTests.swift */,
+				22EA30EE2AAB07E600A7A8E1 /* FeedUI */,
 			);
 			path = EssentialFeediOSTests;
 			sourceTree = "<group>";
@@ -418,6 +420,31 @@
 				2230A0472AA8D85C00E66DA4 /* UIView+Shimmer.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		22EA30ED2AAB07BE00A7A8E1 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				22EA30F02AAB087D00A7A8E1 /* FeedViewController+TestHelpers.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		22EA30EE2AAB07E600A7A8E1 /* FeedUI */ = {
+			isa = PBXGroup;
+			children = (
+				22EA30ED2AAB07BE00A7A8E1 /* Helpers */,
+				22EA30EF2AAB07ED00A7A8E1 /* Controllers */,
+			);
+			path = FeedUI;
+			sourceTree = "<group>";
+		};
+		22EA30EF2AAB07ED00A7A8E1 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				22AC37362AA0E95900D5DBFE /* FeedViewControllerTests.swift */,
+			);
+			path = Controllers;
 			sourceTree = "<group>";
 		};
 		2ECF23D92A7CFB97009F2ACB = {
@@ -726,6 +753,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				22AC37372AA0E95900D5DBFE /* FeedViewControllerTests.swift in Sources */,
+				22EA30F12AAB087D00A7A8E1 /* FeedViewController+TestHelpers.swift in Sources */,
 				22D269C22AA63308003C4363 /* XCTestCase+MemoryLeakTracking.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
