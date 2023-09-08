@@ -9,15 +9,19 @@ import UIKit
 import EssentialFeed
 
 public final class FeedViewController: UITableViewController, UITableViewDataSourcePrefetching {
-    private var feedLoader: FeedLoader?
     private var imageLoader: FeedImageDataLoader?
-    private var tableModel = [FeedImage]()
+    private var tableModel = [FeedImage]() {
+        didSet {
+            tableView.reloadData()
+        }
+    }
     private var cancelTasks = [IndexPath : FeedImageDataLoaderTask]()
+    private var refreshController: FeedRefreshViewController?
     
     public convenience init(loader: FeedLoader, imageLoader: FeedImageDataLoader) {
         self.init()
-        self.feedLoader = loader
         self.imageLoader = imageLoader
+        self.refreshController = FeedRefreshViewController(feedLoader: loader)
     }
     
     public override func viewDidLoad() {
@@ -25,21 +29,11 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
         
         tableView.prefetchDataSource = self
         
-        refreshControl = UIRefreshControl()
-        refreshControl?.addTarget(self, action: #selector(load), for: .valueChanged)
-        
-        load()
-    }
-    
-    @objc private func load() {
-        refreshControl?.beginRefreshing()
-        feedLoader?.load { [weak self] result in
-            if let items = try? result.get() {
-                self?.tableModel = items
-                self?.tableView.reloadData()
-            }
-            self?.refreshControl?.endRefreshing()
+        refreshControl = refreshController?.view
+        refreshController?.onRefresh = { [weak self] images in
+            self?.tableModel = images
         }
+        refreshController?.refresh()
     }
     
     public override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
