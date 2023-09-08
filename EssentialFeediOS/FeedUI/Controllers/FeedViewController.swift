@@ -11,11 +11,10 @@ import EssentialFeed
 public final class FeedViewController: UITableViewController, UITableViewDataSourcePrefetching {
     private var imageLoader: FeedImageDataLoader?
     private var tableModel = [FeedImage]() {
-        didSet {
-            tableView.reloadData()
-        }
+        didSet { tableView.reloadData() }
     }
-    private var cancelTasks = [IndexPath : FeedImageDataLoaderTask]()
+    
+    private var cellControllers = [IndexPath : FeedImageCellController]()
     private var refreshController: FeedRefreshViewController?
     
     public convenience init(loader: FeedLoader, imageLoader: FeedImageDataLoader) {
@@ -41,41 +40,7 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
     }
     
     public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cellModel = tableModel[indexPath.row]
-        let cell = FeedImageCell()
-        cell.locationContainer.isHidden = cellModel.location == nil
-        cell.locationLabel.text = cellModel.location
-        cell.descriptionLabel.isHidden = cellModel.description == nil
-        cell.descriptionLabel.text = cellModel.description
-        cell.feedImage.image = nil
-        cell.retryButton.isHidden = true
-        cell.feedImageContainer.startShimmering()
-        let loader = { [weak self, weak cell] in
-            guard let self = self else {
-                return
-            }
-            
-            self.cancelTasks[indexPath] = self.imageLoader?.loadImageData(from: cellModel.imageURL) { result in
-                switch result {
-                case let .success(data):
-                    guard let image = UIImage(data: data) else {
-                        cell?.retryButton.isHidden = false
-                        break
-                    }
-                    cell?.feedImage.image = image
-                case .failure(_):
-                    cell?.retryButton.isHidden = false
-                }
-                
-                cell?.feedImageContainer.stopShimmering()
-            }
-        }
-        
-        cell.onRetry = loader
-        
-        loader()
-        
-        return cell
+        return cellController(forRowAt: indexPath).view(cellForRowAt: indexPath)
     }
     
     public override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -94,13 +59,19 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
         indexPaths.forEach(cancelTask)
     }
     
+    private func cellController(forRowAt indexPath: IndexPath) -> FeedImageCellController {
+        let cellModel = tableModel[indexPath.row]
+        let cellController = FeedImageCellController(model: cellModel, imageLoader: imageLoader)
+        cellControllers[indexPath] = cellController
+        
+        return cellController
+    }
+    
     private func cancelTask(forRowAt indexPath: IndexPath) {
-        cancelTasks[indexPath]?.cancel()
-        cancelTasks[indexPath] = nil
+        cellControllers[indexPath] = nil
     }
     
     private func startTask(forRowAt indexPath: IndexPath) {
-        let cellModel = tableModel[indexPath.row]
-        cancelTasks[indexPath] = imageLoader?.loadImageData(from: cellModel.imageURL) { _ in }
+        cellController(forRowAt: indexPath).preload()
     }
 }
