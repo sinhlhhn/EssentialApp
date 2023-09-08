@@ -358,40 +358,6 @@ extension UIRefreshControl {
     }
 }
 
-private extension FeedImageCell {
-    var isShowLocation: Bool {
-        !locationContainer.isHidden
-    }
-    
-    var locationText: String? {
-        locationLabel.text
-    }
-    
-    var isShowDescription: Bool {
-        !descriptionLabel.isHidden
-    }
-    
-    var descriptionText: String? {
-        descriptionLabel.text
-    }
-    
-    var isShowingImageLoadingIndicator: Bool {
-        feedImageContainer.isShimmering
-    }
-    
-    var renderedImage: Data? {
-        feedImage.image?.pngData()
-    }
-    
-    var isShowingRetryAction: Bool {
-        !retryButton.isHidden
-    }
-    
-    func simulateRetryAction() {
-        retryButton.simulateTap()
-    }
-}
-
 private extension UIImage {
     static func make(with color: UIColor) -> UIImage {
         let rect = CGRect(x: 0, y: 0, width: 1, height: 1)
@@ -405,7 +371,7 @@ private extension UIImage {
     }
 }
 
-private extension UIButton {
+extension UIButton {
     func simulateTap() {
         allTargets.forEach { target in
             actions(forTarget: target, forControlEvent: .touchUpInside)?.forEach {
