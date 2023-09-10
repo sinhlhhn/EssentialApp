@@ -6,25 +6,27 @@
 //
 
 import Foundation
-import UIKit
 import EssentialFeed
 
-final class FeedImageViewModel {
+final class FeedImageViewModel<Image> {
     typealias Observer<T> = (T) -> ()
     
     private let model: FeedImage
     private let imageLoader: FeedImageDataLoader?
     private var task: FeedImageDataLoaderTask?
+    var imageTransformer: (Data) -> Image?
     
-    init(model: FeedImage, imageLoader: FeedImageDataLoader?, task: FeedImageDataLoaderTask? = nil) {
+    init(model: FeedImage, imageLoader: FeedImageDataLoader?, task: FeedImageDataLoaderTask? = nil, imageTransfer: @escaping (Data) -> Image?) {
         self.model = model
         self.imageLoader = imageLoader
         self.task = task
+        self.imageTransformer = imageTransfer
     }
     
-    var onImageLoad: Observer<UIImage>?
+    var onImageLoad: Observer<Image>?
     var onShouldRetryImageLoadStateChange: Observer<Bool>?
     var onImageLoadingStateChange: Observer<Bool>?
+    
     
     var location: String? {
         return model.location
@@ -62,11 +64,11 @@ final class FeedImageViewModel {
         task = imageLoader?.loadImageData(from: model.imageURL) { [weak self] result in
             switch result {
             case let .success(data):
-                guard let image = UIImage(data: data) else {
+                if let image = self?.imageTransformer(data) {
+                    self?.onImageLoad?(image)
+                } else {
                     self?.onShouldRetryImageLoadStateChange?(true)
-                    break
                 }
-                self?.onImageLoad?(image)
             case .failure(_):
                 self?.onShouldRetryImageLoadStateChange?(true)
             }
