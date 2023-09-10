@@ -52,29 +52,32 @@ final class FeedImageViewModel<Image> {
         task = imageLoader?.loadImageData(from: model.imageURL) { _ in }
     }
     
-    func cancel() {
+    func cancelImageDataLoad() {
         task?.cancel()
         task = nil
     }
     
-    func load(){
+    func loadImageData(){
         onImageLoadingStateChange?(true)
         onShouldRetryImageLoadStateChange?(false)
         
         task = imageLoader?.loadImageData(from: model.imageURL) { [weak self] result in
-            switch result {
-            case let .success(data):
-                if let image = self?.imageTransformer(data) {
-                    self?.onImageLoad?(image)
-                } else {
-                    self?.onShouldRetryImageLoadStateChange?(true)
-                }
-            case .failure(_):
-                self?.onShouldRetryImageLoadStateChange?(true)
+            self?.handle(result)
+        }
+    }
+    
+    func handle(_ result: Result<Data, Error>) {
+        switch result {
+        case let .success(data):
+            if let image = self.imageTransformer(data) {
+                onImageLoad?(image)
+            } else {
+                onShouldRetryImageLoadStateChange?(true)
             }
-            
-            self?.onImageLoadingStateChange?(false)
+        case .failure(_):
+            onShouldRetryImageLoadStateChange?(true)
         }
         
+        onImageLoadingStateChange?(false)
     }
 }

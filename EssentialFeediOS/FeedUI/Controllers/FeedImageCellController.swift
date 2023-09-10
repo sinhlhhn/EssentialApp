@@ -16,7 +16,7 @@ final class FeedImageCellController {
     
     func view(cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = bind(to: FeedImageCell())
-        viewModel.load()
+        viewModel.loadImageData()
         
         return cell
     }
@@ -27,7 +27,7 @@ final class FeedImageCellController {
         cell.descriptionLabel.isHidden = !viewModel.hasDescription
         cell.descriptionLabel.text = viewModel.description
         cell.feedImage.image = nil
-        cell.onRetry = viewModel.load
+        cell.onRetry = viewModel.loadImageData
         
         viewModel.onImageLoad = { [weak cell] image in
             cell?.feedImage.image = image
@@ -49,6 +49,6 @@ final class FeedImageCellController {
     }
     
     func cancel() {
-        viewModel.cancel()
+        viewModel.cancelImageDataLoad()
     }
 }
