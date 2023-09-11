@@ -24,7 +24,7 @@ struct FeedImageViewModel<Image> {
     }
 }
 
-protocol FeedImageView: AnyObject {
+protocol FeedImageView {
     associatedtype Image
     func display(_ viewModel: FeedImageViewModel<Image>)
 }
@@ -42,7 +42,7 @@ final class FeedImagePresenter<View: FeedImageView, Image>: FeedImagePresentInpu
         self.imageTransformer = imageTransfer
     }
     
-    weak var view: View?
+    var view: View!
     
     func didPreLoadData() {
         task = imageLoader?.loadImageData(from: model.imageURL) { _ in }
@@ -54,7 +54,7 @@ final class FeedImagePresenter<View: FeedImageView, Image>: FeedImagePresentInpu
     }
     
     func didLoadImageData(){
-        view?.display(FeedImageViewModel(image: nil, shouldRetry: false, isLoading: true, location: model.location, description: model.description))
+        view.display(FeedImageViewModel(image: nil, shouldRetry: false, isLoading: true, location: model.location, description: model.description))
         
         task = imageLoader?.loadImageData(from: model.imageURL) { [weak self] result in
             self?.handle(result)
@@ -65,12 +65,12 @@ final class FeedImagePresenter<View: FeedImageView, Image>: FeedImagePresentInpu
         switch result {
         case let .success(data):
             if let image = self.imageTransformer(data) {
-                view?.display(FeedImageViewModel(image: image, shouldRetry: false, isLoading: false, location: model.location, description: model.description))
+                view.display(FeedImageViewModel(image: image, shouldRetry: false, isLoading: false, location: model.location, description: model.description))
             } else {
-                view?.display(FeedImageViewModel(image: nil, shouldRetry: true, isLoading: false, location: model.location, description: model.description))
+                view.display(FeedImageViewModel(image: nil, shouldRetry: true, isLoading: false, location: model.location, description: model.description))
             }
         case .failure(_):
-            view?.display(FeedImageViewModel(image: nil, shouldRetry: true, isLoading: false, location: model.location, description: model.description))
+            view.display(FeedImageViewModel(image: nil, shouldRetry: true, isLoading: false, location: model.location, description: model.description))
         }
     }
 }
