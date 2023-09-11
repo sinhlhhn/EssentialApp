@@ -8,7 +8,7 @@
 import Foundation
 import EssentialFeed
 
-protocol FeedImageView {
+protocol FeedImageView: AnyObject {
     associatedtype Image
     func display(image: Image)
     func displayRetry(shouldRetry: Bool)
@@ -28,7 +28,7 @@ final class FeedImagePresenter<View: FeedImageView, Image> where View.Image == I
         self.imageTransformer = imageTransfer
     }
     
-    var view: View!
+    weak var view: View?
     
     var location: String? {
         return model.location
@@ -60,8 +60,8 @@ final class FeedImagePresenter<View: FeedImageView, Image> where View.Image == I
     }
     
     func loadImageData(){
-        view.display(isLoading: true)
-        view.displayRetry(shouldRetry: false)
+        view?.display(isLoading: true)
+        view?.displayRetry(shouldRetry: false)
         
         task = imageLoader?.loadImageData(from: model.imageURL) { [weak self] result in
             self?.handle(result)
@@ -72,14 +72,14 @@ final class FeedImagePresenter<View: FeedImageView, Image> where View.Image == I
         switch result {
         case let .success(data):
             if let image = self.imageTransformer(data) {
-                view.display(image: image)
+                view?.display(image: image)
             } else {
-                view.displayRetry(shouldRetry: true)
+                view?.displayRetry(shouldRetry: true)
             }
         case .failure(_):
-            view.displayRetry(shouldRetry: true)
+            view?.displayRetry(shouldRetry: true)
         }
         
-        view.display(isLoading: false)
+        view?.display(isLoading: false)
     }
 }

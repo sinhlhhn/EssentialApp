@@ -75,7 +75,7 @@ private class FeedViewAdapter: FeedView {
         controller?.tableModel = viewModel.feed.map { model in
             let presenter = FeedImagePresenter<FeedImageCellController, UIImage>(model: model, imageLoader: loader, imageTransfer: UIImage.init)
             let feedImageController = FeedImageCellController(presenter: presenter)
-            presenter.view = FeedImageWeakRefVirtualProxy(feedImageController)
+            presenter.view = feedImageController
             
             return feedImageController
         }
