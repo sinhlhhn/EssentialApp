@@ -13,14 +13,12 @@ public final class FeedUIComposer {
     private init() {}
     
     public static func feedComposedWith(loader: FeedLoader, imageLoader: FeedImageDataLoader) -> FeedViewController {
-        let presenter = FeedPresenter()
-        let adapterComposer = FeedLoaderPresentationAdapter(feedLoader: loader, feedPresenter: presenter)
+        
+        let adapterComposer = FeedLoaderPresentationAdapter(feedLoader: loader)
         let refreshController = FeedRefreshViewController(delegate: adapterComposer)
         
         let feedViewController = FeedViewController(refreshController: refreshController)
-        
-        presenter.feedLoading = WeakRefVirtualProxy(refreshController)
-        presenter.feedView = FeedViewAdapter(controller: feedViewController, loader: imageLoader)
+        adapterComposer.feedPresenter = FeedPresenter(feedLoading: WeakRefVirtualProxy(refreshController), feedView: FeedViewAdapter(controller: feedViewController, loader: imageLoader))
         
         return feedViewController
     }
@@ -62,21 +60,20 @@ private class FeedViewAdapter: FeedView {
 
 private class FeedLoaderPresentationAdapter: FeedRefreshViewControllerDelegate {
     private let feedLoader: FeedLoader
-    private let feedPresenter: FeedPresenter
+    var feedPresenter: FeedPresenter?
     
-    init(feedLoader: FeedLoader, feedPresenter: FeedPresenter) {
+    init(feedLoader: FeedLoader) {
         self.feedLoader = feedLoader
-        self.feedPresenter = feedPresenter
     }
     
     func didRequestFeedRefresh() {
-        feedPresenter.didStartLoading()
+        feedPresenter?.didStartLoading()
         feedLoader.load { [weak self] result in
             switch result {
             case let .success(images):
-                self?.feedPresenter.didFinishSuccess(with: images)
+                self?.feedPresenter?.didFinishSuccess(with: images)
             case let .failure(error):
-                self?.feedPresenter.didFinishFailure(with: error)
+                self?.feedPresenter?.didFinishFailure(with: error)
             }
         }
     }
