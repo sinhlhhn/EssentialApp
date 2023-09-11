@@ -22,12 +22,6 @@ public final class FeedUIComposer {
         
         return feedViewController
     }
-    
-    private static func adaptFeedToCellController(forwardingTo controller: FeedViewController, loader: FeedImageDataLoader) -> (([FeedImage]) -> ()) {
-        return { [weak controller] images in
-            controller?.tableModel = images.map { FeedImageCellController(viewModel: FeedImageViewModel(model: $0, imageLoader: loader, imageTransfer: UIImage.init))}
-        }
-    }
 }
 
 private class WeakRefVirtualProxy<T: AnyObject> {
@@ -54,7 +48,13 @@ private class FeedViewAdapter: FeedView {
     }
     
     func display(_ viewModel: FeedViewModel) {
-        controller?.tableModel = viewModel.feed.map { FeedImageCellController(viewModel: FeedImageViewModel(model: $0, imageLoader: loader, imageTransfer: UIImage.init))}
+        controller?.tableModel = viewModel.feed.map { model in
+            let feedImageController = FeedImageCellController()
+            let presenter = FeedImagePresenter(view: feedImageController, model: model, imageLoader: loader, imageTransfer: UIImage.init)
+            feedImageController.presenter = presenter
+            
+            return feedImageController
+        }
     }
 }
 
