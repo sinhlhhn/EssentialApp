@@ -15,23 +15,20 @@ protocol FeedImageView {
     func display(isLoading: Bool)
 }
 
-final class FeedImagePresenter<View: FeedImageView,Image> where View.Image == Image {
-    typealias Observer<T> = (T) -> ()
-    
+final class FeedImagePresenter<View: FeedImageView, Image> where View.Image == Image {
     private let model: FeedImage
     private let imageLoader: FeedImageDataLoader?
     private var task: FeedImageDataLoaderTask?
     var imageTransformer: (Data) -> Image?
     
-    init(view: View, model: FeedImage, imageLoader: FeedImageDataLoader?, task: FeedImageDataLoaderTask? = nil, imageTransfer: @escaping (Data) -> Image?) {
-        self.view = view
+    init(model: FeedImage, imageLoader: FeedImageDataLoader?, task: FeedImageDataLoaderTask? = nil, imageTransfer: @escaping (Data) -> Image?) {
         self.model = model
         self.imageLoader = imageLoader
         self.task = task
         self.imageTransformer = imageTransfer
     }
     
-    private let view: View
+    var view: View!
     
     var location: String? {
         return model.location

@@ -8,12 +8,12 @@
 import UIKit
 
 final class FeedImageCellController: FeedImageView {
-    var presenter: FeedImagePresenter<FeedImageCellController, UIImage>!
+    let presenter: FeedImagePresenter<FeedImageCellController, UIImage>
     private let cell = FeedImageCell()
     
-//    init(presenter: FeedImagePresenter<FeedImageCellController, UIImage>) {
-//        self.presenter = presenter
-//    }
+    init(presenter: FeedImagePresenter<FeedImageCellController, UIImage>) {
+        self.presenter = presenter
+    }
     
     func view(cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         loadView()
