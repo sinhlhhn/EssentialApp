@@ -46,6 +46,7 @@
 		22C7C1A72A964E73004105AF /* XCTestCase+FailableRetrieveFeedStoreSpecs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22C7C1A62A964E73004105AF /* XCTestCase+FailableRetrieveFeedStoreSpecs.swift */; };
 		22C7C1A92A965379004105AF /* XCTestCase+FailableInsertFeedStoreSpecs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22C7C1A82A965379004105AF /* XCTestCase+FailableInsertFeedStoreSpecs.swift */; };
 		22C7C1AB2A965557004105AF /* XCTestCase+FailableDeleteFeedStoreSpecs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22C7C1AA2A965557004105AF /* XCTestCase+FailableDeleteFeedStoreSpecs.swift */; };
+		22CB3B4B2AAEF8A900B5749D /* FeedPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22CB3B4A2AAEF8A900B5749D /* FeedPresenter.swift */; };
 		22CF441B2A91214100F82814 /* FeedCachePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22CF441A2A91214100F82814 /* FeedCachePolicy.swift */; };
 		22D269C22AA63308003C4363 /* XCTestCase+MemoryLeakTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22DEC2A22A863350000150DF /* XCTestCase+MemoryLeakTracking.swift */; };
 		22D269C42AA633EB003C4363 /* EssentialFeed.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2ECF23E32A7CFB97009F2ACB /* EssentialFeed.framework */; platformFilter = ios; };
@@ -168,6 +169,7 @@
 		22C7C1A62A964E73004105AF /* XCTestCase+FailableRetrieveFeedStoreSpecs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+FailableRetrieveFeedStoreSpecs.swift"; sourceTree = "<group>"; };
 		22C7C1A82A965379004105AF /* XCTestCase+FailableInsertFeedStoreSpecs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+FailableInsertFeedStoreSpecs.swift"; sourceTree = "<group>"; };
 		22C7C1AA2A965557004105AF /* XCTestCase+FailableDeleteFeedStoreSpecs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+FailableDeleteFeedStoreSpecs.swift"; sourceTree = "<group>"; };
+		22CB3B4A2AAEF8A900B5749D /* FeedPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedPresenter.swift; sourceTree = "<group>"; };
 		22CF441A2A91214100F82814 /* FeedCachePolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCachePolicy.swift; sourceTree = "<group>"; };
 		22DA70072A83783900BE7608 /* FeedItemsMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedItemsMapper.swift; sourceTree = "<group>"; };
 		22DEC2A22A863350000150DF /* XCTestCase+MemoryLeakTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+MemoryLeakTracking.swift"; sourceTree = "<group>"; };
@@ -332,6 +334,7 @@
 			isa = PBXGroup;
 			children = (
 				22EA30E82AAB06A500A7A8E1 /* Feed Image Loader */,
+				22EA31082AADC01000A7A8E1 /* Feed Presentation */,
 				22EA30E72AAB069C00A7A8E1 /* FeedUI */,
 			);
 			path = EssentialFeediOS;
@@ -416,7 +419,6 @@
 		22EA30E72AAB069C00A7A8E1 /* FeedUI */ = {
 			isa = PBXGroup;
 			children = (
-				22EA31082AADC01000A7A8E1 /* ViewModels */,
 				22EA31052AAB281300A7A8E1 /* Composer */,
 				22EA30EB2AAB06D600A7A8E1 /* Controllers */,
 				22EA30EC2AAB06E400A7A8E1 /* Views */,
@@ -498,13 +500,14 @@
 			path = Composer;
 			sourceTree = "<group>";
 		};
-		22EA31082AADC01000A7A8E1 /* ViewModels */ = {
+		22EA31082AADC01000A7A8E1 /* Feed Presentation */ = {
 			isa = PBXGroup;
 			children = (
 				22EA31092AADC01E00A7A8E1 /* FeedViewModel.swift */,
 				22EA310B2AADCC1C00A7A8E1 /* FeedImageViewModel.swift */,
+				22CB3B4A2AAEF8A900B5749D /* FeedPresenter.swift */,
 			);
-			path = ViewModels;
+			path = "Feed Presentation";
 			sourceTree = "<group>";
 		};
 		2ECF23D92A7CFB97009F2ACB = {
@@ -801,6 +804,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				22CB3B4B2AAEF8A900B5749D /* FeedPresenter.swift in Sources */,
 				22EA30EA2AAB06BE00A7A8E1 /* FeedImageDataLoader.swift in Sources */,
 				22EA31022AAB11C000A7A8E1 /* FeedRefreshViewController.swift in Sources */,
 				221BE9962AA641BE004FE67D /* FeedViewController.swift in Sources */,
