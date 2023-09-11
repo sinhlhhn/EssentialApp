@@ -16,19 +16,9 @@ final class FeedImageCellController: FeedImageView {
     }
     
     func view(cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        loadView()
         presenter.loadImageData()
         
         return cell
-    }
-    
-    func loadView() {
-        cell.locationContainer.isHidden = !presenter.hasLocation
-        cell.locationLabel.text = presenter.location
-        cell.descriptionLabel.isHidden = !presenter.hasDescription
-        cell.descriptionLabel.text = presenter.description
-        cell.feedImage.image = nil
-        cell.onRetry = presenter.loadImageData
     }
     
     func preload() {
@@ -39,15 +29,17 @@ final class FeedImageCellController: FeedImageView {
         presenter.cancelImageDataLoad()
     }
     
-    func display(image: UIImage) {
-        cell.feedImage.image = image
-    }
-    
-    func display(isLoading: Bool) {
-        cell.feedImageContainer.isShimmering = isLoading
-    }
-    
-    func displayRetry(shouldRetry: Bool) {
-        cell.retryButton.isHidden = !shouldRetry
+    func display(_ viewModel: FeedImageViewModel<UIImage>) {
+        cell.locationContainer.isHidden = !viewModel.hasLocation
+        cell.locationLabel.text = viewModel.location
+        cell.descriptionLabel.isHidden = !viewModel.hasDescription
+        cell.descriptionLabel.text = viewModel.description
+        cell.feedImage.image = nil
+        
+        cell.feedImage.image = viewModel.image
+        cell.feedImageContainer.isShimmering = viewModel.isLoading
+        cell.retryButton.isHidden = !viewModel.shouldRetry
+        
+        cell.onRetry = presenter.loadImageData
     }
 }

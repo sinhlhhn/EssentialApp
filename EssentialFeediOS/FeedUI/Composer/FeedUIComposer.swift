@@ -49,16 +49,8 @@ private class FeedImageWeakRefVirtualProxy<T: AnyObject> {
 extension FeedImageWeakRefVirtualProxy: FeedImageView where T: FeedImageView {
     typealias Image = T.Image
     
-    func displayRetry(shouldRetry: Bool) {
-        object?.displayRetry(shouldRetry: shouldRetry)
-    }
-    
-    func display(isLoading: Bool) {
-        object?.display(isLoading: isLoading)
-    }
-    
-    func display(image: Image) {
-        object?.display(image: image)
+    func display(_ viewModel: FeedImageViewModel<T.Image>) {
+        object?.display(viewModel)
     }
 }
 

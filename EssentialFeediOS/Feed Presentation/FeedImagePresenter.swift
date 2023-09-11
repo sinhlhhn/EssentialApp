@@ -8,11 +8,25 @@
 import Foundation
 import EssentialFeed
 
+struct FeedImageViewModel<Image> {
+    let image: Image?
+    let shouldRetry: Bool
+    let isLoading: Bool
+    let location: String?
+    let description: String?
+    
+    var hasLocation: Bool {
+        return location != nil
+    }
+    
+    var hasDescription: Bool {
+        description != nil
+    }
+}
+
 protocol FeedImageView: AnyObject {
     associatedtype Image
-    func display(image: Image)
-    func displayRetry(shouldRetry: Bool)
-    func display(isLoading: Bool)
+    func display(_ viewModel: FeedImageViewModel<Image>)
 }
 
 final class FeedImagePresenter<View: FeedImageView, Image> where View.Image == Image {
@@ -30,26 +44,6 @@ final class FeedImagePresenter<View: FeedImageView, Image> where View.Image == I
     
     weak var view: View?
     
-    var location: String? {
-        return model.location
-    }
-    
-    var hasLocation: Bool {
-        return location != nil
-    }
-    
-    var description: String? {
-        return model.description
-    }
-    
-    var hasDescription: Bool {
-        description != nil
-    }
-    
-    var imageURL: URL {
-        return model.imageURL
-    }
-    
     func preload() {
         task = imageLoader?.loadImageData(from: model.imageURL) { _ in }
     }
@@ -60,8 +54,7 @@ final class FeedImagePresenter<View: FeedImageView, Image> where View.Image == I
     }
     
     func loadImageData(){
-        view?.display(isLoading: true)
-        view?.displayRetry(shouldRetry: false)
+        view?.display(FeedImageViewModel(image: nil, shouldRetry: false, isLoading: true, location: model.location, description: model.description))
         
         task = imageLoader?.loadImageData(from: model.imageURL) { [weak self] result in
             self?.handle(result)
@@ -72,14 +65,12 @@ final class FeedImagePresenter<View: FeedImageView, Image> where View.Image == I
         switch result {
         case let .success(data):
             if let image = self.imageTransformer(data) {
-                view?.display(image: image)
+                view?.display(FeedImageViewModel(image: image, shouldRetry: false, isLoading: false, location: model.location, description: model.description))
             } else {
-                view?.displayRetry(shouldRetry: true)
+                view?.display(FeedImageViewModel(image: nil, shouldRetry: true, isLoading: false, location: model.location, description: model.description))
             }
         case .failure(_):
-            view?.displayRetry(shouldRetry: true)
+            view?.display(FeedImageViewModel(image: nil, shouldRetry: true, isLoading: false, location: model.location, description: model.description))
         }
-        
-        view?.display(isLoading: false)
     }
 }
