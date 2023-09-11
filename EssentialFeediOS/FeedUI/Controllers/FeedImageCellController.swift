@@ -7,26 +7,31 @@
 
 import UIKit
 
+protocol FeedImagePresentInput {
+    func didLoadImageData()
+    func didPreLoadData()
+    func didCancelImageDataLoad()
+}
+
 final class FeedImageCellController: FeedImageView {
-    let presenter: FeedImagePresenter<FeedImageCellController, UIImage>
+    let input: FeedImagePresentInput
     private let cell = FeedImageCell()
     
-    init(presenter: FeedImagePresenter<FeedImageCellController, UIImage>) {
-        self.presenter = presenter
+    init(input: FeedImagePresentInput) {
+        self.input = input
     }
     
     func view(cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        presenter.loadImageData()
-        
+        input.didLoadImageData()
         return cell
     }
     
     func preload() {
-        presenter.preload()
+        input.didPreLoadData()
     }
     
     func cancel() {
-        presenter.cancelImageDataLoad()
+        input.didCancelImageDataLoad()
     }
     
     func display(_ viewModel: FeedImageViewModel<UIImage>) {
@@ -40,6 +45,6 @@ final class FeedImageCellController: FeedImageView {
         cell.feedImageContainer.isShimmering = viewModel.isLoading
         cell.retryButton.isHidden = !viewModel.shouldRetry
         
-        cell.onRetry = presenter.loadImageData
+        cell.onRetry = input.didLoadImageData
     }
 }

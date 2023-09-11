@@ -29,7 +29,7 @@ protocol FeedImageView: AnyObject {
     func display(_ viewModel: FeedImageViewModel<Image>)
 }
 
-final class FeedImagePresenter<View: FeedImageView, Image> where View.Image == Image {
+final class FeedImagePresenter<View: FeedImageView, Image>: FeedImagePresentInput where View.Image == Image {
     private let model: FeedImage
     private let imageLoader: FeedImageDataLoader?
     private var task: FeedImageDataLoaderTask?
@@ -44,16 +44,16 @@ final class FeedImagePresenter<View: FeedImageView, Image> where View.Image == I
     
     weak var view: View?
     
-    func preload() {
+    func didPreLoadData() {
         task = imageLoader?.loadImageData(from: model.imageURL) { _ in }
     }
     
-    func cancelImageDataLoad() {
+    func didCancelImageDataLoad() {
         task?.cancel()
         task = nil
     }
     
-    func loadImageData(){
+    func didLoadImageData(){
         view?.display(FeedImageViewModel(image: nil, shouldRetry: false, isLoading: true, location: model.location, description: model.description))
         
         task = imageLoader?.loadImageData(from: model.imageURL) { [weak self] result in
