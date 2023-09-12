@@ -248,6 +248,17 @@ final class FeedViewControllerTests: XCTestCase {
         
     }
     
+    func test_feedImageView_doesNotLoadImageWhenImageViewNotVisible() {
+        let (sut, loader) = makeSUT()
+        
+        sut.loadViewIfNeeded()
+        loader.completeLoading(with: [makeImage()], at: 0)
+        let view = sut.simulateFeedImageViewNotVisible(at: 0)
+        loader.completeLoadingImage(with: anyImageData(), at: 0)
+        
+        XCTAssertNil(view?.renderedImage, "Expected nil got \(String(describing: view?.renderedImage)) instead")
+    }
+    
     //MARK: -Helpers
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (FeedViewController, LoaderSpy) {
@@ -262,5 +273,9 @@ final class FeedViewControllerTests: XCTestCase {
     
     private func makeImage(description: String? = nil, location: String? = nil, url: URL = URL(string: "http://any-url")!) -> FeedImage {
         FeedImage(id: UUID(), description: description, location: location, url: url)
+    }
+    
+    private func anyImageData() -> Data {
+        UIImage.make(with: .red).pngData()!
     }
 }
