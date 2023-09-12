@@ -22,6 +22,8 @@ public final class FeedUIComposer {
             FeedViewController(coder: coder, delegate: adapterComposer)
         }
         
+        feedViewController.title = FeedPresenter.title
+        
         adapterComposer.feedPresenter = FeedPresenter(feedLoading: WeakRefVirtualProxy(feedViewController), feedView: FeedViewAdapter(controller: feedViewController, loader: imageLoader))
         
         return feedViewController
