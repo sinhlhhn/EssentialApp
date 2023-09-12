@@ -8,24 +8,14 @@
 import UIKit
 
 public final class FeedViewController: UITableViewController, UITableViewDataSourcePrefetching {
-    private var refreshController: FeedRefreshViewController?
+    @IBOutlet private(set) var refreshController: FeedRefreshViewController?
+    
     var tableModel = [FeedImageCellController]() {
         didSet { tableView.reloadData() }
     }
     
-    init?(coder: NSCoder, refreshController: FeedRefreshViewController) {
-        self.refreshController = refreshController
-        super.init(coder: coder)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("You must create this view controller with a refreshController.")
-    }
-    
     public override func viewDidLoad() {
         super.viewDidLoad()
-        
-        tableView.prefetchDataSource = self
         
         refreshControl = refreshController?.view
         refreshController?.refresh()
