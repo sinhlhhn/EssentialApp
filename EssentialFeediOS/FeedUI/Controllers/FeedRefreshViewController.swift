@@ -7,10 +7,6 @@
 
 import UIKit
 
-protocol FeedRefreshViewControllerDelegate {
-    func didRequestFeedRefresh()
-}
-
 final class FeedRefreshViewController: NSObject, FeedLoadingView {
     var delegate: FeedRefreshViewControllerDelegate?
     @IBOutlet private(set) var view: UIRefreshControl?
