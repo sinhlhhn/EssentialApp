@@ -549,6 +549,10 @@
 		22EA31052AAB281300A7A8E1 /* Composer */ = {
 			isa = PBXGroup;
 			children = (
+				22CB3B702AB1B9FF00B5749D /* FeedLoaderPresentationAdapter.swift */,
+				22CB3B6E2AB1B9CE00B5749D /* FeedImageDataLoaderPresentationAdapter.swift */,
+				22CB3B6C2AB1B97E00B5749D /* FeedViewAdapter.swift */,
+				22CB3B6A2AB1B94600B5749D /* WeakRefVirtualProxy.swift */,
 				22EA31062AAB281C00A7A8E1 /* FeedUIComposer.swift */,
 				22CB3B682AB1B8FA00B5749D /* MainQueueDispatchDecorator.swift */,
 			);
@@ -571,10 +575,6 @@
 		2ECF23D92A7CFB97009F2ACB = {
 			isa = PBXGroup;
 			children = (
-				22CB3B702AB1B9FF00B5749D /* FeedLoaderPresentationAdapter.swift */,
-				22CB3B6E2AB1B9CE00B5749D /* FeedImageDataLoaderPresentationAdapter.swift */,
-				22CB3B6C2AB1B97E00B5749D /* FeedViewAdapter.swift */,
-				22CB3B6A2AB1B94600B5749D /* WeakRefVirtualProxy.swift */,
 				22AC37442AA0EDFF00D5DBFE /* TestPlan */,
 				2ECF23E52A7CFB97009F2ACB /* EssentialFeed */,
 				2ECF23EF2A7CFB97009F2ACB /* EssentialFeedTests */,
