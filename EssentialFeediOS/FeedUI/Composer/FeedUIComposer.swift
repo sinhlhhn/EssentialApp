@@ -22,10 +22,8 @@ public final class FeedUIComposer {
         
         return feedViewController
     }
-}
-
-private extension FeedUIComposer {
-    static func makeWith(delegate: FeedRefreshViewControllerDelegate, title: String) -> FeedViewController {
+    
+    private static func makeWith(delegate: FeedRefreshViewControllerDelegate, title: String) -> FeedViewController {
         let bundle = Bundle(for: FeedViewController.self)
         let sb = UIStoryboard(name: "Feed", bundle: bundle)
         let feedViewController = sb.instantiateViewController(identifier: "FeedViewController"){ coder in
