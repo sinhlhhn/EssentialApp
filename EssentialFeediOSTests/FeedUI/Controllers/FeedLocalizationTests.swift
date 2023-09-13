@@ -40,8 +40,6 @@ final class FeedLocalizationTests: XCTestCase {
                 XCTFail("Couldn't fine bundle for localization: \(localization)", file: file, line: line)
                 return nil
             }
-            print("SLOG: bundle", bundle.bundlePath)
-            print("SLOG allLocalizationBundles:    ", path)
             return (localizedBundle, localization)
         }
     }
@@ -54,8 +52,6 @@ final class FeedLocalizationTests: XCTestCase {
                 XCTFail("Couldn't load localized strings for localization: \(current.localization)", file: file, line: line)
                 return acc
             }
-            print("SLOG: bundle", current.bundle.bundlePath)
-            print("SLOG:    ", path)
             return acc.union(Set(keys))
         }
     }
