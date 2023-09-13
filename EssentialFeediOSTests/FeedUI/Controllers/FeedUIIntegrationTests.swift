@@ -9,7 +9,16 @@ import XCTest
 import EssentialFeed
 import EssentialFeediOS
 
-final class FeedViewControllerTests: XCTestCase {
+final class FeedUIIntegrationTests: XCTestCase {
+    
+    func test_feedView_hasTitle() {
+        let (sut, _) = makeSUT()
+        sut.loadViewIfNeeded()
+        
+        let localizationKey = "FEED_VIEW_TITLE"
+        
+        XCTAssertEqual(sut.title, localize(localizationKey))
+    }
     
     func test_loadFeedActions_requestFeedFromLoader() {
         let (sut, loader) = makeSUT()
@@ -248,6 +257,66 @@ final class FeedViewControllerTests: XCTestCase {
         
     }
     
+    func test_feedImageView_doesNotLoadImageWhenImageViewNotVisible() {
+        let (sut, loader) = makeSUT()
+        
+        sut.loadViewIfNeeded()
+        loader.completeLoading(with: [makeImage()], at: 0)
+        let view = sut.simulateFeedImageViewNotVisible(at: 0)
+        loader.completeLoadingImage(with: anyImageData(), at: 0)
+        
+        XCTAssertNil(view?.renderedImage, "Expected nil got \(String(describing: view?.renderedImage)) instead")
+    }
+    
+    func test_feedImageView_doesNotShowDataFromPreviousRequestWhenCellIsReused() throws {
+        let (sut, loader) = makeSUT()
+        
+        sut.loadViewIfNeeded()
+        loader.completeLoading(with: [makeImage(), makeImage()], at: 0)
+        
+        let view0 = try XCTUnwrap(sut.simulateFeedImageViewVisible(at: 0))
+        view0.prepareForReuse()
+        
+        let imageData0 = UIImage.make(with: .red).pngData()!
+        loader.completeLoadingImage(with: imageData0, at: 0)
+        
+        XCTAssertEqual(view0.renderedImage, .none, "Expected no image state change for reused view once image loading completes successfully")
+    }
+    
+    func test_loadFeedCompletion_dispatchFromBackgroundThreadToMainThread() {
+        let image = makeImage()
+        let (sut, loader) = makeSUT()
+        
+        sut.loadViewIfNeeded()
+        
+        let exp = expectation(description: "wait for completion")
+        DispatchQueue.global().async {
+            loader.completeLoading(with: [image], at: 0)
+            exp.fulfill()
+        }
+        
+        
+        wait(for: [exp], timeout: 1)
+    }
+    
+    func test_loadImageCompletion_dispatchFromBackgroundThreadToMainThread() {
+        let image = makeImage()
+        let imageData = anyImageData()
+        let (sut, loader) = makeSUT()
+        
+        sut.loadViewIfNeeded()
+        loader.completeLoading(with: [image], at: 0)
+        sut.simulateFeedImageViewVisible(at: 0)
+        
+        let exp = expectation(description: "wait for completion")
+        DispatchQueue.global().async {
+            loader.completeLoadingImage(with: imageData, at: 0)
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 1)
+    }
+    
     //MARK: -Helpers
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (FeedViewController, LoaderSpy) {
@@ -255,12 +324,16 @@ final class FeedViewControllerTests: XCTestCase {
         let sut = FeedUIComposer.feedComposedWith(loader: loader, imageLoader: loader)
         
         trackForMemoryLeak(sut, file: file, line: line)
-        trackForMemoryLeak(loader)
+        trackForMemoryLeak(loader, file: file, line: line)
         
         return (sut, loader)
     }
     
     private func makeImage(description: String? = nil, location: String? = nil, url: URL = URL(string: "http://any-url")!) -> FeedImage {
         FeedImage(id: UUID(), description: description, location: location, url: url)
+    }
+    
+    private func anyImageData() -> Data {
+        UIImage.make(with: .red).pngData()!
     }
 }

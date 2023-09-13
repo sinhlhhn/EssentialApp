@@ -13,19 +13,25 @@ public final class FeedUIComposer {
     private init() {}
     
     public static func feedComposedWith(loader: FeedLoader, imageLoader: FeedImageDataLoader) -> FeedViewController {
-        let feedViewModel = FeedViewModel(feedLoader: loader)
-        let refreshController = FeedRefreshViewController(viewModel: feedViewModel)
         
-        let feedViewController = FeedViewController(refreshController: refreshController)
+        let adapterComposer = FeedLoaderPresentationAdapter(feedLoader: MainQueueDispatchDecorator(decoratee: loader))
         
-        feedViewModel.onFeedLoad = adaptFeedToCellController(forwardingTo: feedViewController, loader: imageLoader)
+        let feedViewController = FeedUIComposer.makeWith(delegate: adapterComposer, title: FeedPresenter.title)
+        
+        adapterComposer.feedPresenter = FeedPresenter(feedLoading: WeakRefVirtualProxy(feedViewController), feedView: FeedViewAdapter(controller: feedViewController, loader: MainQueueDispatchDecorator(decoratee: imageLoader)))
         
         return feedViewController
     }
     
-    private static func adaptFeedToCellController(forwardingTo controller: FeedViewController, loader: FeedImageDataLoader) -> (([FeedImage]) -> ()) {
-        return { [weak controller] images in
-            controller?.tableModel = images.map { FeedImageCellController(viewModel: FeedImageViewModel(model: $0, imageLoader: loader, imageTransfer: UIImage.init))}
+    private static func makeWith(delegate: FeedRefreshViewControllerDelegate, title: String) -> FeedViewController {
+        let bundle = Bundle(for: FeedViewController.self)
+        let sb = UIStoryboard(name: "Feed", bundle: bundle)
+        let feedViewController = sb.instantiateViewController(identifier: "FeedViewController"){ coder in
+            FeedViewController(coder: coder, delegate: delegate)
         }
+        
+        feedViewController.title = title
+        
+        return feedViewController
     }
 }

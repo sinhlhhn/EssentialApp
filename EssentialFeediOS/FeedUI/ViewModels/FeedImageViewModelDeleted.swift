@@ -8,7 +8,7 @@
 import Foundation
 import EssentialFeed
 
-final class FeedImageViewModel<Image> {
+final class FeedImageViewModelDeleted<Image> {
     typealias Observer<T> = (T) -> ()
     
     private let model: FeedImage
