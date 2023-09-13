@@ -18,7 +18,7 @@ public final class FeedUIComposer {
         
         let feedViewController = FeedUIComposer.makeWith(delegate: adapterComposer, title: FeedPresenter.title)
         
-        adapterComposer.feedPresenter = FeedPresenter(feedLoading: WeakRefVirtualProxy(feedViewController), feedView: FeedViewAdapter(controller: feedViewController, loader: imageLoader))
+        adapterComposer.feedPresenter = FeedPresenter(feedLoading: WeakRefVirtualProxy(feedViewController), feedView: FeedViewAdapter(controller: feedViewController, loader: MainQueueDispatchDecorator(decoratee: imageLoader)))
         
         return feedViewController
     }
@@ -36,6 +36,21 @@ extension MainQueueDispatchDecorator: FeedLoader where T == FeedLoader {
     
     func load(completion: @escaping (FeedLoader.Result) -> Void) {
         decoratee.load { result in
+            if Thread.isMainThread {
+                completion(result)
+            } else {
+                DispatchQueue.main.async {
+                    completion(result)
+                }
+            }
+        }
+    }
+}
+
+extension MainQueueDispatchDecorator: FeedImageDataLoader where T == FeedImageDataLoader {
+    
+    func loadImageData(from url: URL, completion: @escaping (FeedImageDataLoader.Result) -> ()) -> FeedImageDataLoaderTask {
+        decoratee.loadImageData(from: url) { result in
             if Thread.isMainThread {
                 completion(result)
             } else {

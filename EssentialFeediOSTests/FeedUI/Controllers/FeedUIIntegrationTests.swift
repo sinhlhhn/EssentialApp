@@ -299,6 +299,24 @@ final class FeedUIIntegrationTests: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
     
+    func test_loadImageCompletion_dispatchFromBackgroundThreadToMainThread() {
+        let image = makeImage()
+        let imageData = anyImageData()
+        let (sut, loader) = makeSUT()
+        
+        sut.loadViewIfNeeded()
+        loader.completeLoading(with: [image], at: 0)
+        sut.simulateFeedImageViewVisible(at: 0)
+        
+        let exp = expectation(description: "wait for completion")
+        DispatchQueue.global().async {
+            loader.completeLoadingImage(with: imageData, at: 0)
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 1)
+    }
+    
     //MARK: -Helpers
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (FeedViewController, LoaderSpy) {
