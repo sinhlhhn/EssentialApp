@@ -29,7 +29,7 @@ final class FeedPresenter {
         return NSLocalizedString("FEED_VIEW_TITLE",tableName: "Feed", bundle: Bundle(for: FeedPresenter.self), comment: "Title for the feed view")
     }
     
-    private static var feedLoadError: String {
+    private var feedLoadError: String {
         return NSLocalizedString("FEED_VIEW_CONNECTION_ERROR",tableName: "Feed", bundle: Bundle(for: FeedPresenter.self), comment: "Error message display when we can't get the feed from server")
     }
     
@@ -40,7 +40,7 @@ final class FeedPresenter {
     }
     
     func didStartLoading() {
-        feedErrorView.display(FeedErrorViewModel(message: nil))
+        feedErrorView.display(.noError)
         feedLoading.display(FeedLoadingViewModel(isLoading: true))
     }
     
@@ -50,7 +50,7 @@ final class FeedPresenter {
     }
     
     func didFinishFailure(with error: Error) {
-        feedErrorView.display(FeedErrorViewModel(message: FeedPresenter.feedLoadError))
+        feedErrorView.display(.error(message: feedLoadError))
         feedLoading.display(FeedLoadingViewModel(isLoading: false))
     }
 }
