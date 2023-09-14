@@ -435,6 +435,7 @@
 		22CB3B5D2AB06A0300B5749D /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				22CB3B592AB0694E00B5749D /* UITableView+Dequeueing.swift */,
 				2230A0472AA8D85C00E66DA4 /* UIView+Shimmer.swift */,
 				22CB3B5B2AB069FB00B5749D /* UIImageView+Animations.swift */,
 			);
@@ -502,7 +503,6 @@
 			children = (
 				22CB3B5D2AB06A0300B5749D /* Helpers */,
 				22B4F0B42AA72BE400734B1A /* FeedImageCell.swift */,
-				22CB3B592AB0694E00B5749D /* UITableView+Dequeueing.swift */,
 				221A62B92AB2F9AB0038001E /* ErrorView.swift */,
 			);
 			path = Views;
