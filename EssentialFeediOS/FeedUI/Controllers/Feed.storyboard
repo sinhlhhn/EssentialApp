@@ -19,22 +19,25 @@
                             <rect key="frame" x="0.0" y="0.0" width="414" height="16"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="szj-ra-nlO">
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Y83-n6-Fnw">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="16"/>
-                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                    <nil key="textColor"/>
-                                    <nil key="highlightedColor"/>
-                                </label>
+                                    <state key="normal" title="Button"/>
+                                    <buttonConfiguration key="configuration" style="plain" title="Button"/>
+                                    <connections>
+                                        <action selector="hideMessageAnimated" destination="clu-9B-M8g" eventType="touchUpInside" id="BHz-Ed-jvs"/>
+                                    </connections>
+                                </button>
                             </subviews>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <gestureRecognizers/>
                             <constraints>
-                                <constraint firstAttribute="trailing" secondItem="szj-ra-nlO" secondAttribute="trailing" id="9at-ew-hMX"/>
-                                <constraint firstAttribute="bottom" secondItem="szj-ra-nlO" secondAttribute="bottom" id="Nhy-qw-fTr"/>
-                                <constraint firstItem="szj-ra-nlO" firstAttribute="top" secondItem="clu-9B-M8g" secondAttribute="top" id="l3x-Ec-p7u"/>
-                                <constraint firstItem="szj-ra-nlO" firstAttribute="leading" secondItem="clu-9B-M8g" secondAttribute="leading" id="z8C-bM-R2k"/>
+                                <constraint firstItem="Y83-n6-Fnw" firstAttribute="leading" secondItem="clu-9B-M8g" secondAttribute="leading" id="MSp-fP-f7E"/>
+                                <constraint firstItem="Y83-n6-Fnw" firstAttribute="top" secondItem="clu-9B-M8g" secondAttribute="top" id="SFL-Y6-TjI"/>
+                                <constraint firstAttribute="bottom" secondItem="Y83-n6-Fnw" secondAttribute="bottom" id="iZM-Rq-p8n"/>
+                                <constraint firstAttribute="trailing" secondItem="Y83-n6-Fnw" secondAttribute="trailing" id="z52-Uv-ZI0"/>
                             </constraints>
                             <connections>
-                                <outlet property="errorLabel" destination="szj-ra-nlO" id="wTE-93-3s7"/>
+                                <outlet property="errorButton" destination="Y83-n6-Fnw" id="aJO-1p-YDq"/>
                             </connections>
                         </view>
                         <view key="tableFooterView" contentMode="scaleToFill" id="pGT-Qn-vv2">

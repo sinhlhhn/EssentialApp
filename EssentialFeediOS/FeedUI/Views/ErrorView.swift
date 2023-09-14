@@ -8,15 +8,15 @@
 import UIKit
 
 public final class ErrorView: UIView {
-    @IBOutlet weak var errorLabel: UILabel!
+    @IBOutlet weak public var errorButton: UIButton!
     
     public var message: String? {
-        get { return isVisible ? errorLabel.text : nil }
+        get { return isVisible ? errorButton.title(for: .normal) : nil }
         set { setMessage(message: newValue) }
     }
     
     private var isVisible: Bool {
-        return self.alpha == 1
+        return self.alpha > 0
     }
     
     private func setMessage(message: String?) {
@@ -28,18 +28,18 @@ public final class ErrorView: UIView {
     }
     
     private func showMessageAnimated(message: String) {
-        self.errorLabel.text = message
+        self.errorButton.setTitle(message, for: .normal)
         
         UIView.animate(withDuration: 0.25) {
             self.alpha = 1
         }
     }
     
-    private func hideMessageAnimated() {
+    @IBAction private func hideMessageAnimated() {
         UIView.animate(withDuration: 0.25) {
             self.alpha = 0
         } completion: { completed in
-            if completed { self.errorLabel.text = nil }
+            if completed { self.errorButton.setTitle(nil, for: .normal) }
         }
     }
 }
