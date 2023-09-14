@@ -8,5 +8,10 @@
 import UIKit
 
 public final class ErrorView: UIView {
-    public var message: String?
+    @IBOutlet weak var errorLabel: UILabel!
+    
+    public var message: String? {
+        get { return errorLabel.text }
+        set { errorLabel.text = newValue }
+    }
 }

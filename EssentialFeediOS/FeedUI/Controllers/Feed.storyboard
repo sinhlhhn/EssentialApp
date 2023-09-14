@@ -18,7 +18,24 @@
                         <view key="tableHeaderView" contentMode="scaleToFill" id="clu-9B-M8g" customClass="ErrorView" customModule="EssentialFeediOS" customModuleProvider="target">
                             <rect key="frame" x="0.0" y="0.0" width="414" height="16"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="szj-ra-nlO">
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="16"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <nil key="textColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                            </subviews>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <constraints>
+                                <constraint firstAttribute="trailing" secondItem="szj-ra-nlO" secondAttribute="trailing" id="9at-ew-hMX"/>
+                                <constraint firstAttribute="bottom" secondItem="szj-ra-nlO" secondAttribute="bottom" id="Nhy-qw-fTr"/>
+                                <constraint firstItem="szj-ra-nlO" firstAttribute="top" secondItem="clu-9B-M8g" secondAttribute="top" id="l3x-Ec-p7u"/>
+                                <constraint firstItem="szj-ra-nlO" firstAttribute="leading" secondItem="clu-9B-M8g" secondAttribute="leading" id="z8C-bM-R2k"/>
+                            </constraints>
+                            <connections>
+                                <outlet property="errorLabel" destination="szj-ra-nlO" id="wTE-93-3s7"/>
+                            </connections>
                         </view>
                         <view key="tableFooterView" contentMode="scaleToFill" id="pGT-Qn-vv2">
                             <rect key="frame" x="0.0" y="674" width="414" height="16"/>
