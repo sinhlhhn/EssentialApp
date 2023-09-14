@@ -8,7 +8,7 @@
 import UIKit
 import EssentialFeediOS
 
-extension UITableViewController {
+extension FeedViewController {
     var isShowingLoadingIndicator: Bool {
         return refreshControl?.isRefreshing == true
     }
@@ -59,5 +59,9 @@ extension UITableViewController {
         let ds = tableView.dataSource
         let index = IndexPath(row: row, section: feedImageSection)
         return ds?.tableView(tableView, cellForRowAt: index)
+    }
+    
+    var errorMessage: String? {
+        errorView.message
     }
 }
