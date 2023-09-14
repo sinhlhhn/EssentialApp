@@ -13,4 +13,12 @@ public struct FeedImageViewModel<Image> {
     public let isLoading: Bool
     public let location: String?
     public let description: String?
+    
+    public var hasLocation: Bool {
+        return location != nil
+    }
+
+    public var hasDescription: Bool {
+        description != nil
+    }
 }
