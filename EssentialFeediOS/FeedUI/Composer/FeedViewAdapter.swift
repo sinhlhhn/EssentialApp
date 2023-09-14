@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import EssentialFeed
 
 class FeedViewAdapter: FeedView {
     private weak var controller: FeedViewController?
@@ -23,7 +24,7 @@ class FeedViewAdapter: FeedView {
             
             let feedImageController = FeedImageCellController(delegate: adapter)
             
-            adapter.presenter = FeedImagePresenter(view: WeakRefVirtualProxy(feedImageController), imageTransfer: UIImage.init)
+            adapter.presenter = FeedImagePresenter(view: WeakRefVirtualProxy(feedImageController), imageTransformer: UIImage.init)
             
             return feedImageController
         }
