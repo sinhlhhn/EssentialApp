@@ -10,3 +10,7 @@ import Foundation
 func anyError() -> Error {
     NSError(domain: "any-error", code: 1)
 }
+
+func anyURL() -> URL {
+    URL(string: "http://any-url")!
+}
