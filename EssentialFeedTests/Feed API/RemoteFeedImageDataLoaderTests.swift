@@ -16,12 +16,17 @@ final class RemoteFeedImageDataLoader {
         self.client = client
     }
     
+    enum Error: Swift.Error {
+        case invalidData
+    }
+    
     func loadImageData(from url: URL, completion: @escaping (HTTPClient.Result) -> ()) {
         client.get(from: url) { result in
             switch result {
             case let .failure(error):
                 completion(.failure(error))
-            default:
+            case .success(_):
+                completion(.failure(Error.invalidData))
                 break
             }
         }
@@ -63,6 +68,18 @@ final class RemoteFeedImageDataLoaderTests: XCTestCase {
         }
     }
     
+    func test_loadImageDataFromURL_deliversInvalidDataErrorOnNon200HTTPResponse() {
+        let (sut, client) = makeSUT()
+        
+        let samples = [100, 199, 201, 300]
+        
+        samples.enumerated().forEach { index, statusCode in
+            expect(sut, completionWithResult: failure(.invalidData)) {
+                client.completeLoadingImage(withStatusCode: statusCode, data: anyData(), at: index)
+            }
+        }
+    }
+    
     //MARK: -Helpers
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (RemoteFeedImageDataLoader, HTTPClientSpy) {
@@ -72,6 +89,14 @@ final class RemoteFeedImageDataLoaderTests: XCTestCase {
         trackForMemoryLeak(client)
         
         return (sut, client)
+    }
+    
+    private func anyData() -> Data {
+        return Data("invalid data".utf8)
+    }
+    
+    private func failure(_ error: RemoteFeedImageDataLoader.Error) -> HTTPClient.Result {
+        return .failure(error)
     }
     
     private func expect(_ sut: RemoteFeedImageDataLoader, completionWithResult expectedResult: HTTPClient.Result, action: (() -> ()), file: StaticString = #filePath, line: UInt = #line) {
@@ -103,6 +128,15 @@ final class RemoteFeedImageDataLoaderTests: XCTestCase {
         
         func get(from url: URL, completion: @escaping (HTTPClient.Result) -> Void) {
             messages.append((url, completion))
+        }
+        
+        func completeLoadingImage(withStatusCode statusCode: Int, data: Data, at index: Int = 0) {
+            let response = HTTPURLResponse(
+                url: capturedURLs[index],
+                statusCode: statusCode,
+                httpVersion: nil,
+                headerFields: nil)
+            messages[index].completion(.success((data, response!)))
         }
         
         func completeLoadingImage(with error: Error, at index: Int) {
