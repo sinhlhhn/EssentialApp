@@ -21,34 +21,45 @@ final class RemoteFeedImageDataLoader {
     }
     
     private class RemoteFeedImageDataLoaderTask: FeedImageDataLoaderTask {
-        var wrapped: HTTPClientTask
+        var completion: ((FeedImageDataLoader.Result) -> ())?
         
-        init(wrapped: HTTPClientTask) {
-            self.wrapped = wrapped
+        init(completion: @escaping (FeedImageDataLoader.Result) -> Void) {
+            self.completion = completion
+        }
+        
+        var wrapped: HTTPClientTask?
+        
+        func complete(with result: FeedImageDataLoader.Result) {
+            completion?(result)
         }
         
         func cancel() {
-            wrapped.cancel()
+            preventFutureCompletions()
+            wrapped?.cancel()
+        }
+        
+        private func preventFutureCompletions() {
+            completion = nil
         }
     }
     
     @discardableResult
-    func loadImageData(from url: URL, completion: @escaping (HTTPClient.Result) -> ()) -> FeedImageDataLoaderTask {
-        let task = RemoteFeedImageDataLoaderTask(
-            wrapped:
-                client.get(from: url) { [weak self] result in
+    func loadImageData(from url: URL, completion: @escaping (FeedImageDataLoader.Result) -> ()) -> FeedImageDataLoaderTask {
+        let task = RemoteFeedImageDataLoaderTask(completion: completion)
+        
+        task.wrapped = client.get(from: url) { [weak self] result in
             guard self != nil else { return }
             switch result {
             case let .failure(error):
-                completion(.failure(error))
+                task.completion?(.failure(error))
             case let .success((data, response)):
                 if response.statusCode == 200, !data.isEmpty {
-                    completion(.success((data, response)))
+                    task.completion?(.success(data))
                 } else {
-                    completion(.failure(Error.invalidData))
+                    task.completion?(.failure(Error.invalidData))
                 }
             }
-        })
+        }
         
         return task
     }
@@ -113,10 +124,9 @@ final class RemoteFeedImageDataLoaderTests: XCTestCase {
     func test_loadImageDataFromURL_deliversNonEmptyReceivedDataOn200HTTPResponse() {
         let (sut, client) = makeSUT()
         let data = anyData()
-        let response = HTTPURLResponse(url: anyURL(), statusCode: 200, httpVersion: nil, headerFields: nil)!
         
-        expect(sut, completionWithResult: .success((data, response))) {
-            client.completeLoadingImage(with: data, response: response)
+        expect(sut, completionWithResult: .success(data)) {
+            client.completeLoadingImage(withStatusCode: 200, data: data)
         }
     }
     
@@ -124,7 +134,7 @@ final class RemoteFeedImageDataLoaderTests: XCTestCase {
         let client = HTTPClientSpy()
         var sut: RemoteFeedImageDataLoader? = RemoteFeedImageDataLoader(client: client)
         
-        var capturedResults = [HTTPClient.Result]()
+        var capturedResults = [FeedImageDataLoader.Result]()
         sut?.loadImageData(from: anyURL()) { result in
             capturedResults.append(result)
         }
@@ -151,7 +161,7 @@ final class RemoteFeedImageDataLoaderTests: XCTestCase {
         let nonEmptyData = Data("non-empty data".utf8)
         let (sut, client) = makeSUT()
         
-        var capturedResult = [HTTPClient.Result]()
+        var capturedResult = [FeedImageDataLoader.Result]()
         let task = sut.loadImageData(from: url) { capturedResult.append($0) }
         
         task.cancel()
@@ -159,7 +169,6 @@ final class RemoteFeedImageDataLoaderTests: XCTestCase {
         client.completeLoadingImage(with: anyError())
         client.completeLoadingImage(withStatusCode: 200, data: nonEmptyData)
         client.completeLoadingImage(withStatusCode: 300, data: anyData())
-        client.completeLoadingImage(with: anyData(), response: HTTPURLResponse(url: url, statusCode: 100, httpVersion: nil, headerFields: nil)!)
         
         XCTAssertTrue(capturedResult.isEmpty, "Expected no received result after task is canceled got \(capturedResult.count) instead")
     }
@@ -179,11 +188,11 @@ final class RemoteFeedImageDataLoaderTests: XCTestCase {
         return Data("invalid data".utf8)
     }
     
-    private func failure(_ error: RemoteFeedImageDataLoader.Error) -> HTTPClient.Result {
+    private func failure(_ error: RemoteFeedImageDataLoader.Error) -> FeedImageDataLoader.Result {
         return .failure(error)
     }
     
-    private func expect(_ sut: RemoteFeedImageDataLoader, completionWithResult expectedResult: HTTPClient.Result, action: (() -> ()), file: StaticString = #filePath, line: UInt = #line) {
+    private func expect(_ sut: RemoteFeedImageDataLoader, completionWithResult expectedResult: FeedImageDataLoader.Result, action: (() -> ()), file: StaticString = #filePath, line: UInt = #line) {
         let url = anyURL()
         
         let exp = expectation(description: "wait for completion")
@@ -192,9 +201,8 @@ final class RemoteFeedImageDataLoaderTests: XCTestCase {
             case let (.failure(receivedError as NSError), .failure(expectedError as NSError)):
                 XCTAssertEqual(expectedError.code, receivedError.code, file: file, line: line)
                 XCTAssertEqual(expectedError.domain, receivedError.domain, file: file, line: line)
-            case let (.success((receivedData, receivedResponse)), .success((expectedData, expectedResponse))):
+            case let (.success(receivedData), .success(expectedData)):
                 XCTAssertEqual(receivedData, expectedData, file: file, line: line)
-                XCTAssertEqual(receivedResponse, expectedResponse, file: file, line: line)
             default:
                 XCTFail("Expected \(expectedResult) got \(result) instead", file: file, line: line)
             }
@@ -236,10 +244,6 @@ final class RemoteFeedImageDataLoaderTests: XCTestCase {
                 httpVersion: nil,
                 headerFields: nil)
             messages[index].completion(.success((data, response!)))
-        }
-        
-        func completeLoadingImage(with data: Data, response: HTTPURLResponse, at index: Int = 0) {
-            messages[index].completion(.success((data, response)))
         }
         
         func completeLoadingImage(with error: Error, at index: Int = 0) {
