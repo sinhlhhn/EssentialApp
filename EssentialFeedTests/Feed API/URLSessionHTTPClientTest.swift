@@ -43,11 +43,11 @@ final class URLSessionHTTPClientTest: XCTestCase {
         XCTAssertNotNil(resultErrorFor((data: nil, response: nil, error: nil)))
         XCTAssertNotNil(resultErrorFor((data: nil, response: anyURLResponse(), error: nil)))
         XCTAssertNotNil(resultErrorFor((data: anyData(), response: nil, error: nil)))
-        XCTAssertNotNil(resultErrorFor((data: anyData(), response: nil, error: anyError())))
-        XCTAssertNotNil(resultErrorFor((data: nil, response: anyURLResponse(), error: anyError())))
-        XCTAssertNotNil(resultErrorFor((data: nil, response: anyHTTPURLResponse(), error: anyError())))
-        XCTAssertNotNil(resultErrorFor((data: anyData(), response: anyURLResponse(), error: anyError())))
-        XCTAssertNotNil(resultErrorFor((data: anyData(), response: anyHTTPURLResponse(), error: anyError())))
+        XCTAssertNotNil(resultErrorFor((data: anyData(), response: nil, error: anyNSError())))
+        XCTAssertNotNil(resultErrorFor((data: nil, response: anyURLResponse(), error: anyNSError())))
+        XCTAssertNotNil(resultErrorFor((data: nil, response: anyHTTPURLResponse(), error: anyNSError())))
+        XCTAssertNotNil(resultErrorFor((data: anyData(), response: anyURLResponse(), error: anyNSError())))
+        XCTAssertNotNil(resultErrorFor((data: anyData(), response: anyHTTPURLResponse(), error: anyNSError())))
         XCTAssertNotNil(resultErrorFor((data: anyData(), response: anyURLResponse(), error: nil)))
     }
     

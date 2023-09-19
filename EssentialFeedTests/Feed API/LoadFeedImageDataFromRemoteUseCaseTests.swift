@@ -83,7 +83,7 @@ final class LoadFeedImageDataFromRemoteUseCaseTests: XCTestCase {
             capturedResults.append(result)
         }
         sut = nil
-        client.completion(with: anyError())
+        client.completion(with: anyNSError())
         
         XCTAssertTrue(capturedResults.isEmpty)
     }
@@ -110,7 +110,7 @@ final class LoadFeedImageDataFromRemoteUseCaseTests: XCTestCase {
         
         task.cancel()
         
-        client.completion(with: anyError())
+        client.completion(with: anyNSError())
         client.completion(withStatusCode: 200, data: nonEmptyData)
         client.completion(withStatusCode: 300, data: anyData())
         

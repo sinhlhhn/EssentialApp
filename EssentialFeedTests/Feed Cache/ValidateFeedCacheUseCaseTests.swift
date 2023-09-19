@@ -21,7 +21,7 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
         
         sut.validate()
         
-        store.completeRetrieve(with: anyError())
+        store.completeRetrieve(with: anyNSError())
         
         XCTAssertEqual(store.receivedMessage, [.retrieve, .deleteCacheFeed])
     }
@@ -83,7 +83,7 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
         
         sut = nil
         
-        store.completeRetrieve(with: anyError())
+        store.completeRetrieve(with: anyNSError())
         
         XCTAssertEqual(store.receivedMessage, [.retrieve])
         

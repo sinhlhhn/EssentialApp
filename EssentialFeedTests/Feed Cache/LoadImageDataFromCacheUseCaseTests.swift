@@ -60,7 +60,7 @@ final class LoadImageDataFromCacheUseCaseTests: XCTestCase {
         let (sut, store) = makeSUT()
         
         expect(sut, completeWithResult: failed()) {
-            store.completion(with: anyError())
+            store.completion(with: anyNSError())
         }
     }
     
