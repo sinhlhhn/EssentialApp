@@ -85,6 +85,16 @@ final class LoadImageDataFromCacheUseCaseTests: XCTestCase {
         XCTAssertEqual(capturedResult.isEmpty, true)
     }
     
+    func test_saveImage_requestsImageDataInsertionForURL() {
+        let (sut, store) = makeSUT()
+        let url = anyURL()
+        let imageData = anyData()
+        
+        sut.save(imageData, for: url) { _ in }
+        
+        XCTAssertEqual(store.receivedMessage, [.insert(imageData, for: url)])
+    }
+    
     //MARK: -Helpers
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (LocalFeedImageDataLoader, FeedStoreSpy) {
@@ -127,6 +137,7 @@ final class LoadImageDataFromCacheUseCaseTests: XCTestCase {
     private class FeedStoreSpy: FeedImageDataStore {
         enum Message: Equatable {
             case retrieve(dataForURL: URL)
+            case insert(_ data: Data, for: URL)
         }
         
         private var completions = [(FeedImageDataStore.Result) -> Void]()
@@ -135,6 +146,10 @@ final class LoadImageDataFromCacheUseCaseTests: XCTestCase {
         func retrieve(dataFroURL url: URL, completion: @escaping (FeedImageDataStore.Result) -> ()) {
             receivedMessage.append(.retrieve(dataForURL: url))
             completions.append(completion)
+        }
+        
+        func insert(_ data: Data, for url: URL, completion: @escaping (InsertionResult) -> ()) {
+            receivedMessage.append(.insert(data, for: url))
         }
         
         func completion(with error: Error, at index: Int = 0) {
