@@ -52,7 +52,7 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
         [199, 201, 300, 400].enumerated().forEach { index, statusCode in
             expect(sut, toCompletionWith: failure(.invalidData)) {
                 let data = makeItemJSON([])
-                client.completion(statusCode: statusCode, data: data, at: index)
+                client.completion(withStatusCode: statusCode, data: data, at: index)
             }
         }
     }
@@ -62,7 +62,7 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
 
         expect(sut, toCompletionWith: failure(.invalidData)) {
             let invalidData = Data()
-            client.completion(statusCode: 200, data: invalidData)
+            client.completion(withStatusCode: 200, data: invalidData)
         }
     }
     
@@ -71,7 +71,7 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
 
         expect(sut, toCompletionWith: .success([])) {
             let emptyJSON = makeItemJSON([])
-            client.completion(statusCode: 200, data: emptyJSON)
+            client.completion(withStatusCode: 200, data: emptyJSON)
         }
     }
     
@@ -92,7 +92,7 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
         
         expect(sut, toCompletionWith: .success([item1.item, item2.item])) {
             let json = makeItemJSON([item1.itemJSON, item2.itemJSON])
-            client.completion(statusCode: 200, data: json)
+            client.completion(withStatusCode: 200, data: json)
         }
     }
     
@@ -106,7 +106,7 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
         
         sut = nil
         
-        client.completion(statusCode: 200, data: makeItemJSON([]))
+        client.completion(withStatusCode: 200, data: makeItemJSON([]))
         
         XCTAssertTrue(captureResults.isEmpty)
     }
@@ -174,36 +174,4 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
             
             wait(for: [expectation], timeout: 1)
         }
-    
-    private class HTTPClientSpy: HTTPClient {
-        private struct Task: HTTPClientTask {
-            func cancel() {
-                
-            }
-        }
-        
-        private var messages = [(requestedURLs: URL, completion: (HTTPClient.Result) -> Void)]()
-        
-        var requestedURLs: [URL] {
-            messages.map { $0.requestedURLs }
-        }
-        
-        func get(from url: URL, completion: @escaping (HTTPClient.Result) -> Void) -> HTTPClientTask {
-            messages.append((url, completion))
-            return Task()
-        }
-        
-        func completion(with error: Error, at index: Int = 0) {
-            messages[index].completion(.failure(error))
-        }
-        
-        func completion(statusCode: Int, data: Data, at index: Int = 0) {
-            let response = HTTPURLResponse(
-                url: requestedURLs[index],
-                statusCode: statusCode,
-                httpVersion: nil,
-                headerFields: nil)!
-            messages[index].completion(.success((data, response)))
-        }
-    }
 }
