@@ -50,7 +50,8 @@ final class LocalFeedImageDataLoader: FeedImageDataLoader {
     func loadImageData(from url: URL, completion: @escaping (FeedImageDataLoader.Result) -> ()) -> FeedImageDataLoaderTask {
         let task = LocalFeedImageDataLoaderTask(completion: completion)
         
-        store.retrieve(dataFroURL: url) { result in
+        store.retrieve(dataFroURL: url) { [weak self] result in
+            guard self != nil else { return }
             task.complete(with: result
                 .mapError { _ in Error.failed }
                 .flatMap { data in
@@ -104,7 +105,7 @@ final class LoadImageDataFromCacheUseCaseTests: XCTestCase {
         }
     }
     
-    func test_loadImageDataFromURL_doesNotDeliverDataAfterCancelingTask() {
+    func test_loadImageDataFromURL_doesNotDeliverResultAfterCancelingTask() {
         let (sut, store) = makeSUT()
         
         var capturedResult = [FeedImageDataLoader.Result]()
@@ -113,6 +114,24 @@ final class LoadImageDataFromCacheUseCaseTests: XCTestCase {
         }
         
         task.cancel()
+        
+        store.completion(with: anyData())
+        store.completion(with: anyNSError())
+        store.completion(with: .none)
+        
+        XCTAssertEqual(capturedResult.isEmpty, true)
+    }
+    
+    func test_loadImageDataFromURL_doesNotDeliverResultAfterInstanceHasBeenDeallocated() {
+        let store = FeedStoreSpy()
+        var sut: LocalFeedImageDataLoader? = LocalFeedImageDataLoader(store: store)
+        
+        var capturedResult = [FeedImageDataLoader.Result]()
+        _ = sut?.loadImageData(from: anyURL()) { result in
+            capturedResult.append(result)
+        }
+        
+        sut = nil
         
         store.completion(with: anyData())
         store.completion(with: anyNSError())
