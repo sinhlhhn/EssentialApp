@@ -22,9 +22,23 @@ final class LocalFeedImageDataLoader: FeedImageDataLoader {
         self.store = store
     }
     
-    private struct LocalFeedImageDataLoaderTask: FeedImageDataLoaderTask {
+    private class LocalFeedImageDataLoaderTask: FeedImageDataLoaderTask {
+        private var completion: ((FeedImageDataLoader.Result) -> ())?
+        
+        init(completion: @escaping (FeedImageDataLoader.Result) -> Void) {
+            self.completion = completion
+        }
+        
+        func complete(with result: FeedImageDataLoader.Result) {
+            completion?(result)
+        }
+        
         func cancel() {
-            
+            preventFurtherCompletions()
+        }
+        
+        private func preventFurtherCompletions() {
+            completion = nil
         }
     }
     
@@ -34,9 +48,10 @@ final class LocalFeedImageDataLoader: FeedImageDataLoader {
     }
     
     func loadImageData(from url: URL, completion: @escaping (FeedImageDataLoader.Result) -> ()) -> FeedImageDataLoaderTask {
+        let task = LocalFeedImageDataLoaderTask(completion: completion)
         
         store.retrieve(dataFroURL: url) { result in
-            completion(result
+            task.complete(with: result
                 .mapError { _ in Error.failed }
                 .flatMap { data in
                     data.map { .success($0) } ?? .failure(Error.notFound)
@@ -44,7 +59,7 @@ final class LocalFeedImageDataLoader: FeedImageDataLoader {
             )
         }
         
-        return LocalFeedImageDataLoaderTask()
+        return task
     }
 }
 
@@ -87,6 +102,23 @@ final class LoadImageDataFromCacheUseCaseTests: XCTestCase {
         expect(sut, completeWithResult: .success(foundData)) {
             store.completion(with: foundData)
         }
+    }
+    
+    func test_loadImageDataFromURL_doesNotDeliverDataAfterCancelingTask() {
+        let (sut, store) = makeSUT()
+        
+        var capturedResult = [FeedImageDataLoader.Result]()
+        let task = sut.loadImageData(from: anyURL()) { result in
+            capturedResult.append(result)
+        }
+        
+        task.cancel()
+        
+        store.completion(with: anyData())
+        store.completion(with: anyNSError())
+        store.completion(with: .none)
+        
+        XCTAssertEqual(capturedResult.isEmpty, true)
     }
     
     //MARK: -Helpers
