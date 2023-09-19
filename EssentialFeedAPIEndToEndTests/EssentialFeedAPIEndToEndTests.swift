@@ -29,6 +29,19 @@ final class EssentialFeedAPIEndToEndTests: XCTestCase {
         }
     }
     
+    func test_endToEndTestServerGETFeedImageDataResult_matchesFixedTestAccountData() {
+        let receivedImageResult = getImageDataFromURL()
+        
+        switch receivedImageResult {
+        case let .success(data):
+            XCTAssertEqual(data.isEmpty, false, "Expected non-empty data instead")
+        case let .failure(error):
+            XCTFail("Expected success got error \(error) instead")
+        default:
+            XCTFail("Expected success got result \(String(describing: receivedImageResult)) instead")
+        }
+    }
+    
     //MARK: -Helpers
     
     private func getFromURL(file: StaticString = #filePath,
@@ -43,6 +56,27 @@ final class EssentialFeedAPIEndToEndTests: XCTestCase {
         
         let exp = expectation(description: "Wait for completion")
         sut.load { result in
+            receivedResult = result
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 10)
+        
+        return receivedResult
+    }
+    
+    private func getImageDataFromURL(file: StaticString = #filePath, line: UInt = #line) -> FeedImageDataLoader.Result? {
+        let testServerURL = URL(string: "https://essentialdeveloper.com/feed-case-study/test-api/feed/73A7F70C-75DA-4C2E-B5A3-EED40DC53AA6/image")!
+        let session = URLSession(configuration: .ephemeral)
+        let client = URLSessionHTTPClient(session: session)
+        let sut = RemoteFeedImageDataLoader(client: client)
+        trackForMemoryLeak(sut, file: file, line: line)
+        trackForMemoryLeak(client, file: file, line: line)
+        
+        var receivedResult: FeedImageDataLoader.Result?
+        
+        let exp = expectation(description: "Wait for completion")
+        _ = sut.loadImageData(from: testServerURL) { result in
             receivedResult = result
             exp.fulfill()
         }
