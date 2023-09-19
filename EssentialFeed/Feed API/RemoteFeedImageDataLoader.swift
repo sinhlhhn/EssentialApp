@@ -19,6 +19,8 @@ public final class RemoteFeedImageDataLoader: FeedImageDataLoader {
         case connectivity
     }
     
+    private let isOK: Int = 200
+    
     private class RemoteFeedImageDataLoaderTask: FeedImageDataLoaderTask {
         var completion: ((FeedImageDataLoader.Result) -> ())?
         
@@ -51,7 +53,7 @@ public final class RemoteFeedImageDataLoader: FeedImageDataLoader {
             task.complete(with: result
                 .mapError { _ in Error.connectivity }
                 .flatMap { (data, response) in
-                    let isValidResponse = response.statusCode == 200 && !data.isEmpty
+                    let isValidResponse = response.isOK && !data.isEmpty
                     return isValidResponse ? .success(data) : .failure(Error.invalidData)
                 })
         }
