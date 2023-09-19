@@ -10,7 +10,9 @@ import XCTest
 import EssentialFeed
 
 protocol FeedImageDataStore {
-    func retrieve(dataFroURL url: URL)
+    typealias Result = Swift.Result<Data?, Error>
+    
+    func retrieve(dataFroURL url: URL, completion: @escaping (Result) -> ())
 }
 
 final class LocalFeedImageDataLoader: FeedImageDataLoader {
@@ -26,8 +28,14 @@ final class LocalFeedImageDataLoader: FeedImageDataLoader {
         }
     }
     
+    enum Error: Swift.Error {
+        case failed
+    }
+    
     func loadImageData(from url: URL, completion: @escaping (FeedImageDataLoader.Result) -> ()) -> FeedImageDataLoaderTask {
-        store.retrieve(dataFroURL: url)
+        store.retrieve(dataFroURL: url) { result in
+            completion(.failure(Error.failed))
+        }
         return LocalFeedImageDataLoaderTask()
     }
 }
@@ -48,6 +56,14 @@ final class LoadImageDataFromCacheUseCaseTests: XCTestCase {
         XCTAssertEqual(store.receivedMessage, [.retrieve(dataForURL: url)])
     }
     
+    func test_loadImageData_failsOnStoreError() {
+        let (sut, store) = makeSUT()
+        
+        expect(sut, completeWithResult: failed()) {
+            store.completion(with: anyError())
+        }
+    }
+    
     //MARK: -Helpers
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (LocalFeedImageDataLoader, FeedStoreSpy) {
@@ -59,15 +75,43 @@ final class LoadImageDataFromCacheUseCaseTests: XCTestCase {
         return (sut, store)
     }
     
+    private func failed() -> FeedImageDataStore.Result {
+        return .failure(LocalFeedImageDataLoader.Error.failed)
+    }
+    
+    private func expect(_ sut: LocalFeedImageDataLoader, completeWithResult expectedResult: FeedImageDataStore.Result, action: () -> Void, file: StaticString = #filePath, line: UInt = #line) {
+        let exp = expectation(description: "wait for request")
+        
+        _ = sut.loadImageData(from: anyURL()) { result in
+            switch (result, expectedResult) {
+            case let (.failure(error as LocalFeedImageDataLoader.Error), .failure(expectedError as LocalFeedImageDataLoader.Error)):
+                XCTAssertEqual(error, expectedError)
+            default:
+                XCTFail("Expected result \(expectedResult) got \(result) instead")
+            }
+            exp.fulfill()
+        }
+        
+        action()
+        
+        wait(for: [exp], timeout: 1)
+    }
+    
     private class FeedStoreSpy: FeedImageDataStore {
         enum Message: Equatable {
             case retrieve(dataForURL: URL)
         }
         
+        private var completions = [(FeedImageDataStore.Result) -> Void]()
         private(set) var receivedMessage = [Message]()
         
-        func retrieve(dataFroURL url: URL) {
+        func retrieve(dataFroURL url: URL, completion: @escaping (FeedImageDataStore.Result) -> ()) {
             receivedMessage.append(.retrieve(dataForURL: url))
+            completions.append(completion)
+        }
+        
+        func completion(with error: Error, at index: Int = 0) {
+            completions[index](.failure(error))
         }
     }
 }
