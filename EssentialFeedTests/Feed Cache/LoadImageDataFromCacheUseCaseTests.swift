@@ -9,61 +9,6 @@ import Foundation
 import XCTest
 import EssentialFeed
 
-protocol FeedImageDataStore {
-    typealias Result = Swift.Result<Data?, Error>
-    
-    func retrieve(dataFroURL url: URL, completion: @escaping (Result) -> ())
-}
-
-final class LocalFeedImageDataLoader: FeedImageDataLoader {
-    private let store: FeedImageDataStore
-    
-    init(store: FeedImageDataStore) {
-        self.store = store
-    }
-    
-    private class LocalFeedImageDataLoaderTask: FeedImageDataLoaderTask {
-        private var completion: ((FeedImageDataLoader.Result) -> ())?
-        
-        init(completion: @escaping (FeedImageDataLoader.Result) -> Void) {
-            self.completion = completion
-        }
-        
-        func complete(with result: FeedImageDataLoader.Result) {
-            completion?(result)
-        }
-        
-        func cancel() {
-            preventFurtherCompletions()
-        }
-        
-        private func preventFurtherCompletions() {
-            completion = nil
-        }
-    }
-    
-    enum Error: Swift.Error {
-        case failed
-        case notFound
-    }
-    
-    func loadImageData(from url: URL, completion: @escaping (FeedImageDataLoader.Result) -> ()) -> FeedImageDataLoaderTask {
-        let task = LocalFeedImageDataLoaderTask(completion: completion)
-        
-        store.retrieve(dataFroURL: url) { [weak self] result in
-            guard self != nil else { return }
-            task.complete(with: result
-                .mapError { _ in Error.failed }
-                .flatMap { data in
-                    data.map { .success($0) } ?? .failure(Error.notFound)
-                }
-            )
-        }
-        
-        return task
-    }
-}
-
 final class LoadImageDataFromCacheUseCaseTests: XCTestCase {
     func test_init_doesNotMessageStore() {
         let (_, store) = makeSUT()
