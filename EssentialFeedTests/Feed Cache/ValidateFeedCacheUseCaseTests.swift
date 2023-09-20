@@ -89,6 +89,25 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
         
     }
     
+    func test_validateCache_failsOnDeletionErrorOfFailedRetrieval() {
+        let (sut, store) = makeSUT()
+        let deletionError = anyNSError()
+
+        expect(sut, completionWithResult: .failure(deletionError)) {
+            store.completeRetrieve(with: anyNSError())
+            store.completeDeletion(with: deletionError)
+        }
+    }
+    
+    func test_validateCache_failsOnSuccessfulDeletionOfFailedRetrieval() {
+        let (sut, store) = makeSUT()
+
+        expect(sut, completionWithResult: .success(())) {
+            store.completeRetrieve(with: anyNSError())
+            store.completeSuccessDeletion()
+        }
+    }
+    
     //MARK: - Helpers
     
     private func makeSUT(currentDate: @escaping () -> Date = Date.init, file: StaticString = #filePath, line: UInt = #line) -> (LocalFeedLoader, FeedStoreSpy) {
@@ -97,5 +116,25 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
         trackForMemoryLeak(store, file: file, line: line)
         trackForMemoryLeak(sut, file: file, line: line)
         return (sut, store)
+    }
+    
+    private func expect(_ sut: LocalFeedLoader, completionWithResult expectedResult: LocalFeedLoader.ValidationResult, action: () -> Void, file: StaticString = #filePath, line: UInt = #line) {
+        let exp = expectation(description: "wait for validate")
+        sut.validateCache { receivedResult in
+            switch (receivedResult, expectedResult) {
+            case (.success(()), .success(())):
+                break
+            case let (.failure(receivedError as NSError), .failure(expectedError as NSError)):
+                XCTAssertEqual(receivedError.code, expectedError.code)
+                XCTAssertEqual(receivedError.domain, expectedError.domain)
+            default:
+                XCTFail("Expected \(expectedResult) got \(receivedResult) instead", file: file, line: line)
+            }
+            exp.fulfill()
+        }
+        
+        action()
+        
+        wait(for: [exp], timeout: 1)
     }
 }
