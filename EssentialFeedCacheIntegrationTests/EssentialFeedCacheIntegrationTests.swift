@@ -185,7 +185,7 @@ final class EssentialFeedCacheIntegrationTests: XCTestCase {
     
     private func validateCache(with sut: LocalFeedLoader, file: StaticString = #filePath, line: UInt = #line) {
         let exp = expectation(description: "wait for validate")
-        sut.validate { validationResult in
+        sut.validateCache { validationResult in
             switch validationResult {
             case .success:
                 break
