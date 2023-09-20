@@ -41,6 +41,23 @@ final class CacheFeedImageDataUseCaseTests: XCTestCase {
         }
     }
     
+    func test_saveImage_doesNotDeliverResultAfterInstanceHasBeenDeallocated() {
+        let store = FeedImageDataStoreSpy()
+        var sut: LocalFeedImageDataLoader? = LocalFeedImageDataLoader(store: store)
+        
+        var capturedResult = [LocalFeedImageDataLoader.SaveResult]()
+        _ = sut?.save(anyData(), for: anyURL()) { result in
+            capturedResult.append(result)
+        }
+        
+        sut = nil
+        
+        store.completeInsertion(with: anyNSError())
+        store.completeInsertionSuccessfully()
+        
+        XCTAssertEqual(capturedResult.isEmpty, true)
+    }
+    
     //MARK: -Helpers
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (LocalFeedImageDataLoader, FeedImageDataStoreSpy) {
