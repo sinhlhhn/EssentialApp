@@ -19,7 +19,7 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
     func test_validateCache_deletesCacheOnRetrievalError() {
         let (sut, store) = makeSUT()
         
-        sut.validate()
+        sut.validate { _ in }
         
         store.completeRetrieve(with: anyNSError())
         
@@ -29,7 +29,7 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
     func test_validateCache_doesNotDeleteCacheWhenCacheIsAlreadyEmpty() {
         let (sut, store) = makeSUT()
         
-        sut.validate()
+        sut.validate { _ in }
         
         store.completeRetrievalWithEmptyCache()
         
@@ -42,7 +42,7 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
         let feed = uniqueImageFeed()
         let nonExpiredTimestamp = fixCurrentDate.minusFeedCacheMaxAge().adding(seconds: 1)
 
-        sut.validate()
+        sut.validate { _ in }
 
         store.completeRetrieval(with: feed.locals, timestamp: nonExpiredTimestamp)
 
@@ -55,7 +55,7 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
         let feed = uniqueImageFeed()
         let cacheExpirationTimestamp = fixCurrentDate.minusFeedCacheMaxAge()
         
-        sut.validate()
+        sut.validate { _ in }
 
         store.completeRetrieval(with: feed.locals, timestamp: cacheExpirationTimestamp)
         
@@ -68,7 +68,7 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
         let feed = uniqueImageFeed()
         let expiredTimestamp = fixCurrentDate.minusFeedCacheMaxAge().adding(seconds: -1)
 
-        sut.validate()
+        sut.validate { _ in }
 
         store.completeRetrieval(with: feed.locals, timestamp: expiredTimestamp)
 
@@ -79,7 +79,7 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
         let store = FeedStoreSpy()
         var sut: LocalFeedLoader? = LocalFeedLoader(store: store, currentDate: Date.init)
         
-        sut?.validate()
+        sut?.validate { _ in }
         
         sut = nil
         
