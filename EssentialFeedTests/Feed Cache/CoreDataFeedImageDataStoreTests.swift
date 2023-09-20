@@ -25,6 +25,16 @@ final class CoreDataFeedImageDataStoreTests: XCTestCase {
         expect(sut, completionWithResult: notFound(), for: nonMatchURL)
     }
     
+    func test_retrieveImage_deliversFoundDataWhenThereIsAStoredImageDataMatchingURL() {
+        let sut = makeSUT()
+        let data = anyData()
+        let url = anyURL()
+        
+        insert(data: data, for: url, into: sut)
+        
+        expect(sut, completionWithResult: found(data), for: url)
+    }
+    
     //MARK: -Helpers
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> CoreDataFeedStore {
@@ -44,13 +54,17 @@ final class CoreDataFeedImageDataStoreTests: XCTestCase {
         return LocalFeedImage(id: UUID(), description: nil, location: nil, url: url)
     }
     
+    private func found(_ data: Data) -> FeedImageDataStore.RetrievalResult {
+        return .success(data)
+    }
+    
     private func expect(_ sut: CoreDataFeedStore, completionWithResult expectedResult: FeedImageDataStore.RetrievalResult, for url: URL, file: StaticString = #filePath, line: UInt = #line) {
         
         let exp = expectation(description: "Wait for completion")
         sut.retrieve(dataFroURL: url) { receivedResult in
             switch (receivedResult, expectedResult) {
             case let (.success(receivedData), .success(expectedData)):
-                XCTAssertEqual(receivedData, expectedData)
+                XCTAssertEqual(receivedData, expectedData, file: file, line: line)
             default:
                 XCTFail("Expected \(expectedResult) got \(receivedResult) instead", file: file, line: line)
             }
