@@ -37,11 +37,11 @@ final class CoreDataFeedImageDataStoreTests: XCTestCase {
     
     //MARK: -Helpers
     
-    private func makeSUT() -> CoreDataFeedStore {
+    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> CoreDataFeedStore {
         let storeBundle = Bundle(for: CoreDataFeedStore.self)
         let storeURL = URL(filePath: "/dev/null")
         let sut = try! CoreDataFeedStore(storeURL: storeURL, bundle: storeBundle)
-        trackForMemoryLeak(sut)
+        trackForMemoryLeak(sut, file: file, line: line)
         
         return sut
     }
@@ -54,7 +54,7 @@ final class CoreDataFeedImageDataStoreTests: XCTestCase {
         return LocalFeedImage(id: UUID(), description: nil, location: nil, url: url)
     }
     
-    private func expect(_ sut: CoreDataFeedStore, completionWithResult expectedResult: FeedImageDataStore.RetrievalResult, for url: URL) {
+    private func expect(_ sut: CoreDataFeedStore, completionWithResult expectedResult: FeedImageDataStore.RetrievalResult, for url: URL, file: StaticString = #filePath, line: UInt = #line) {
         
         let exp = expectation(description: "Wait for completion")
         sut.retrieve(dataFroURL: url) { receivedResult in
@@ -62,7 +62,7 @@ final class CoreDataFeedImageDataStoreTests: XCTestCase {
             case let (.success(receivedData), .success(expectedData)):
                 XCTAssertEqual(receivedData, expectedData)
             default:
-                XCTFail("Expected \(expectedResult) got \(receivedResult) instead")
+                XCTFail("Expected \(expectedResult) got \(receivedResult) instead", file: file, line: line)
             }
             exp.fulfill()
         }
@@ -70,7 +70,7 @@ final class CoreDataFeedImageDataStoreTests: XCTestCase {
         wait(for: [exp] ,timeout: 1)
     }
     
-    private func insert(data: Data, for url: URL, into sut: CoreDataFeedStore) {
+    private func insert(data: Data, for url: URL, into sut: CoreDataFeedStore, file: StaticString = #filePath, line: UInt = #line) {
         let image = localFeedImage(url: url)
         
         let exp = expectation(description: "Wait for completion")
@@ -82,12 +82,12 @@ final class CoreDataFeedImageDataStoreTests: XCTestCase {
                     case .success(()):
                         break
                     default:
-                        XCTFail("Expected insert successfully got \(insertionImageResult) instead")
+                        XCTFail("Expected insert successfully got \(insertionImageResult) instead", file: file, line: line)
                     }
                 }
                 exp.fulfill()
             default:
-                XCTFail("Expected success got \(insertionResult) instead")
+                XCTFail("Expected success got \(insertionResult) instead", file: file, line: line)
             }
         }
         
