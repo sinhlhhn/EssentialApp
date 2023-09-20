@@ -47,6 +47,28 @@ final class CoreDataFeedImageDataStoreTests: XCTestCase {
         expect(sut, completionWithResult: found(lastData), for: url)
     }
     
+    func test_sideEffects_runSerially() {
+        let sut = makeSUT()
+        let url = anyURL()
+        
+        let op1 = expectation(description: "operation 1")
+        sut.insert([localFeedImage(url: url)], currentDate: Date()) { _ in
+            op1.fulfill()
+        }
+        
+        let op2 = expectation(description: "operation 2")
+        sut.insert(anyData(), for: url) { _ in
+            op2.fulfill()
+        }
+        
+        let op3 = expectation(description: "operation 3")
+        sut.insert(anyData(), for: url) { _ in
+            op3.fulfill()
+        }
+        
+        wait(for: [op1, op2, op3], timeout: 5, enforceOrder: true)
+    }
+    
     //MARK: -Helpers
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> CoreDataFeedStore {
@@ -100,10 +122,10 @@ final class CoreDataFeedImageDataStoreTests: XCTestCase {
                     default:
                         XCTFail("Expected insert successfully got \(insertionImageResult) instead", file: file, line: line)
                     }
+                    exp.fulfill()
                 }
-                exp.fulfill()
             default:
-                XCTFail("Expected success got \(insertionResult) instead", file: file, line: line)
+                XCTFail("Expected insert successfully got \(insertionResult) instead", file: file, line: line)
             }
         }
         
