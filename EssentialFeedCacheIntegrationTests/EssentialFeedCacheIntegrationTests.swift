@@ -22,34 +22,38 @@ final class EssentialFeedCacheIntegrationTests: XCTestCase {
         undoStoreSideEffects()
     }
 
+    // MARK: - LocalFeedLoader Tests
+    
     func test_load_deliversNoItemOnEmptyCache() {
-        let sut = makeFeedLoader()
+        let feedLoader = makeFeedLoader()
         
-        expect(sut, toCompleteWithItem: [])
+        expect(feedLoader, toCompleteWithItem: [])
     }
     
-    func test_load_deliversItemsSavedOnASeparateInstance() {
-        let sutToSave = makeFeedLoader()
-        let sutToLoad = makeFeedLoader()
+    func test_loadFeed_deliversItemsSavedOnASeparateInstance() {
+        let feedLoaderToPerformSave = makeFeedLoader()
+        let feedLoaderToPerformLoad = makeFeedLoader()
         let feed = uniqueImageFeed().models
         
-        save(feed, with: sutToSave)
+        save(feed, with: feedLoaderToPerformSave)
         
-        expect(sutToLoad, toCompleteWithItem: feed)
+        expect(feedLoaderToPerformLoad, toCompleteWithItem: feed)
     }
     
-    func test_load_overridesItemsSavedOnASeparateInstance() {
-        let sutToPerformFirstSave = makeFeedLoader()
-        let sutToPerformLastSave = makeFeedLoader()
-        let sutToPerformLoad = makeFeedLoader()
+    func test_saveFeed_overridesItemsSavedOnASeparateInstance() {
+        let feedLoaderToPerformFirstSave = makeFeedLoader()
+        let feedLoaderToPerformLastSave = makeFeedLoader()
+        let feedLoaderToPerformLoad = makeFeedLoader()
         let firstFeed = uniqueImageFeed().models
         let lastFeed = uniqueImageFeed().models
         
-        save(firstFeed, with: sutToPerformFirstSave)
-        save(lastFeed, with: sutToPerformLastSave)
+        save(firstFeed, with: feedLoaderToPerformFirstSave)
+        save(lastFeed, with: feedLoaderToPerformLastSave)
         
-        expect(sutToPerformLoad, toCompleteWithItem: lastFeed)
+        expect(feedLoaderToPerformLoad, toCompleteWithItem: lastFeed)
     }
+    
+    // MARK: - LocalFeedImageDataLoader Tests
     
     func test_loadImageData_deliversSavedDataOnASeparateInstance() {
         let imageLoaderToPerformSave = makeImageLoader()
