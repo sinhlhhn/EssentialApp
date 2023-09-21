@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		22DE94812ABC4DF7005BA3E7 /* FeedLoaderWithCallbackComposite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22DE94802ABC4DF7005BA3E7 /* FeedLoaderWithCallbackComposite.swift */; };
 		22E44EF72ABBFEDD00D3F10A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22E44EF62ABBFEDD00D3F10A /* AppDelegate.swift */; };
 		22E44EF92ABBFEDD00D3F10A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22E44EF82ABBFEDD00D3F10A /* SceneDelegate.swift */; };
 		22E44EFB2ABBFEDD00D3F10A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22E44EFA2ABBFEDD00D3F10A /* ViewController.swift */; };
@@ -56,6 +57,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		22DE94802ABC4DF7005BA3E7 /* FeedLoaderWithCallbackComposite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedLoaderWithCallbackComposite.swift; sourceTree = "<group>"; };
 		22E44EF32ABBFEDD00D3F10A /* EssentialApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EssentialApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		22E44EF62ABBFEDD00D3F10A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		22E44EF82ABBFEDD00D3F10A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -133,6 +135,7 @@
 				22E44EFF2ABBFEDE00D3F10A /* Assets.xcassets */,
 				22E44F012ABBFEDE00D3F10A /* LaunchScreen.storyboard */,
 				22E44F042ABBFEDE00D3F10A /* Info.plist */,
+				22DE94802ABC4DF7005BA3E7 /* FeedLoaderWithCallbackComposite.swift */,
 			);
 			path = EssentialApp;
 			sourceTree = "<group>";
@@ -307,6 +310,7 @@
 				22E44EFB2ABBFEDD00D3F10A /* ViewController.swift in Sources */,
 				22E44EF72ABBFEDD00D3F10A /* AppDelegate.swift in Sources */,
 				22E44EF92ABBFEDD00D3F10A /* SceneDelegate.swift in Sources */,
+				22DE94812ABC4DF7005BA3E7 /* FeedLoaderWithCallbackComposite.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
