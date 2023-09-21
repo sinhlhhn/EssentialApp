@@ -1,5 +1,5 @@
 //
-//  FeedImageDataLoaderWithFallbackTests.swift
+//  FeedImageDataLoaderWithFallbackCompositeTests.swift
 //  EssentialAppTests
 //
 //  Created by Sam on 21/09/2023.
@@ -8,7 +8,7 @@
 import XCTest
 import EssentialFeed
 
-final class FeedImageDataLoaderWithFallback: FeedImageDataLoader {
+final class FeedImageDataLoaderWithFallbackComposite: FeedImageDataLoader {
     private let primaryLoader: FeedImageDataLoader
     
     init(primaryLoader: FeedImageDataLoader, fallbackLoader: FeedImageDataLoader) {
@@ -25,11 +25,11 @@ final class FeedImageDataLoaderWithFallback: FeedImageDataLoader {
     }
 }
 
-final class FeedImageDataLoaderWithFallbackTests: XCTestCase {
+final class FeedImageDataLoaderWithFallbackCompositeTests: XCTestCase {
     func test_init_doesNotLoadImageData() {
         let primaryLoader = FeedImageDataLoaderSpy()
         let fallbackLoader = FeedImageDataLoaderSpy()
-        let _ = FeedImageDataLoaderWithFallback(primaryLoader: primaryLoader, fallbackLoader: fallbackLoader)
+        let _ = FeedImageDataLoaderWithFallbackComposite(primaryLoader: primaryLoader, fallbackLoader: fallbackLoader)
         
         XCTAssertEqual(primaryLoader.requestedURLs.isEmpty, true)
         XCTAssertEqual(fallbackLoader.requestedURLs.isEmpty, true)
@@ -40,7 +40,7 @@ final class FeedImageDataLoaderWithFallbackTests: XCTestCase {
         let data = anyData()
         let primaryLoader = FeedImageDataLoaderSpy()
         let fallbackLoader = FeedImageDataLoaderSpy()
-        let sut = FeedImageDataLoaderWithFallback(primaryLoader: primaryLoader, fallbackLoader: fallbackLoader)
+        let sut = FeedImageDataLoaderWithFallbackComposite(primaryLoader: primaryLoader, fallbackLoader: fallbackLoader)
         
         _ = sut.loadImageData(from: url) { _ in }
         
