@@ -36,36 +36,14 @@ final class FeedLoaderWithCallbackCompositeTests: XCTestCase {
         let callbackImage = uniqueImage()
         let sut = makeSUT(primaryResult: .success(primaryImage), callbackResult: .success(callbackImage))
         
-        let exp = expectation(description: "wait for load")
-        sut.load { result in
-            switch result {
-            case let .success(receivedImage):
-                XCTAssertEqual(receivedImage, primaryImage)
-            case let .failure(error):
-                XCTFail("Expected success got \(error) instead")
-            }
-            exp.fulfill()
-        }
-        
-        wait(for: [exp], timeout: 1)
+        expect(sut, toCompleteWithResult: .success(primaryImage))
     }
     
     func test_loadFeed_deliversFallbackOnPrimaryLoaderFailure() {
         let callbackImage = uniqueImage()
         let sut = makeSUT(primaryResult: .failure(anyNSError()), callbackResult: .success(callbackImage))
         
-        let exp = expectation(description: "wait for load")
-        sut.load { result in
-            switch result {
-            case let .success(receivedImage):
-                XCTAssertEqual(receivedImage, callbackImage)
-            case let .failure(error):
-                XCTFail("Expected success got \(error) instead")
-            }
-            exp.fulfill()
-        }
-        
-        wait(for: [exp], timeout: 1)
+        expect(sut, toCompleteWithResult: .success(callbackImage))
     }
     
     //MARK: -Helpers
@@ -79,6 +57,22 @@ final class FeedLoaderWithCallbackCompositeTests: XCTestCase {
         trackForMemoryLeak(callbackLoader, file: file, line: line)
         
         return sut
+    }
+    
+    private func expect(_ sut: FeedLoaderWithCallbackComposite, toCompleteWithResult expectedResult: FeedLoader.Result, file: StaticString = #filePath, line: UInt = #line) {
+        
+        let exp = expectation(description: "wait for load")
+        sut.load { result in
+            switch (result, expectedResult) {
+            case let (.success(receivedImage), .success(expectedImage)):
+                XCTAssertEqual(receivedImage, expectedImage)
+            default:
+                XCTFail("Expected \(expectedResult) got \(result) instead")
+            }
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 1)
     }
     
     private func trackForMemoryLeak(_ instance: AnyObject, file: StaticString = #filePath, line: UInt = #line) {
