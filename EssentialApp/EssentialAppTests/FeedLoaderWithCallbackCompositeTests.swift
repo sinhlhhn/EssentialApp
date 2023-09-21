@@ -10,11 +10,11 @@ import EssentialFeed
 
 final class FeedLoaderWithCallbackComposite: FeedLoader {
     private let primaryLoader: FeedLoader
-    private let callbackLoader: FeedLoader
+    private let fallbackLoader: FeedLoader
     
-    init(primaryLoader: FeedLoader, callbackLoader: FeedLoader) {
+    init(primaryLoader: FeedLoader, fallbackLoader: FeedLoader) {
         self.primaryLoader = primaryLoader
-        self.callbackLoader = callbackLoader
+        self.fallbackLoader = fallbackLoader
     }
     
     func load(completion: @escaping (FeedLoader.Result) -> Void) {
@@ -23,7 +23,7 @@ final class FeedLoaderWithCallbackComposite: FeedLoader {
             case .success:
                 completion(result)
             case .failure:
-                self?.callbackLoader.load(completion: completion)
+                self?.fallbackLoader.load(completion: completion)
             }
         }
     }
@@ -73,7 +73,7 @@ final class FeedLoaderWithCallbackCompositeTests: XCTestCase {
     private func makeSUT(primaryResult: FeedLoader.Result, callbackResult: FeedLoader.Result, file: StaticString = #filePath, line: UInt = #line) -> FeedLoaderWithCallbackComposite {
         let primaryLoader = FeedLoaderStub(result: primaryResult)
         let callbackLoader = FeedLoaderStub(result: callbackResult)
-        let sut = FeedLoaderWithCallbackComposite(primaryLoader: primaryLoader, callbackLoader: callbackLoader)
+        let sut = FeedLoaderWithCallbackComposite(primaryLoader: primaryLoader, fallbackLoader: callbackLoader)
         trackForMemoryLeak(sut, file: file, line: line)
         trackForMemoryLeak(primaryLoader, file: file, line: line)
         trackForMemoryLeak(callbackLoader, file: file, line: line)
