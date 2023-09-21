@@ -114,6 +114,17 @@ final class FeedImageDataLoaderWithFallbackCompositeTests: XCTestCase {
         }
     }
     
+    func test_loadImageData_deliversErrorOnBothPrimaryAndFallbackLoaderFailure() {
+        let url = anyURL()
+        let fallbackError = anyNSError()
+        let (sut, primaryLoader, fallbackLoader) = makeSUT()
+        
+        expect(sut, completeWithResult: .failure(fallbackError), from: url) {
+            primaryLoader.completeLoadImage(with: anyNSError())
+            fallbackLoader.completeLoadImage(with: fallbackError)
+        }
+    }
+    
     //MARK: -Helpers
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (FeedImageDataLoaderWithFallbackComposite, FeedImageDataLoaderSpy, FeedImageDataLoaderSpy) {
@@ -134,6 +145,9 @@ final class FeedImageDataLoaderWithFallbackCompositeTests: XCTestCase {
             switch (result, expectedResult) {
             case let (.success(receivedData), .success(expectedData)):
                 XCTAssertEqual(receivedData, expectedData)
+            case let (.failure(receivedError as NSError), .failure(expectedError as NSError)):
+                XCTAssertEqual(receivedError.code, expectedError.code)
+                XCTAssertEqual(receivedError.domain, expectedError.domain)
             default:
                 XCTFail("Expected \(expectedResult) got \(result) instead")
             }
