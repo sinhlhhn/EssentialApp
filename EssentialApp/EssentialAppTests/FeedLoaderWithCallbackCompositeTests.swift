@@ -25,15 +25,13 @@ final class FeedLoaderWithCallbackCompositeTests: XCTestCase {
     func test_loadFeed_deliversPrimaryImageOnPrimaryLoaderSuccess() {
         let primaryImage = uniqueImage()
         let callbackImage = uniqueImage()
-        let primaryLoader = FeedLoaderStub(result: .success([primaryImage]))
-        let callbackLoader = FeedLoaderStub(result: .success([callbackImage]))
-        let sut = FeedLoaderWithCallbackComposite(primaryLoader: primaryLoader, callbackLoader: callbackLoader)
+        let sut = makeSUT(primaryResult: .success(primaryImage), callbackResult: .success(callbackImage))
         
         let exp = expectation(description: "wait for load")
         sut.load { result in
             switch result {
             case let .success(receivedImage):
-                XCTAssertEqual(receivedImage, [primaryImage])
+                XCTAssertEqual(receivedImage, primaryImage)
             case let .failure(error):
                 XCTFail("Expected success got \(error) instead")
             }
@@ -43,8 +41,27 @@ final class FeedLoaderWithCallbackCompositeTests: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
     
-    private func uniqueImage() -> FeedImage {
-        return FeedImage(id: UUID(), description: nil, location: nil, url: URL(string: "https://any-url")!)
+    //MARK: -Helpers
+    
+    private func makeSUT(primaryResult: FeedLoader.Result, callbackResult: FeedLoader.Result, file: StaticString = #filePath, line: UInt = #line) -> FeedLoaderWithCallbackComposite {
+        let primaryLoader = FeedLoaderStub(result: primaryResult)
+        let callbackLoader = FeedLoaderStub(result: callbackResult)
+        let sut = FeedLoaderWithCallbackComposite(primaryLoader: primaryLoader, callbackLoader: callbackLoader)
+        trackForMemoryLeak(sut, file: file, line: line)
+        trackForMemoryLeak(primaryLoader, file: file, line: line)
+        trackForMemoryLeak(callbackLoader, file: file, line: line)
+        
+        return sut
+    }
+    
+    private func trackForMemoryLeak(_ instance: AnyObject, file: StaticString = #filePath, line: UInt = #line) {
+        addTeardownBlock { [weak instance] in
+            XCTAssertNil(instance, "Instance should has been deallocated. Potential memory leak", file: file, line: line)
+        }
+    }
+    
+    private func uniqueImage() -> [FeedImage] {
+        return [FeedImage(id: UUID(), description: nil, location: nil, url: URL(string: "https://any-url")!)]
     }
     
     private class FeedLoaderStub: FeedLoader {
