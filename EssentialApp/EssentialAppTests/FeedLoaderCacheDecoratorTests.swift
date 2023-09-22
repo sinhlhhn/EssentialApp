@@ -20,13 +20,13 @@ final class FeedLoaderCacheDecorator: FeedLoader {
     }
 }
 
-final class FeedLoaderCacheDecoratorTests: XCTestCase {
+final class FeedLoaderCacheDecoratorTests: XCTestCase, FeedLoaderTestCase {
     func test_load_deliversFeedOnLoaderSuccess() {
         let feed = uniqueImage()
         let loader = FeedLoaderStub(result: .success(feed))
         let sut = FeedLoaderCacheDecorator(decoratee: loader)
         
-        expect(sut, completeWithResult: .success(feed))
+        expect(sut, toCompleteWithResult: .success(feed))
     }
     
     func test_load_deliversFeedOnLoaderFailure() {
@@ -34,27 +34,6 @@ final class FeedLoaderCacheDecoratorTests: XCTestCase {
         let loader = FeedLoaderStub(result: .failure(error))
         let sut = FeedLoaderCacheDecorator(decoratee: loader)
         
-        expect(sut, completeWithResult: .failure(error))
-    }
-    
-    //MARK: -Helpers
-    
-    private func expect(_ sut: FeedLoaderCacheDecorator, completeWithResult expectedResult: FeedLoader.Result, file: StaticString = #filePath, line: UInt = #line) {
-        
-        let exp = expectation(description: "wait for load")
-        sut.load { result in
-            switch (result, expectedResult) {
-            case let (.success(receivedData), .success(expectedData)):
-                XCTAssertEqual(receivedData, expectedData, file: file, line: line)
-            case let (.failure(receivedError as NSError), .failure(expectedError as NSError)):
-                XCTAssertEqual(receivedError.code, expectedError.code, file: file, line: line)
-                XCTAssertEqual(receivedError.domain, expectedError.domain, file: file, line: line)
-            default:
-                XCTFail("Expected \(expectedResult) got \(result) instead", file: file, line: line)
-            }
-            exp.fulfill()
-        }
-        
-        wait(for: [exp], timeout: 1)
+        expect(sut, toCompleteWithResult: .failure(error))
     }
 }
