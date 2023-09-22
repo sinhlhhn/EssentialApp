@@ -54,8 +54,8 @@ extension LocalFeedLoader {
     }
 }
 
-extension LocalFeedLoader {
-    public typealias SaveResult = Result<Void,Error>
+extension LocalFeedLoader: FeedCache {
+    public typealias SaveResult = FeedCache.SaveResult
     
     public func save(_ feed: [FeedImage], completion: @escaping (SaveResult) -> Void) {
         store.deleteCacheFeed { [weak self] result in
