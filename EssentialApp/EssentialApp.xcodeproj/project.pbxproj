@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		228BA3152ABD96E4006D1476 /* FeedLoaderStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228BA3142ABD96E4006D1476 /* FeedLoaderStub.swift */; };
 		228BA3172ABD9810006D1476 /* XCTestCase+FeedLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228BA3162ABD9810006D1476 /* XCTestCase+FeedLoader.swift */; };
+		228BA31B2ABD9E0E006D1476 /* FeedLoaderCacheDecorator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228BA31A2ABD9E0E006D1476 /* FeedLoaderCacheDecorator.swift */; };
 		22B5D5C02ABD90FB00498C8B /* FeedLoaderCacheDecoratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B5D5BF2ABD90FB00498C8B /* FeedLoaderCacheDecoratorTests.swift */; };
 		22DE94812ABC4DF7005BA3E7 /* FeedLoaderWithCallbackComposite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22DE94802ABC4DF7005BA3E7 /* FeedLoaderWithCallbackComposite.swift */; };
 		22DE94832ABC50C8005BA3E7 /* FeedImageDataLoaderWithFallbackCompositeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22DE94822ABC50C8005BA3E7 /* FeedImageDataLoaderWithFallbackCompositeTests.swift */; };
@@ -66,6 +67,7 @@
 /* Begin PBXFileReference section */
 		228BA3142ABD96E4006D1476 /* FeedLoaderStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedLoaderStub.swift; sourceTree = "<group>"; };
 		228BA3162ABD9810006D1476 /* XCTestCase+FeedLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+FeedLoader.swift"; sourceTree = "<group>"; };
+		228BA31A2ABD9E0E006D1476 /* FeedLoaderCacheDecorator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedLoaderCacheDecorator.swift; sourceTree = "<group>"; };
 		22B5D5BF2ABD90FB00498C8B /* FeedLoaderCacheDecoratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedLoaderCacheDecoratorTests.swift; sourceTree = "<group>"; };
 		22DE94802ABC4DF7005BA3E7 /* FeedLoaderWithCallbackComposite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedLoaderWithCallbackComposite.swift; sourceTree = "<group>"; };
 		22DE94822ABC50C8005BA3E7 /* FeedImageDataLoaderWithFallbackCompositeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedImageDataLoaderWithFallbackCompositeTests.swift; sourceTree = "<group>"; };
@@ -162,6 +164,7 @@
 				22E44F042ABBFEDE00D3F10A /* Info.plist */,
 				22DE94802ABC4DF7005BA3E7 /* FeedLoaderWithCallbackComposite.swift */,
 				22DE94842ABCA510005BA3E7 /* FeedImageDataLoaderWithFallbackComposite.swift */,
+				228BA31A2ABD9E0E006D1476 /* FeedLoaderCacheDecorator.swift */,
 			);
 			path = EssentialApp;
 			sourceTree = "<group>";
@@ -339,6 +342,7 @@
 				22E44EFB2ABBFEDD00D3F10A /* ViewController.swift in Sources */,
 				22E44EF72ABBFEDD00D3F10A /* AppDelegate.swift in Sources */,
 				22E44EF92ABBFEDD00D3F10A /* SceneDelegate.swift in Sources */,
+				228BA31B2ABD9E0E006D1476 /* FeedLoaderCacheDecorator.swift in Sources */,
 				22DE94812ABC4DF7005BA3E7 /* FeedLoaderWithCallbackComposite.swift in Sources */,
 				22DE94852ABCA510005BA3E7 /* FeedImageDataLoaderWithFallbackComposite.swift in Sources */,
 			);
