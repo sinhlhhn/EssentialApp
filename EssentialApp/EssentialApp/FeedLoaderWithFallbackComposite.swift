@@ -8,7 +8,7 @@
 import Foundation
 import EssentialFeed
 
-public final class FeedLoaderWithCallbackComposite: FeedLoader {
+public final class FeedLoaderWithFallbackComposite: FeedLoader {
     private let primaryLoader: FeedLoader
     private let fallbackLoader: FeedLoader
     
