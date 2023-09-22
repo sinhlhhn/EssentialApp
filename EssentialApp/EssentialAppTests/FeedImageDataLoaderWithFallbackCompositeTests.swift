@@ -33,7 +33,7 @@ final class FeedImageDataLoaderWithFallbackCompositeTests: XCTestCase {
         
         _ = sut.loadImageData(from: url) { result in }
         
-        primaryLoader.completeLoadImage(with: anyNSError())
+        primaryLoader.complete(with: anyNSError())
         
         XCTAssertEqual(primaryLoader.requestedURLs, [url])
         XCTAssertEqual(fallbackLoader.requestedURLs, [url])
@@ -56,7 +56,7 @@ final class FeedImageDataLoaderWithFallbackCompositeTests: XCTestCase {
         let (sut, primaryLoader, fallbackLoader) = makeSUT()
         let task = sut.loadImageData(from: url) { result in }
         
-        primaryLoader.completeLoadImage(with: anyNSError())
+        primaryLoader.complete(with: anyNSError())
         task.cancel()
         
         XCTAssertEqual(primaryLoader.canceledURLs.isEmpty, true)
@@ -79,7 +79,7 @@ final class FeedImageDataLoaderWithFallbackCompositeTests: XCTestCase {
         let (sut, primaryLoader, fallbackLoader) = makeSUT()
         
         expect(sut, completeWithResult: .success(fallbackData), from: url) {
-            primaryLoader.completeLoadImage(with: anyNSError())
+            primaryLoader.complete(with: anyNSError())
             fallbackLoader.complete(with: fallbackData)
         }
     }
@@ -90,8 +90,8 @@ final class FeedImageDataLoaderWithFallbackCompositeTests: XCTestCase {
         let (sut, primaryLoader, fallbackLoader) = makeSUT()
         
         expect(sut, completeWithResult: .failure(fallbackError), from: url) {
-            primaryLoader.completeLoadImage(with: anyNSError())
-            fallbackLoader.completeLoadImage(with: fallbackError)
+            primaryLoader.complete(with: anyNSError())
+            fallbackLoader.complete(with: fallbackError)
         }
     }
     
@@ -127,42 +127,5 @@ final class FeedImageDataLoaderWithFallbackCompositeTests: XCTestCase {
         action()
         
         wait(for: [exp], timeout: 1)
-    }
-    
-    private class FeedImageDataLoaderSpy: FeedImageDataLoader {
-        private var messages = [(url: URL, completion: (FeedImageDataLoader.Result) -> ())]()
-        
-        var requestedURLs: [URL] {
-            messages.map { $0.url }
-        }
-        
-        var canceledURLs = [URL]()
-        
-        private final class Task: FeedImageDataLoaderTask {
-            let callback: (() -> Void)
-            
-            init(callback: @escaping () -> Void) {
-                self.callback = callback
-            }
-            
-            func cancel() {
-                callback()
-            }
-        }
-        
-        func loadImageData(from url: URL, completion: @escaping (FeedImageDataLoader.Result) -> ()) -> FeedImageDataLoaderTask {
-            messages.append((url, completion))
-            return Task { [weak self] in
-                self?.canceledURLs.append(url)
-            }
-        }
-        
-        func completeLoadImage(with error: Error, at index: Int = 0) {
-            messages[index].completion(.failure(error))
-        }
-        
-        func complete(with data: Data, at index: Int = 0) {
-            messages[index].completion(.success(data))
-        }
     }
 }

@@ -24,7 +24,7 @@ final class FeedImageDataLoaderCacheDecoratorTests: XCTestCase {
     func test_init_doesNotLoadImageData() {
         let (_, loader) = makeSUT()
         
-        XCTAssertEqual(loader.requestURLs.isEmpty, true)
+        XCTAssertEqual(loader.requestedURLs.isEmpty, true)
     }
     
     func test_loadImageData_loadsFromLoader() {
@@ -33,7 +33,7 @@ final class FeedImageDataLoaderCacheDecoratorTests: XCTestCase {
         
         _ = sut.loadImageData(from: url) { _ in }
         
-        XCTAssertEqual(loader.requestURLs, [url])
+        XCTAssertEqual(loader.requestedURLs, [url])
     }
     
     func test_loadImageData_cancelsLoaderTask() {
@@ -43,7 +43,7 @@ final class FeedImageDataLoaderCacheDecoratorTests: XCTestCase {
         let task = sut.loadImageData(from: url) { _ in }
         task.cancel()
         
-        XCTAssertEqual(loader.canceledRequests, [url])
+        XCTAssertEqual(loader.canceledURLs, [url])
     }
     
     func test_loadImageData_deliversImageDataOnLoaderSuccess() {
@@ -96,42 +96,5 @@ final class FeedImageDataLoaderCacheDecoratorTests: XCTestCase {
         action()
         
         wait(for: [exp], timeout: 1)
-    }
-    
-    private class FeedImageDataLoaderSpy: FeedImageDataLoader {
-        private var messages = [(url: URL, completion: (FeedImageDataLoader.Result) -> ())]()
-        
-        var requestURLs: [URL] {
-            messages.map { $0.url }
-        }
-        
-        private(set) var canceledRequests = [URL]()
-        
-        private class Task: FeedImageDataLoaderTask {
-            var onCancel: () -> Void
-            
-            init(onCancel: @escaping () -> Void) {
-                self.onCancel = onCancel
-            }
-            
-            func cancel() {
-                onCancel()
-            }
-        }
-        
-        func loadImageData(from url: URL, completion: @escaping (FeedImageDataLoader.Result) -> ()) -> FeedImageDataLoaderTask {
-            messages.append((url, completion))
-            return Task { [weak self] in
-                self?.canceledRequests.append(url)
-            }
-        }
-        
-        func complete(with data: Data, at index: Int = 0) {
-            messages[index].completion(.success(data))
-        }
-        
-        func complete(with error: Error, at index: Int = 0) {
-            messages[index].completion(.failure(error))
-        }
     }
 }
