@@ -27,9 +27,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         var localStoreURL = NSPersistentContainer.defaultDirectoryURL()
                 localStoreURL.append(path: "feed-store.sqplite")
 
+        #if DEBUG
         if CommandLine.arguments.contains("-reset") {
             try! FileManager.default.removeItem(at: localStoreURL)
         }
+        #endif
         
         let store = try! CoreDataFeedStore(storeURL: localStoreURL)
         let localFeedLoader = LocalFeedLoader(store: store, currentDate: Date.init)
@@ -47,17 +49,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     private func makeClient() -> HTTPClient {
-        let connectivity = UserDefaults.standard.string(forKey: "connectivity")
-        
-        if connectivity == "offline" {
+        #if DEBUG
+        if UserDefaults.standard.string(forKey: "connectivity") == "offline" {
             return AlwaysFallHTTPClient()
-        } else {
-            let session = URLSession(configuration: .ephemeral)
-            return URLSessionHTTPClient(session: session)
         }
+        #endif
+        
+        let session = URLSession(configuration: .ephemeral)
+        return URLSessionHTTPClient(session: session)
     }
 }
-
+#if DEBUG
 private class AlwaysFallHTTPClient: HTTPClient {
     
     private class Task: HTTPClientTask {
@@ -70,4 +72,4 @@ private class AlwaysFallHTTPClient: HTTPClient {
         return Task()
     }
 }
-
+#endif
