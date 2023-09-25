@@ -34,6 +34,7 @@
 		22E44F2A2ABBFFD500D3F10A /* EssentialFeed.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 22E44F272ABBFFD500D3F10A /* EssentialFeed.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		22E44F2B2ABBFFD500D3F10A /* EssentialFeediOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22E44F282ABBFFD500D3F10A /* EssentialFeediOS.framework */; };
 		22E44F2C2ABBFFD500D3F10A /* EssentialFeediOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 22E44F282ABBFFD500D3F10A /* EssentialFeediOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		22E5DF602AC12E6B0085A614 /* SceneDelegateDebugging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22E5DF5F2AC12E6B0085A614 /* SceneDelegateDebugging.swift */; };
 		22F234DD2ABC4D4300EF4F09 /* EssentialApp.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 22F234DC2ABC4D4300EF4F09 /* EssentialApp.xctestplan */; };
 /* End PBXBuildFile section */
 
@@ -107,6 +108,7 @@
 		22E44F192ABBFEDE00D3F10A /* EssentialAppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EssentialAppUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		22E44F272ABBFFD500D3F10A /* EssentialFeed.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = EssentialFeed.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		22E44F282ABBFFD500D3F10A /* EssentialFeediOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = EssentialFeediOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		22E5DF5F2AC12E6B0085A614 /* SceneDelegateDebugging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegateDebugging.swift; sourceTree = "<group>"; };
 		22F234DC2ABC4D4300EF4F09 /* EssentialApp.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EssentialApp.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -194,6 +196,7 @@
 			children = (
 				22E44EF62ABBFEDD00D3F10A /* AppDelegate.swift */,
 				22E44EF82ABBFEDD00D3F10A /* SceneDelegate.swift */,
+				22E5DF5F2AC12E6B0085A614 /* SceneDelegateDebugging.swift */,
 				22E44EFA2ABBFEDD00D3F10A /* ViewController.swift */,
 				22E44EFC2ABBFEDD00D3F10A /* Main.storyboard */,
 				22E44EFF2ABBFEDE00D3F10A /* Assets.xcassets */,
@@ -420,6 +423,7 @@
 				22E44EF72ABBFEDD00D3F10A /* AppDelegate.swift in Sources */,
 				22E44EF92ABBFEDD00D3F10A /* SceneDelegate.swift in Sources */,
 				228BA31B2ABD9E0E006D1476 /* FeedLoaderCacheDecorator.swift in Sources */,
+				22E5DF602AC12E6B0085A614 /* SceneDelegateDebugging.swift in Sources */,
 				22DE94812ABC4DF7005BA3E7 /* FeedLoaderWithFallbackComposite.swift in Sources */,
 				22DE94852ABCA510005BA3E7 /* FeedImageDataLoaderWithFallbackComposite.swift in Sources */,
 				228BA3252ABDD30D006D1476 /* FeedImageDataLoaderCacheDecorator.swift in Sources */,
