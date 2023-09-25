@@ -20,6 +20,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let localStoreURL = NSPersistentContainer.defaultDirectoryURL().appending(path: "feed-store.sqplite")
         return try! CoreDataFeedStore(storeURL: localStoreURL)
     }()
+    
+    private lazy var localFeedLoader = LocalFeedLoader(store: store, currentDate: Date.init)
 
     convenience init(client: HTTPClient, store: FeedStore & FeedImageDataStore) {
         self.init()
@@ -40,7 +42,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let remoteImageLoader = RemoteFeedImageDataLoader(client: client)
         let remoteFeedLoader = RemoteFeedLoader(client: client, url: url)
         
-        let localFeedLoader = LocalFeedLoader(store: store, currentDate: Date.init)
         let localImageFeedLoader = LocalFeedImageDataLoader(store: store)
         
         let feedViewController = UINavigationController(rootViewController: FeedUIComposer.feedComposedWith(
@@ -56,5 +57,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 fallbackLoader: localImageFeedLoader)))
         
         window?.rootViewController = feedViewController
+    }
+    
+    func sceneWillResignActive(_ scene: UIScene) {
+        localFeedLoader.validateCache { _ in }
     }
 }
