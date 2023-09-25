@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import EssentialFeediOS
 import EssentialFeed
 
 class FeedLoaderPresentationAdapter: FeedRefreshViewControllerDelegate {
