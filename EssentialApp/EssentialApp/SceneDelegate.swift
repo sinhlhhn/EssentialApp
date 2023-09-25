@@ -27,6 +27,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         var localStoreURL = NSPersistentContainer.defaultDirectoryURL()
                 localStoreURL.append(path: "feed-store.sqplite")
 
+        if CommandLine.arguments.contains("-reset") {
+            try! FileManager.default.removeItem(at: localStoreURL)
+        }
+        
         let store = try! CoreDataFeedStore(storeURL: localStoreURL)
         let localFeedLoader = LocalFeedLoader(store: store, currentDate: Date.init)
         let localImageFeedLoader = LocalFeedImageDataLoader(store: store)
