@@ -14,12 +14,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
     
-    let localStoreURL = NSPersistentContainer.defaultDirectoryURL().appending(path: "feed-store.sqplite")
-    
     private lazy var client: HTTPClient = URLSessionHTTPClient(session: URLSession(configuration: .ephemeral))
     
     private lazy var store: (FeedStore & FeedImageDataStore) = {
-        
+        let localStoreURL = NSPersistentContainer.defaultDirectoryURL().appending(path: "feed-store.sqplite")
         return try! CoreDataFeedStore(storeURL: localStoreURL)
     }()
 
@@ -58,10 +56,5 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 fallbackLoader: localImageFeedLoader)))
         
         window?.rootViewController = feedViewController
-    }
-    
-    func makeRemoteClient() -> HTTPClient {
-        let session = URLSession(configuration: .ephemeral)
-        return URLSessionHTTPClient(session: session)
     }
 }
