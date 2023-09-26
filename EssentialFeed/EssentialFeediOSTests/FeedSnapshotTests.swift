@@ -31,6 +31,14 @@ final class FeedSnapshotTests: XCTestCase {
         record(snapshot: sut.snapshot(), name: "FEED_WITH_ERROR")
     }
 
+    
+    func test_feedWithFailedImageLoading() {
+        let sut = makeSUT()
+        sut.display(feedWithFailedImageLoading())
+        
+        record(snapshot: sut.snapshot(), name: "FEED_WITH_FAILED_IMAGE_LOADING")
+    }
+
     //MARK: -Helpers
     
     private func makeSUT() -> FeedViewController {
@@ -60,6 +68,15 @@ final class FeedSnapshotTests: XCTestCase {
             ImageStub(viewModel: FeedImageViewModel<UIImage>(image: UIImage.make(with: .green), shouldRetry: false, isLoading: false, location: "HoChiMinh, VietNam", description: "A long \ndecription"))
         ]
     }
+    
+    private func feedWithFailedImageLoading() -> [ImageStub] {
+        return [
+            ImageStub(viewModel: FeedImageViewModel<UIImage>(image: nil, shouldRetry: true, isLoading: false, location: "HaNoi\nVietNam", description: "A short description")),
+            ImageStub(viewModel: FeedImageViewModel<UIImage>(image: nil, shouldRetry: true, isLoading: false, location: "HoChiMinh, VietNam", description: "A long \ndecription"))
+        ]
+    }
+    
+    
     
     private func record(snapshot: UIImage, name: String, file: StaticString = #filePath, line: UInt = #line) {
         guard let snapshotData = snapshot.pngData() else {
