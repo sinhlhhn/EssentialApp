@@ -7,6 +7,7 @@
 
 import XCTest
 import EssentialFeediOS
+@testable import EssentialFeed
 
 final class FeedSnapshotTests: XCTestCase {
     func test_emptyFeed() {
@@ -14,6 +15,13 @@ final class FeedSnapshotTests: XCTestCase {
         sut.display(emptyFeed())
         
         record(snapshot: sut.snapshot(), name: "EMPTY_FEED")
+    }
+    
+    func test_feedWithContent() {
+        let sut = makeSUT()
+        sut.display(feedWithContent())
+        
+        record(snapshot: sut.snapshot(), name: "FEED_WITH_CONTENT")
     }
 
     //MARK: -Helpers
@@ -37,6 +45,13 @@ final class FeedSnapshotTests: XCTestCase {
     
     private func emptyFeed() -> [FeedImageCellController] {
         return []
+    }
+    
+    private func feedWithContent() -> [ImageStub] {
+        return [
+            ImageStub(viewModel: FeedImageViewModel<UIImage>(image: UIImage.make(with: .red), shouldRetry: false, isLoading: false, location: "HaNoi\nVietNam", description: "A short description")),
+            ImageStub(viewModel: FeedImageViewModel<UIImage>(image: UIImage.make(with: .green), shouldRetry: false, isLoading: false, location: "HoChiMinh, VietNam", description: "A long \ndecription"))
+        ]
     }
     
     private func record(snapshot: UIImage, name: String, file: StaticString = #filePath, line: UInt = #line) {
@@ -63,6 +78,36 @@ final class FeedSnapshotTests: XCTestCase {
         
     }
     
+}
+
+private extension FeedViewController {
+    func display(_ stubs: [ImageStub]) {
+        let cells = stubs.map { stub in
+            let controller = FeedImageCellController(delegate: stub)
+            stub.controller = controller
+            return controller
+        }
+        
+        display(cells)
+    }
+}
+
+private class ImageStub: FeedImageCellControllerDelegate {
+    let viewModel: FeedImageViewModel<UIImage>
+    weak var controller: FeedImageCellController?
+    
+    init(viewModel: FeedImageViewModel<UIImage>, controller: FeedImageCellController? = nil) {
+        self.viewModel = viewModel
+        self.controller = controller
+    }
+    
+    func didCancelImageRequest() {
+        
+    }
+    
+    func didRequestImage() {
+        controller?.display(viewModel)
+    }
 }
 
 private extension UIViewController {
