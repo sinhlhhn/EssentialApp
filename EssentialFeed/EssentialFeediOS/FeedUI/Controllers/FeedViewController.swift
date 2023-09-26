@@ -17,6 +17,7 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
     
     private let delegate: FeedRefreshViewControllerDelegate
     
+    private var loadingController = [IndexPath: FeedImageCellController]()
     private var tableModel = [FeedImageCellController]() {
         didSet { tableView.reloadData() }
     }
@@ -47,6 +48,7 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
     }
     
     public func display(_ tableModel: [FeedImageCellController]) {
+        loadingController = [:]
         self.tableModel = tableModel
     }
     
@@ -84,11 +86,13 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
     
     private func cellController(forRowAt indexPath: IndexPath) -> FeedImageCellController {
         let cellController = tableModel[indexPath.row]
+        loadingController[indexPath] = cellController
         return cellController
     }
     
     private func cancelCellControllerLoad(forRowAt indexPath: IndexPath) {
-        tableModel[indexPath.row].cancel()
+        loadingController[indexPath]?.cancel()
+        loadingController[indexPath] = nil
     }
     
     private func startTask(forRowAt indexPath: IndexPath) {
