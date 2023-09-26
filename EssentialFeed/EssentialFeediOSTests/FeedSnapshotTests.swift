@@ -52,6 +52,8 @@ final class FeedSnapshotTests: XCTestCase {
             FeedViewController(coder: coder, delegate: RefreshSpy())
         }
         sut.loadViewIfNeeded()
+        sut.tableView.showsVerticalScrollIndicator = false
+        sut.tableView.showsHorizontalScrollIndicator = false
         
         return sut
     }
