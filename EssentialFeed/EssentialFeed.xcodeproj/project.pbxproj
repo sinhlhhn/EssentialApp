@@ -413,7 +413,6 @@
 			isa = PBXGroup;
 			children = (
 				22C177C52AC2C6A60068022D /* Helpers */,
-				22C177BF2AC280D20068022D /* UIImage+TestHelpers.swift */,
 				2288C1D82AC1E30800BDA013 /* FeedSnapshotTests.swift */,
 			);
 			path = EssentialFeediOSTests;
@@ -451,6 +450,7 @@
 		22C177C52AC2C6A60068022D /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				22C177BF2AC280D20068022D /* UIImage+TestHelpers.swift */,
 				22C177C62AC2C6B90068022D /* UIViewController+Snapshot.swift */,
 				22C177C82AC2C7240068022D /* XCTestCase+Snapshot.swift */,
 			);
