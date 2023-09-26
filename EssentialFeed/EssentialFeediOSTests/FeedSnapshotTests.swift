@@ -23,6 +23,13 @@ final class FeedSnapshotTests: XCTestCase {
         
         record(snapshot: sut.snapshot(), name: "FEED_WITH_CONTENT")
     }
+    
+    func test_feedWithError() {
+        let sut = makeSUT()
+        sut.display(.error(message: "There is a\nmultil-line\nerror message"))
+        
+        record(snapshot: sut.snapshot(), name: "FEED_WITH_ERROR")
+    }
 
     //MARK: -Helpers
     
