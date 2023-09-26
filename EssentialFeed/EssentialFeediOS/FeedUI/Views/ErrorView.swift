@@ -19,6 +19,16 @@ public final class ErrorView: UIView {
         return self.alpha > 0
     }
     
+    public override func awakeFromNib() {
+        super.awakeFromNib()
+        
+        errorButton.setTitle("", for: .normal)
+        errorButton.titleLabel?.numberOfLines = 0
+        errorButton.titleLabel?.textAlignment = .center
+        
+        self.alpha = 0
+    }
+    
     private func setMessage(message: String?) {
         if let message = message {
             showMessageAnimated(message: message)
