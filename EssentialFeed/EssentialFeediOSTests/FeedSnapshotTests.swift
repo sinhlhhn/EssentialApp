@@ -14,19 +14,19 @@ final class FeedSnapshotTests: XCTestCase {
         let sut = makeSUT()
         sut.display(emptyFeed())
         
-        record(snapshot: sut.snapshot(), name: "EMPTY_FEED")
+        assert(snapshot: sut.snapshot(), name: "EMPTY_FEED")
     }
     
     func test_feedWithContent() {
         let sut = makeSUT()
         sut.display(feedWithContent())
         
-        record(snapshot: sut.snapshot(), name: "FEED_WITH_CONTENT")
+        assert(snapshot: sut.snapshot(), name: "FEED_WITH_CONTENT")
     }
     
     func test_feedWithError() {
         let sut = makeSUT()
-        sut.display(.error(message: "There is a\nmultil-line\nerror message"))
+        sut.display(.error(message: "A error"))
         
         record(snapshot: sut.snapshot(), name: "FEED_WITH_ERROR")
     }
@@ -36,7 +36,7 @@ final class FeedSnapshotTests: XCTestCase {
         let sut = makeSUT()
         sut.display(feedWithFailedImageLoading())
         
-        record(snapshot: sut.snapshot(), name: "FEED_WITH_FAILED_IMAGE_LOADING")
+        assert(snapshot: sut.snapshot(), name: "FEED_WITH_FAILED_IMAGE_LOADING")
     }
 
     //MARK: -Helpers
@@ -76,18 +76,28 @@ final class FeedSnapshotTests: XCTestCase {
         ]
     }
     
-    
-    
-    private func record(snapshot: UIImage, name: String, file: StaticString = #filePath, line: UInt = #line) {
-        guard let snapshotData = snapshot.pngData() else {
-            XCTFail("Failed to generate png data representation from snapshot", file: file, line: line)
+    private func assert(snapshot: UIImage, name: String, file: StaticString = #filePath, line: UInt = #line) {
+        let snapshotData = makeSnapshotData(for: snapshot, file: file, line: line)
+        let snapshotURL = makeSnapshotURL(name: name, file: file)
+        
+        guard let storedSnapshotData = try? Data(contentsOf: snapshotURL) else {
+            XCTFail("Failed to load stored snapshot at URL: \(snapshotURL). Use the `record` method to store a snapshot before asserting", file: file, line: line)
             return
         }
         
-        let snapshotURL = URL(filePath: String(describing: file))
-            .deletingLastPathComponent()
-            .appending(path: "snapshot")
-            .appending(path: "\(name).png")
+        if snapshotData != storedSnapshotData {
+            let temporarySnapshotURL = URL(filePath: NSTemporaryDirectory(), directoryHint: .isDirectory)
+                .appendingPathComponent(snapshotURL.lastPathComponent)
+            
+            try! snapshotData?.write(to: temporarySnapshotURL)
+            
+            XCTFail("New snapshot does not match stored snapshot. New snapshot URL: \(temporarySnapshotURL), Stored snapshot URL: \(snapshotURL)", file: file, line: line)
+        }
+    }
+    
+    private func record(snapshot: UIImage, name: String, file: StaticString = #filePath, line: UInt = #line) {
+        let snapshotData = makeSnapshotData(for: snapshot, file: file, line: line)
+        let snapshotURL = makeSnapshotURL(name: name, file: file)
         
         do {
             try FileManager.default.createDirectory(
@@ -95,13 +105,27 @@ final class FeedSnapshotTests: XCTestCase {
                     .deletingLastPathComponent(),
                 withIntermediateDirectories: true)
             
-            try snapshotData.write(to: snapshotURL)
+            try snapshotData?.write(to: snapshotURL)
         } catch {
             XCTFail("Failed to record snapshot with error \(error)", file: file, line: line)
         }
-        
     }
     
+    private func makeSnapshotData(for snapshot: UIImage, file: StaticString, line: UInt) -> Data? {
+        guard let snapshotData = snapshot.pngData() else {
+            XCTFail("Failed to generate png data representation from snapshot", file: file, line: line)
+            return nil
+        }
+        
+        return snapshotData
+    }
+    
+    private func makeSnapshotURL(name: String, file: StaticString) -> URL {
+        return URL(filePath: String(describing: file))
+            .deletingLastPathComponent()
+            .appending(path: "snapshot")
+            .appending(path: "\(name).png")
+    }
 }
 
 private extension FeedViewController {
