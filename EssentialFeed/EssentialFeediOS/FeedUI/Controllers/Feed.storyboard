@@ -4,6 +4,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21679"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -15,12 +16,12 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <view key="tableHeaderView" contentMode="scaleToFill" id="clu-9B-M8g" customClass="ErrorView" customModule="EssentialFeediOS" customModuleProvider="target">
+                        <view key="tableHeaderView" alpha="0.0" contentMode="scaleToFill" id="clu-9B-M8g" customClass="ErrorView" customModule="EssentialFeediOS" customModuleProvider="target">
                             <rect key="frame" x="0.0" y="0.0" width="414" height="16"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Y83-n6-Fnw">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="16"/>
+                                    <rect key="frame" x="0.0" y="8" width="414" height="0.0"/>
                                     <state key="normal" title="Button"/>
                                     <buttonConfiguration key="configuration" style="plain"/>
                                     <connections>
@@ -28,12 +29,12 @@
                                     </connections>
                                 </button>
                             </subviews>
-                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <color key="backgroundColor" systemColor="systemRedColor"/>
                             <gestureRecognizers/>
                             <constraints>
                                 <constraint firstItem="Y83-n6-Fnw" firstAttribute="leading" secondItem="clu-9B-M8g" secondAttribute="leading" id="MSp-fP-f7E"/>
-                                <constraint firstItem="Y83-n6-Fnw" firstAttribute="top" secondItem="clu-9B-M8g" secondAttribute="top" id="SFL-Y6-TjI"/>
-                                <constraint firstAttribute="bottom" secondItem="Y83-n6-Fnw" secondAttribute="bottom" id="iZM-Rq-p8n"/>
+                                <constraint firstItem="Y83-n6-Fnw" firstAttribute="top" secondItem="clu-9B-M8g" secondAttribute="top" constant="8" id="SFL-Y6-TjI"/>
+                                <constraint firstAttribute="bottom" secondItem="Y83-n6-Fnw" secondAttribute="bottom" constant="8" id="iZM-Rq-p8n"/>
                                 <constraint firstAttribute="trailing" secondItem="Y83-n6-Fnw" secondAttribute="trailing" id="z52-Uv-ZI0"/>
                             </constraints>
                             <connections>
@@ -180,5 +181,8 @@ Location</string>
     </scenes>
     <resources>
         <image name="pin" width="10" height="14"/>
+        <systemColor name="systemRedColor">
+            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
     </resources>
 </document>
