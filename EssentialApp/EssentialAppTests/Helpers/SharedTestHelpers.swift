@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import EssentialFeed
 
 func anyURL() -> URL {
     return URL(string: "https://any-url")!
@@ -17,4 +18,8 @@ func anyNSError() -> NSError {
 
 func anyData() -> Data {
     return Data("any-data".utf8)
+}
+
+func uniqueImage() -> [FeedImage] {
+    return [FeedImage(id: UUID(), description: nil, location: nil, url: URL(string: "https://any-url")!)]
 }

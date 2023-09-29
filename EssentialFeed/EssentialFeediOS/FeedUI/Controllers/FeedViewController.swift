@@ -8,7 +8,7 @@
 import UIKit
 import EssentialFeed
 
-protocol FeedRefreshViewControllerDelegate {
+public protocol FeedRefreshViewControllerDelegate {
     func didRequestFeedRefresh()
 }
 
@@ -17,11 +17,12 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
     
     private let delegate: FeedRefreshViewControllerDelegate
     
-    var tableModel = [FeedImageCellController]() {
+    private var loadingController = [IndexPath: FeedImageCellController]()
+    private var tableModel = [FeedImageCellController]() {
         didSet { tableView.reloadData() }
     }
     
-    init?(coder: NSCoder, delegate: FeedRefreshViewControllerDelegate) {
+    public init?(coder: NSCoder, delegate: FeedRefreshViewControllerDelegate) {
         self.delegate = delegate
         super.init(coder: coder)
     }
@@ -36,8 +37,19 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
         refresh()
     }
     
+    public override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        tableView.sizeTableHeaderToFit()
+    }
+    
     @IBAction private func refresh() {
         delegate.didRequestFeedRefresh()
+    }
+    
+    public func display(_ tableModel: [FeedImageCellController]) {
+        loadingController = [:]
+        self.tableModel = tableModel
     }
     
     public func display(_ viewModel: FeedLoadingViewModel) {
@@ -74,11 +86,13 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
     
     private func cellController(forRowAt indexPath: IndexPath) -> FeedImageCellController {
         let cellController = tableModel[indexPath.row]
+        loadingController[indexPath] = cellController
         return cellController
     }
     
     private func cancelCellControllerLoad(forRowAt indexPath: IndexPath) {
-        tableModel[indexPath.row].cancel()
+        loadingController[indexPath]?.cancel()
+        loadingController[indexPath] = nil
     }
     
     private func startTask(forRowAt indexPath: IndexPath) {

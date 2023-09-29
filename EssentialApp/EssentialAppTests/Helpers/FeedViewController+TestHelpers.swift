@@ -56,6 +56,9 @@ extension FeedViewController {
     }
     
     func feedImageView(at row: Int) -> UITableViewCell? {
+        guard numberOfRenderedFeedImageViews() > row else {
+            return nil
+        }
         let ds = tableView.dataSource
         let index = IndexPath(row: row, section: feedImageSection)
         return ds?.tableView(tableView, cellForRowAt: index)
@@ -67,5 +70,9 @@ extension FeedViewController {
     
     func simulateTapErrorMessage() {
         errorView.errorButton.simulateTap()
+    }
+    
+    func renderedImage(at index: Int) -> Data? {
+        simulateFeedImageViewVisible(at: index)?.renderedImage
     }
 }
