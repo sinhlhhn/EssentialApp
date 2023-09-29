@@ -331,7 +331,6 @@
 				22D1D95A2AB961A6002276B7 /* Helpers */,
 				2260B09C2A80ED6B00B7CE83 /* RemoteFeedLoader.swift */,
 				22ABED702AC6C88E00C83AC0 /* RemoteImageCommentLoader.swift */,
-				229AE4C92AC6CCF800D2F43B /* ImageComment.swift */,
 				22ABED722AC6C9C600C83AC0 /* ImageCommentsMapper.swift */,
 				22C11FC52A837324006D2E80 /* HTTPClient.swift */,
 				22DA70072A83783900BE7608 /* FeedItemsMapper.swift */,
@@ -354,6 +353,14 @@
 				228742B52AB9ABBE002E62CC /* FeedImageDataStore.swift */,
 			);
 			path = "Feed Cache";
+			sourceTree = "<group>";
+		};
+		229AE4CB2AC6D64100D2F43B /* Image Comment Feature */ = {
+			isa = PBXGroup;
+			children = (
+				229AE4C92AC6CCF800D2F43B /* ImageComment.swift */,
+			);
+			path = "Image Comment Feature";
 			sourceTree = "<group>";
 		};
 		229FB4B42A97AEDE00840D03 /* Infrastructure */ = {
@@ -626,6 +633,7 @@
 				22CCE34D2AB31739003E043D /* FeedPresenter */,
 				226652B72A8E04C000460F38 /* Feed Cache */,
 				2260B09B2A80ED5000B7CE83 /* Feed API */,
+				229AE4CB2AC6D64100D2F43B /* Image Comment Feature */,
 				2ECF24012A7CFD07009F2ACB /* Feed Feature */,
 			);
 			path = EssentialFeed;
