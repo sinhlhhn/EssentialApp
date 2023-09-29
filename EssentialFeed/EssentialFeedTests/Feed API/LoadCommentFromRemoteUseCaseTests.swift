@@ -84,15 +84,15 @@ final class LoadCommentFromRemoteUseCaseTests: XCTestCase {
 
         let item1 = makeItem(
             id: UUID(),
-            description: nil,
-            location: nil,
-            imageURL: URL(string: "https://a-url.com")!)
+            message: "a message",
+            createdAt: (Date(timeIntervalSince1970: 1695979645), "2023-09-29T09:27:25+00:00"),
+            username: "a username")
         
         let item2 = makeItem(
             id: UUID(),
-            description: "a description",
-            location: "a location",
-            imageURL: URL(string: "https://another-url.com")!)
+            message: "another message",
+            createdAt: (Date(timeIntervalSince1970: 1695980003), "2023-09-29T09:33:23+00:00"),
+            username: "another username")
         
         let json = makeItemJSON([item1.itemJSON, item2.itemJSON])
         
@@ -130,18 +130,20 @@ final class LoadCommentFromRemoteUseCaseTests: XCTestCase {
         return (sut, client)
     }
     
-    private func makeItem(id: UUID, description: String?, location: String?, imageURL: URL) -> (item: FeedImage, itemJSON: [String: Any]) {
-        let item = FeedImage(
+    private func makeItem(id: UUID, message: String, createdAt: (date: Date, iso8601String: String), username: String) -> (item: ImageComment, itemJSON: [String: Any]) {
+        let item = ImageComment(
             id: id,
-            description: description,
-            location: location,
-            url: imageURL)
-        let itemJSON = [
+            message: message,
+            createdAt: createdAt.date,
+            username: username)
+        let itemJSON: [String : Any] = [
             "id": item.id.uuidString,
-            "description": item.description,
-            "location": item.location,
-            "image": item.imageURL.absoluteString
-        ].compactMapValues { $0 }
+            "message": item.message,
+            "created_at": createdAt.iso8601String,
+            "author": [
+                "username": item.username
+            ]
+        ]
         
         return (item, itemJSON)
     }
@@ -168,7 +170,7 @@ final class LoadCommentFromRemoteUseCaseTests: XCTestCase {
                 switch (receiveResult, expectResult) {
                 case let (.success(receiveItem), .success(expectItem)):
                     XCTAssertEqual(receiveItem, expectItem, file: file, line: line)
-                case let (.failure(receiveError as RemoteImageCommentLoader.Error), .failure(expectError as RemoteImageCommentLoader.Error)):
+                case let (.failure(receiveError), .failure(expectError)):
                     XCTAssertEqual(receiveError, expectError, file: file, line: line)
                 default:
                     XCTFail("Expect result \(expectResult) got receive result \(receiveResult) instead", file: file, line: line)

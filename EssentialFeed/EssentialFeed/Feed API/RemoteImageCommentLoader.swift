@@ -7,11 +7,11 @@
 
 import Foundation
 
-public final class RemoteImageCommentLoader: FeedLoader {
+public final class RemoteImageCommentLoader {
     private let client: HTTPClient
     private let url: URL
     
-    public typealias Result = FeedLoader.Result
+    public typealias Result = Swift.Result<[ImageComment], Error>
     
     public enum Error: Swift.Error {
         case connectivity
@@ -31,23 +31,17 @@ public final class RemoteImageCommentLoader: FeedLoader {
             case let .success((data, response)):
                 completion(RemoteImageCommentLoader.map(data, response))
             case .failure:
-                completion(.failure(Error.connectivity))
+                completion(.failure(.connectivity))
             }
         }
     }
     
     private static func map(_ data: Data, _ response: HTTPURLResponse) -> Result {
         do {
-            let items = try ImageCommentsMapper.map(data, response).toModels()
+            let items = try ImageCommentsMapper.map(data, response)
             return .success(items)
         } catch {
-            return .failure(error)
+            return .failure(.invalidData)
         }
-    }
-}
-
-private extension Array where Element == RemoteFeedLoaderItem {
-    func toModels() -> [FeedImage] {
-        self.map { FeedImage(id: $0.id, description: $0.description, location: $0.location, url: $0.image) }
     }
 }
