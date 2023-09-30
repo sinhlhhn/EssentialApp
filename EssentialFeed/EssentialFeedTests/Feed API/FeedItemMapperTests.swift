@@ -55,11 +55,6 @@ final class FeedItemMapperTests: XCTestCase {
     }
     
     //MARK: - Helpers
-    
-    private func response(with statusCode: Int) -> HTTPURLResponse {
-        return HTTPURLResponse(url: anyURL(), statusCode: statusCode, httpVersion: nil, headerFields: nil)!
-    }
-    
     private func makeItem(id: UUID, description: String?, location: String?, imageURL: URL) -> (item: FeedImage, itemJSON: [String: Any]) {
         let item = FeedImage(
             id: id,
