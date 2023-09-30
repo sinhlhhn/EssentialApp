@@ -77,8 +77,4 @@ final class FeedItemMapperTests: XCTestCase {
         ]
         return try! JSONSerialization.data(withJSONObject: json)
     }
-    
-    private func failure(_ error: RemoteFeedLoader.Error) -> RemoteFeedLoader.Result {
-        return .failure(error)
-    }
 }
