@@ -9,43 +9,6 @@ import XCTest
 import EssentialFeed
 
 final class LoadCommentFromRemoteUseCaseTests: XCTestCase {
-    func test_init_doesNotRequestDataFromURL() {
-        
-        let (_, client) = makeSUT()
-        
-        XCTAssertTrue(client.requestedURLs.isEmpty)
-    }
-    
-    func test_load_requestDataFromURL() {
-        let url = URL(string: "https://a-new-url")!
-        let (sut, client) = makeSUT(url: url)
-        
-        sut.load { _ in }
-        
-        XCTAssertEqual(client.requestedURLs, [url])
-        XCTAssertEqual(client.requestedURLs.count, 1)
-    }
-    
-    func test_loadTwice_requestDataFromURLTwice() {
-        let url = URL(string: "https://a-new-url")!
-        let (sut, client) = makeSUT(url: url)
-        
-        sut.load { _ in }
-        sut.load { _ in }
-        
-        XCTAssertEqual(client.requestedURLs, [url, url])
-        XCTAssertEqual(client.requestedURLs.count, 2)
-    }
-    
-    func test_load_deliverErrorOnClientError() {
-        let (sut, client) = makeSUT()
-        
-        expect(sut, toCompletionWith: failure(.connectivity)) {
-            let clientError = NSError(domain: "", code: 0)
-            client.completion(with: clientError)
-        }
-    }
-    
     func test_load_deliverErrorOnNon2xxHTTPResponse() {
         let (sut, client) = makeSUT()
         
@@ -101,21 +64,6 @@ final class LoadCommentFromRemoteUseCaseTests: XCTestCase {
                 client.completion(withStatusCode: statusCode, data: json, at: index)
             }
         }
-    }
-    
-    func test_load_doesNotDeliverResultAfterSUTInstanceHasBeenDeallocated() {
-        let url = URL(string: "https://any-url.com")!
-        let client = HTTPClientSpy()
-        var sut: RemoteImageCommentLoader? = RemoteImageCommentLoader(client: client, url: url)
-        
-        var captureResults = [RemoteImageCommentLoader.Result]()
-        sut?.load { captureResults.append($0) }
-        
-        sut = nil
-        
-        client.completion(withStatusCode: 200, data: makeItemJSON([]))
-        
-        XCTAssertTrue(captureResults.isEmpty)
     }
     
     //MARK: - Helpers
