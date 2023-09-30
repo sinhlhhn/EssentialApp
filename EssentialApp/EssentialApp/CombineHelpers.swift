@@ -9,6 +9,22 @@ import Foundation
 import Combine
 import EssentialFeed
 
+extension HTTPClient {
+    public typealias Publisher = AnyPublisher<(Data, HTTPURLResponse), Error>
+    
+    public func getPublisher(from url: URL) -> Publisher {
+        var task: HTTPClientTask?
+        
+        return Deferred {
+            Future { completion in
+                task = self.get(from: url, completion: completion)
+            }
+        }
+        .handleEvents(receiveCancel: { task?.cancel() })
+        .eraseToAnyPublisher()
+    }
+}
+
 extension FeedImageDataLoader {
     public typealias Publisher = AnyPublisher<Data, Error>
     
