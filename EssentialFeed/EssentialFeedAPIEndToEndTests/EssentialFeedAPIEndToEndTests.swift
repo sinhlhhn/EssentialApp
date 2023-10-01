@@ -45,12 +45,12 @@ final class EssentialFeedAPIEndToEndTests: XCTestCase {
     //MARK: -Helpers
     
     private func getFromURL(file: StaticString = #filePath,
-                            line: UInt = #line) -> FeedLoader.Result? {
+                            line: UInt = #line) -> Swift.Result<[FeedImage], Error>? {
         let url = feedTestServerURL
         let sut = RemoteLoader(client: ephemeralClient(), url: url, mapper: FeedItemsMapper.map)
         trackForMemoryLeak(sut, file: file, line: line)
         
-        var receivedResult: FeedLoader.Result?
+        var receivedResult: Swift.Result<[FeedImage], Error>?
         
         let exp = expectation(description: "Wait for completion")
         sut.load { result in

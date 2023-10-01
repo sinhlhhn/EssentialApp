@@ -100,7 +100,6 @@
 		2ECF23EC2A7CFB97009F2ACB /* EssentialFeed.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2ECF23E32A7CFB97009F2ACB /* EssentialFeed.framework */; };
 		2ECF23F12A7CFB97009F2ACB /* FeedItemMapperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ECF23F02A7CFB97009F2ACB /* FeedItemMapperTests.swift */; };
 		2ECF23FC2A7CFBF2009F2ACB /* FeedImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ECF23FB2A7CFBF2009F2ACB /* FeedImage.swift */; };
-		2ECF24002A7CFCF7009F2ACB /* FeedLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ECF23FF2A7CFCF7009F2ACB /* FeedLoader.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -250,7 +249,6 @@
 		2ECF23EB2A7CFB97009F2ACB /* EssentialFeedTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EssentialFeedTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2ECF23F02A7CFB97009F2ACB /* FeedItemMapperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedItemMapperTests.swift; sourceTree = "<group>"; };
 		2ECF23FB2A7CFBF2009F2ACB /* FeedImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedImage.swift; sourceTree = "<group>"; };
-		2ECF23FF2A7CFCF7009F2ACB /* FeedLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedLoader.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -706,7 +704,6 @@
 		2ECF24012A7CFD07009F2ACB /* Feed Feature */ = {
 			isa = PBXGroup;
 			children = (
-				2ECF23FF2A7CFCF7009F2ACB /* FeedLoader.swift */,
 				2ECF23FB2A7CFBF2009F2ACB /* FeedImage.swift */,
 				22CEC4F32AB452D000FE79FB /* FeedImageDataLoader.swift */,
 				228BA3182ABD9DCB006D1476 /* FeedCache.swift */,
@@ -1009,7 +1006,6 @@
 				229AE4CA2AC6CCF800D2F43B /* ImageComment.swift in Sources */,
 				229FB4B82A97AFB100840D03 /* CoreDataHelpers.swift in Sources */,
 				22DA70082A83783900BE7608 /* FeedItemsMapper.swift in Sources */,
-				2ECF24002A7CFCF7009F2ACB /* FeedLoader.swift in Sources */,
 				229AE4D42AC7241000D2F43B /* RemoteLoader.swift in Sources */,
 				22CCE3562AB31856003E043D /* FeedErrorViewModel.swift in Sources */,
 				2260482E2ABAFECC00A62090 /* CoreDataFeedStore+FeedImageDataStore.swift in Sources */,

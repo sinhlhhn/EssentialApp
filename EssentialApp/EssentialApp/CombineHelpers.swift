@@ -41,7 +41,7 @@ extension FeedImageDataLoader {
     }
 }
 
-extension FeedLoader {
+extension LocalFeedLoader {
     public typealias Publisher = AnyPublisher<[FeedImage], Error>
     
     public func loadPublisher() -> Publisher {
