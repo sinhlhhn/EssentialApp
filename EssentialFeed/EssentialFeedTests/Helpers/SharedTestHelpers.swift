@@ -29,3 +29,7 @@ func makeItemJSON(_ items: [[String: Any]]) -> Data {
 func response(with statusCode: Int) -> HTTPURLResponse {
     return HTTPURLResponse(url: anyURL(), statusCode: statusCode, httpVersion: nil, headerFields: nil)!
 }
+
+func anyHTTPURLResponse() -> HTTPURLResponse {
+    HTTPURLResponse(url: anyURL(), mimeType: nil, expectedContentLength: 0, textEncodingName: nil)
+}
