@@ -45,16 +45,21 @@ final class EssentialFeedAPIEndToEndTests: XCTestCase {
     //MARK: -Helpers
     
     private func getFromURL(file: StaticString = #filePath,
-                            line: UInt = #line) -> FeedLoader.Result? {
+                            line: UInt = #line) -> Swift.Result<[FeedImage], Error>? {
         let url = feedTestServerURL
-        let sut = RemoteFeedLoader(client: ephemeralClient(), url: url)
-        trackForMemoryLeak(sut, file: file, line: line)
+        let client = ephemeralClient()
         
-        var receivedResult: FeedLoader.Result?
+        var receivedResult: Swift.Result<[FeedImage], Error>?
         
         let exp = expectation(description: "Wait for completion")
-        sut.load { result in
-            receivedResult = result
+        client.get(from: url) { result in
+            receivedResult = result.flatMap{ data, response in
+                do {
+                    return .success(try FeedItemsMapper.map(data, response))
+                } catch {
+                    return .failure(error)
+                }
+            }
             exp.fulfill()
         }
         
@@ -65,14 +70,19 @@ final class EssentialFeedAPIEndToEndTests: XCTestCase {
     
     private func getImageDataFromURL(file: StaticString = #filePath, line: UInt = #line) -> FeedImageDataLoader.Result? {
         let url = feedTestServerURL.appending(path: "73A7F70C-75DA-4C2E-B5A3-EED40DC53AA6/image")
-        let sut = RemoteFeedImageDataLoader(client: ephemeralClient())
-        trackForMemoryLeak(sut, file: file, line: line)
+        let client = ephemeralClient()
         
         var receivedResult: FeedImageDataLoader.Result?
         
         let exp = expectation(description: "Wait for completion")
-        _ = sut.loadImageData(from: url) { result in
-            receivedResult = result
+        _ = client.get(from: url) { result in
+            receivedResult = result.flatMap { data, response in
+                do {
+                    return .success(try FeedImageDataMapper.map(data, from: response))
+                } catch {
+                    return .failure(error)
+                }
+            }
             exp.fulfill()
         }
         

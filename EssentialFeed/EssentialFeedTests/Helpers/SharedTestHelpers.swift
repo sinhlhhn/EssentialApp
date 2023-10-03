@@ -18,3 +18,18 @@ func anyURL() -> URL {
 func anyData() -> Data {
     Data("any-data".utf8)
 }
+
+func makeItemJSON(_ items: [[String: Any]]) -> Data {
+    let json = [
+        "items": items
+    ]
+    return try! JSONSerialization.data(withJSONObject: json)
+}
+
+func response(with statusCode: Int) -> HTTPURLResponse {
+    return HTTPURLResponse(url: anyURL(), statusCode: statusCode, httpVersion: nil, headerFields: nil)!
+}
+
+func anyHTTPURLResponse() -> HTTPURLResponse {
+    HTTPURLResponse(url: anyURL(), mimeType: nil, expectedContentLength: 0, textEncodingName: nil)
+}
