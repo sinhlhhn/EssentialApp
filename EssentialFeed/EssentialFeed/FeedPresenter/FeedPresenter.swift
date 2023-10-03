@@ -34,8 +34,8 @@ public final class FeedPresenter {
         return NSLocalizedString("FEED_VIEW_TITLE",tableName: "Feed", bundle: Bundle(for: FeedPresenter.self), comment: "Title for the feed view")
     }
     
-    private var feedLoadError: String {
-        return NSLocalizedString("GENERIC_CONNECTION_ERROR",tableName: "Feed", bundle: Bundle(for: FeedPresenter.self), comment: "Error message display when we can't get the feed from server")
+    public static var feedLoadError: String {
+        return NSLocalizedString("GENERIC_CONNECTION_ERROR",tableName: "Shared", bundle: Bundle(for: FeedPresenter.self), comment: "Error message display when we can't get the feed from server")
     }
     
     public func didStartLoading() {
@@ -49,7 +49,7 @@ public final class FeedPresenter {
     }
     
     public func didFinishFailure(with error: Error) {
-        feedErrorView.display(.error(message: feedLoadError))
+        feedErrorView.display(.error(message: Self.feedLoadError))
         feedLoading.display(FeedLoadingViewModel(isLoading: false))
     }
 }

@@ -43,7 +43,7 @@ final class FeedPresenterTests: XCTestCase {
         
         sut.didFinishFailure(with: error)
         
-        XCTAssertEqual(view.messages, [.display(errorMessage: localized("GENERIC_CONNECTION_ERROR")), .display(isLoading: false)])
+        XCTAssertEqual(view.messages, [.display(errorMessage: localized("GENERIC_CONNECTION_ERROR", table: "Shared")), .display(isLoading: false)])
     }
     
     //MARK: -Helpers
@@ -55,8 +55,7 @@ final class FeedPresenterTests: XCTestCase {
         return (sut, view)
     }
     
-    private func localized(_ key: String, file: StaticString = #file, line: UInt = #line) -> String {
-            let table = "Feed"
+    private func localized(_ key: String, table: String = "Feed", file: StaticString = #file, line: UInt = #line) -> String {
             let bundle = Bundle(for: FeedPresenter.self)
             let value = bundle.localizedString(forKey: key, value: nil, table: table)
             if value == key {
