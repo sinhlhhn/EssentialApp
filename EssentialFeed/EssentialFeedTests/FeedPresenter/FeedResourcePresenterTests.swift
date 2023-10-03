@@ -9,9 +9,6 @@ import XCTest
 import EssentialFeed
 
 final class FeedResourcePresenterTests: XCTestCase {
-    func test_title_isLocalized() {
-        XCTAssertEqual(FeedResourcePresenter.title, localized("FEED_VIEW_TITLE"))
-    }
     
     func test_init_doesNotSendMessage() {
         let (_, view) = makeSUT()
