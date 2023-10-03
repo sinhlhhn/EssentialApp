@@ -24,13 +24,17 @@ final class FeedResourcePresenterTests: XCTestCase {
         XCTAssertEqual(view.messages, [.display(errorMessage: .none), .display(isLoading: true)])
     }
     
-    func test_didFinishSuccess_displayFeedAndStopLoading() {
-        let feed = [uniqueImage()]
-        let (sut, view) = makeSUT()
+    func test_didFinishLoadingResource_displaysResourceAndStopLoading() {
+        let resource = "resource"
+        let (sut, view) = makeSUT(mapper: { result in
+            result + " view models"
+        })
         
-        sut.didFinishSuccess(with: feed)
+        sut.didFinishSuccess(with: resource)
         
-        XCTAssertEqual(view.messages, [.display(feed: feed), .display(isLoading: false)])
+        XCTAssertEqual(view.messages, [
+            .display(resource: "resource view models"),
+            .display(isLoading: false)])
     }
     
     func test_didFinishFailure_displayLocalizedErrorAndStopLoading() {
@@ -44,9 +48,9 @@ final class FeedResourcePresenterTests: XCTestCase {
     
     //MARK: -Helpers
     
-    private func makeSUT() -> (FeedResourcePresenter, ViewSpy) {
+    private func makeSUT(mapper: @escaping FeedResourcePresenter.Mapper = { _ in "default"}) -> (FeedResourcePresenter, ViewSpy) {
         let view = ViewSpy()
-        let sut = FeedResourcePresenter(feedLoading: view, feedView: view, feedErrorView: view)
+        let sut = FeedResourcePresenter(feedLoading: view, resourceView: view, feedErrorView: view, mapper: mapper)
         
         return (sut, view)
     }
@@ -61,12 +65,12 @@ final class FeedResourcePresenterTests: XCTestCase {
             return value
         }
     
-    private class ViewSpy: FeedLoadingView, FeedView, FeedErrorView {
+    private class ViewSpy: FeedLoadingView, ResourceView, FeedErrorView {
         
         enum Message: Hashable {
             case display(errorMessage: String?)
             case display(isLoading: Bool)
-            case display(feed: [FeedImage])
+            case display(resource: String)
         }
         
         private(set) var messages: Set<Message> = []
@@ -79,8 +83,8 @@ final class FeedResourcePresenterTests: XCTestCase {
             messages.insert(.display(isLoading: viewModel.isLoading))
         }
         
-        func display(_ viewModel: FeedViewModel) {
-            messages.insert(.display(feed: viewModel.feed))
+        func display(_ viewModel: String) {
+            messages.insert(.display(resource: viewModel))
         }
     }
 }
