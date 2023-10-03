@@ -52,7 +52,7 @@ final class FeedResourcePresenterTests: XCTestCase {
     
     private func makeSUT(mapper: @escaping SUT.Mapper = { _ in "default"}) -> (SUT, ViewSpy) {
         let view = ViewSpy()
-        let sut = SUT(feedLoading: view, resourceView: view, feedErrorView: view, mapper: mapper)
+        let sut = SUT(loadingView: view, resourceView: view, feedErrorView: view, mapper: mapper)
         
         return (sut, view)
     }
@@ -67,7 +67,7 @@ final class FeedResourcePresenterTests: XCTestCase {
             return value
         }
     
-    private class ViewSpy: FeedLoadingView, ResourceView, FeedErrorView {
+    private class ViewSpy: ResourceLoadingView, ResourceView, FeedErrorView {
         typealias ResourceViewModel = String
         
         enum Message: Hashable {
@@ -82,7 +82,7 @@ final class FeedResourcePresenterTests: XCTestCase {
             messages.insert(.display(errorMessage: viewModel.message))
         }
         
-        func display(_ viewModel: FeedLoadingViewModel) {
+        func display(_ viewModel: ResourceLoadingViewModel) {
             messages.insert(.display(isLoading: viewModel.isLoading))
         }
         
