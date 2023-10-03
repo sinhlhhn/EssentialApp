@@ -345,7 +345,7 @@ final class FeedUIIntegrationTests: XCTestCase {
         sut.loadViewIfNeeded()
         loader.completeLoadingWithError(at: 0)
         
-        XCTAssertEqual(sut.errorMessage, localize("FEED_VIEW_CONNECTION_ERROR"))
+        XCTAssertEqual(sut.errorMessage, localize("GENERIC_CONNECTION_ERROR"))
     }
     
     func test_errorView_hideErrorOnReload() {
