@@ -12,7 +12,7 @@ import EssentialFeed
 
 class FeedLoaderPresentationAdapter: FeedRefreshViewControllerDelegate {
     private let feedLoader: () -> AnyPublisher<[FeedImage], Error>
-    var feedPresenter: FeedPresenter?
+    var feedPresenter: LoadResourcePresenter<[FeedImage], FeedViewAdapter>?
     private var cancellable: Cancellable?
     
     init(feedLoader: @escaping () -> AnyPublisher<[FeedImage], Error>) {
