@@ -1,5 +1,5 @@
 //
-//  FeedResourcePresenter.swift
+//  LoadResourcePresenter.swift
 //  EssentialFeed
 //
 //  Created by Sam on 03/10/2023.
