@@ -22,10 +22,10 @@ extension WeakRefVirtualProxy: ResourceLoadingView where T: ResourceLoadingView 
     }
 }
 
-extension WeakRefVirtualProxy: FeedImageView where T: FeedImageView {
-    typealias Image = T.Image
+extension WeakRefVirtualProxy: ResourceView where T: ResourceView {
+    typealias ResourceViewModel = T.ResourceViewModel
     
-    func display(_ viewModel: FeedImageViewModel<T.Image>) {
+    func display(_ viewModel: ResourceViewModel) {
         object?.display(viewModel)
     }
 }
