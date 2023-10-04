@@ -70,15 +70,15 @@ final class FeedSnapshotTests: XCTestCase {
     
     private func feedWithContent() -> [ImageStub] {
         return [
-            ImageStub(viewModel: FeedImageViewModel<UIImage>(image: UIImage.make(with: .red), shouldRetry: false, isLoading: false, location: "HaNoi\nVietNam", description: "A short description")),
-            ImageStub(viewModel: FeedImageViewModel<UIImage>(image: UIImage.make(with: .green), shouldRetry: false, isLoading: false, location: "HoChiMinh, VietNam", description: "A long \ndecription"))
+            ImageStub(description: "A short description", location: "HaNoi\nVietNam", image: UIImage.make(with: .red)),
+            ImageStub(description: "A long \ndecription", location: "HoChiMinh, VietNam", image: UIImage.make(with: .green))
         ]
     }
     
     private func feedWithFailedImageLoading() -> [ImageStub] {
         return [
-            ImageStub(viewModel: FeedImageViewModel<UIImage>(image: nil, shouldRetry: true, isLoading: false, location: "HaNoi\nVietNam", description: "A short description")),
-            ImageStub(viewModel: FeedImageViewModel<UIImage>(image: nil, shouldRetry: true, isLoading: false, location: "HoChiMinh, VietNam", description: "A long \ndecription"))
+            ImageStub(description: "A short description", location: "HaNoi\nVietNam", image: nil),
+            ImageStub(description: "A long \ndecription", location: "HoChiMinh, VietNam", image: nil)
         ]
     }
 }
@@ -86,7 +86,7 @@ final class FeedSnapshotTests: XCTestCase {
 private extension FeedViewController {
     func display(_ stubs: [ImageStub]) {
         let cells = stubs.map { stub in
-            let controller = FeedImageCellController(delegate: stub)
+            let controller = FeedImageCellController(viewModel: stub.viewModel, delegate: stub)
             stub.controller = controller
             return controller
         }
@@ -96,12 +96,13 @@ private extension FeedViewController {
 }
 
 private class ImageStub: FeedImageCellControllerDelegate {
-    let viewModel: FeedImageViewModel<UIImage>
+    private let image: UIImage?
+    let viewModel: FeedImageViewModel
     weak var controller: FeedImageCellController?
     
-    init(viewModel: FeedImageViewModel<UIImage>, controller: FeedImageCellController? = nil) {
-        self.viewModel = viewModel
-        self.controller = controller
+    init(description: String?, location: String?, image: UIImage?) {
+        self.viewModel = FeedImageViewModel(location: location, description: description)
+        self.image = image
     }
     
     func didCancelImageRequest() {
@@ -109,6 +110,13 @@ private class ImageStub: FeedImageCellControllerDelegate {
     }
     
     func didRequestImage() {
-        controller?.display(viewModel)
+        controller?.display(ResourceLoadingViewModel(isLoading: false))
+        
+        if let image = image {
+            controller?.display(image)
+            controller?.display(ResourceErrorViewModel(message: .none))
+        } else {
+            controller?.display(ResourceErrorViewModel(message: "any"))
+        }
     }
 }
