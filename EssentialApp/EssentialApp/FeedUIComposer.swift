@@ -16,12 +16,12 @@ public final class FeedUIComposer {
     
     public static func feedComposedWith(loader: @escaping () -> AnyPublisher<[FeedImage], Error>, imageLoader: @escaping (URL) -> FeedImageDataLoader.Publisher) -> FeedViewController {
         
-        let adapterComposer = FeedLoaderPresentationAdapter(
-            feedLoader: loader)
+        let adapterComposer = LoadResourcePresentationAdapter<[FeedImage], FeedViewAdapter>(
+            loader: loader)
         
         let feedViewController = FeedUIComposer.makeWith(delegate: adapterComposer, title: FeedPresenter.title)
         
-        adapterComposer.feedPresenter = LoadResourcePresenter(
+        adapterComposer.loadPresenter = LoadResourcePresenter(
             loadingView: WeakRefVirtualProxy(feedViewController),
             resourceView:
                 FeedViewAdapter(
