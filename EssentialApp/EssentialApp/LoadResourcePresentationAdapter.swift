@@ -28,10 +28,10 @@ class LoadResourcePresentationAdapter<Resource, View: ResourceView> {
             switch completion {
             case .finished: break
             case let .failure(error):
-                self?.loadPresenter?.didFinishFailure(with: error)
+                self?.loadPresenter?.didFinishLoading(with: error)
             }
         } receiveValue: { [weak self] resource in
-            self?.loadPresenter?.didFinishSuccess(with: resource)
+            self?.loadPresenter?.didFinishLoading(with: resource)
         }
     }
 }

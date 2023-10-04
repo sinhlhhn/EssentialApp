@@ -30,18 +30,18 @@ final class FeedResourcePresenterTests: XCTestCase {
             result + " view models"
         })
         
-        sut.didFinishSuccess(with: resource)
+        sut.didFinishLoading(with: resource)
         
         XCTAssertEqual(view.messages, [
             .display(resource: "resource view models"),
             .display(isLoading: false)])
     }
     
-    func test_didFinishFailure_displayLocalizedErrorAndStopLoading() {
+    func test_didFinishLoadingWithError_displayLocalizedErrorAndStopLoading() {
         let error = anyNSError()
         let (sut, view) = makeSUT()
         
-        sut.didFinishFailure(with: error)
+        sut.didFinishLoading(with: error)
         
         XCTAssertEqual(view.messages, [.display(errorMessage: localized("GENERIC_CONNECTION_ERROR")), .display(isLoading: false)])
     }
@@ -52,7 +52,7 @@ final class FeedResourcePresenterTests: XCTestCase {
             throw anyNSError()
         })
         
-        sut.didFinishSuccess(with: resource)
+        sut.didFinishLoading(with: resource)
         
         XCTAssertEqual(view.messages, [
             .display(errorMessage: localized("GENERIC_CONNECTION_ERROR")),
