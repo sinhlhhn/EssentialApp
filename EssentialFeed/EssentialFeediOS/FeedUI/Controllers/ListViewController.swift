@@ -8,10 +8,6 @@
 import UIKit
 import EssentialFeed
 
-public protocol FeedRefreshViewControllerDelegate {
-    func didRequestFeedRefresh()
-}
-
 public protocol CellController {
     func view(in tableView: UITableView) -> UITableViewCell
     func cancel()
@@ -21,15 +17,15 @@ public protocol CellController {
 public final class ListViewController: UITableViewController, UITableViewDataSourcePrefetching, ResourceLoadingView, ResourceErrorView {
     @IBOutlet weak public var errorView: ErrorView!
     
-    private let delegate: FeedRefreshViewControllerDelegate
+    private var onRefresh: (() -> ())?
     
     private var loadingController = [IndexPath: CellController]()
     private var tableModel = [CellController]() {
         didSet { tableView.reloadData() }
     }
     
-    public init?(coder: NSCoder, delegate: FeedRefreshViewControllerDelegate) {
-        self.delegate = delegate
+    public init?(coder: NSCoder, onRefresh: (() -> ())?) {
+        self.onRefresh = onRefresh
         super.init(coder: coder)
     }
     
@@ -50,7 +46,7 @@ public final class ListViewController: UITableViewController, UITableViewDataSou
     }
     
     @IBAction private func refresh() {
-        delegate.didRequestFeedRefresh()
+        onRefresh?()
     }
     
     public func display(_ tableModel: [CellController]) {
