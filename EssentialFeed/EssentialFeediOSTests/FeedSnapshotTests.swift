@@ -49,19 +49,13 @@ final class FeedSnapshotTests: XCTestCase {
         let bundle = Bundle(for: ListViewController.self)
         let sb = UIStoryboard(name: "Feed", bundle: bundle)
         let sut = sb.instantiateViewController(identifier: "FeedViewController") { coder in
-            ListViewController(coder: coder, delegate: RefreshSpy())
+            ListViewController(coder: coder, onRefresh: nil)
         }
         sut.loadViewIfNeeded()
         sut.tableView.showsVerticalScrollIndicator = false
         sut.tableView.showsHorizontalScrollIndicator = false
         
         return sut
-    }
-    
-    private class RefreshSpy: FeedRefreshViewControllerDelegate {
-        func didRequestFeedRefresh() {
-            
-        }
     }
     
     private func emptyFeed() -> [FeedImageCellController] {
