@@ -18,7 +18,7 @@ public protocol CellController {
     func preload()
 }
 
-public final class FeedViewController: UITableViewController, UITableViewDataSourcePrefetching, ResourceLoadingView, ResourceErrorView {
+public final class ListViewController: UITableViewController, UITableViewDataSourcePrefetching, ResourceLoadingView, ResourceErrorView {
     @IBOutlet weak public var errorView: ErrorView!
     
     private let delegate: FeedRefreshViewControllerDelegate
