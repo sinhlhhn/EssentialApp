@@ -16,9 +16,7 @@ final class FeedUIIntegrationTests: XCTestCase {
         let (sut, _) = makeSUT()
         sut.loadViewIfNeeded()
         
-        let localizationKey = "FEED_VIEW_TITLE"
-        
-        XCTAssertEqual(sut.title, localize(localizationKey))
+        XCTAssertEqual(sut.title, feedTitle)
     }
     
     func test_loadFeedActions_requestFeedFromLoader() {
@@ -345,7 +343,7 @@ final class FeedUIIntegrationTests: XCTestCase {
         sut.loadViewIfNeeded()
         loader.completeLoadingWithError(at: 0)
         
-        XCTAssertEqual(sut.errorMessage, localize("FEED_VIEW_CONNECTION_ERROR"))
+        XCTAssertEqual(sut.errorMessage, loadError)
     }
     
     func test_errorView_hideErrorOnReload() {

@@ -33,3 +33,17 @@ func response(with statusCode: Int) -> HTTPURLResponse {
 func anyHTTPURLResponse() -> HTTPURLResponse {
     HTTPURLResponse(url: anyURL(), mimeType: nil, expectedContentLength: 0, textEncodingName: nil)
 }
+
+extension Date {
+    func adding(seconds: TimeInterval) -> Date {
+        self + seconds
+    }
+    
+    func adding(days: Int, calendar: Calendar = Calendar(identifier: .gregorian)) -> Date {
+        calendar.date(byAdding: .day, value: days, to: self)!
+    }
+    
+    func adding(minutes: Int, calendar: Calendar = Calendar(identifier: .gregorian)) -> Date {
+        calendar.date(byAdding: .minute, value: minutes, to: self)!
+    }
+}
