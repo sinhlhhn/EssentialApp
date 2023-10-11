@@ -23,14 +23,4 @@ public class ImageCommentCellController: CellController {
         
         return cell
     }
-    
-    public func cancel() {
-        
-    }
-    
-    public func preload() {
-        
-    }
-    
-    
 }
