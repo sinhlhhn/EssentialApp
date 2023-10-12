@@ -37,7 +37,7 @@ struct SnapshotConfiguration {
             ]))
     }
     
-    static func iPhone14(style: UIUserInterfaceStyle) -> SnapshotConfiguration {
+    static func iPhone14(style: UIUserInterfaceStyle, contentSize: UIContentSizeCategory = .large) -> SnapshotConfiguration {
         return SnapshotConfiguration(
             size: CGSize(width: 390, height: 844),
             safeAreaInsets: UIEdgeInsets(top: 47, left: 0, bottom: 34, right: 0),
@@ -45,7 +45,7 @@ struct SnapshotConfiguration {
             traitCollection: UITraitCollection(traitsFrom: [
                 .init(forceTouchCapability: .unavailable),
                 .init(layoutDirection: .leftToRight),
-                .init(preferredContentSizeCategory: .large),
+                .init(preferredContentSizeCategory: contentSize),
                 .init(userInterfaceIdiom: .phone),
                 .init(horizontalSizeClass: .compact),
                 .init(verticalSizeClass: .regular),
