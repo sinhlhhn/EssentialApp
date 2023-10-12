@@ -17,6 +17,7 @@ final class FeedSnapshotTests: XCTestCase {
         
         assert(snapshot: sut.snapshot(for: .iPhone14(style: .light)), name: "FEED_WITH_CONTENT_light")
         assert(snapshot: sut.snapshot(for: .iPhone14(style: .dark)), name: "FEED_WITH_CONTENT_dark")
+        assert(snapshot: sut.snapshot(for: .iPhone14(style: .light, contentSize: .extraExtraExtraLarge)), name: "FEED_WITH_CONTENT_light_extraExtraExtraLarge")
     }
     
     func test_feedWithFailedImageLoading() {
@@ -25,6 +26,7 @@ final class FeedSnapshotTests: XCTestCase {
         
         assert(snapshot: sut.snapshot(for: .iPhone14(style: .light)), name: "FEED_WITH_FAILED_IMAGE_LOADING_light")
         assert(snapshot: sut.snapshot(for: .iPhone14(style: .dark)), name: "FEED_WITH_FAILED_IMAGE_LOADING_dark")
+        assert(snapshot: sut.snapshot(for: .iPhone14(style: .light, contentSize: .extraExtraExtraLarge)), name: "FEED_WITH_FAILED_IMAGE_LOADING_light_extraExtraExtraLarge")
     }
 
     //MARK: -Helpers

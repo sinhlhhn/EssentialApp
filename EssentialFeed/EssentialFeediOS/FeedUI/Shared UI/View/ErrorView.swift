@@ -12,6 +12,8 @@ public final class ErrorView: UIStackView {
         let errorButton = UIButton()
         errorButton.titleLabel?.numberOfLines = 0
         errorButton.titleLabel?.textAlignment = .center
+        errorButton.titleLabel?.font = .preferredFont(forTextStyle: .body)
+        errorButton.titleLabel?.adjustsFontForContentSizeCategory = true
         return errorButton
     }()
     
