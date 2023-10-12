@@ -7,8 +7,15 @@
 
 import UIKit
 
-public final class ErrorView: UIView {
-    @IBOutlet weak public var errorButton: UIButton!
+public final class ErrorView: UIStackView {
+    public lazy var errorButton: UIButton = {
+        let errorButton = UIButton()
+        errorButton.titleLabel?.numberOfLines = 0
+        errorButton.titleLabel?.textAlignment = .center
+        return errorButton
+    }()
+    
+    var onHide: (() -> Void)?
     
     public var message: String? {
         get { return isVisible ? errorButton.title(for: .normal) : nil }
@@ -19,14 +26,41 @@ public final class ErrorView: UIView {
         return self.alpha > 0
     }
     
-    public override func awakeFromNib() {
-        super.awakeFromNib()
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
+        configure()
+    }
+    
+    required init(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+    
+    private func configure() {
+        backgroundColor = .systemRed
         
+        configureButton()
+        hideMessage()
+        
+        errorButton.addTarget(self, action: #selector(hideMessageAnimated), for: .touchUpInside)
+    }
+    
+    private func configureButton() {
+        addSubview(errorButton)
+        errorButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            errorButton.topAnchor.constraint(equalTo: topAnchor),
+            bottomAnchor.constraint(equalTo: errorButton.bottomAnchor),
+            errorButton.leadingAnchor.constraint(equalTo: leadingAnchor),
+            errorButton.trailingAnchor.constraint(equalTo: trailingAnchor)
+        ])
+    }
+    
+    private func hideMessage() {
         errorButton.setTitle("", for: .normal)
-        errorButton.titleLabel?.numberOfLines = 0
-        errorButton.titleLabel?.textAlignment = .center
-        
         self.alpha = 0
+        self.errorButton.isHidden = true
+        
     }
     
     private func setMessage(message: String?) {
@@ -39,17 +73,21 @@ public final class ErrorView: UIView {
     
     private func showMessageAnimated(message: String) {
         self.errorButton.setTitle(message, for: .normal)
-        
+        self.isHidden = false
         UIView.animate(withDuration: 0.25) {
             self.alpha = 1
+            self.errorButton.isHidden = false
         }
     }
     
-    @IBAction private func hideMessageAnimated() {
+    @objc private func hideMessageAnimated() {
         UIView.animate(withDuration: 0.25) {
             self.alpha = 0
+            self.errorButton.isHidden = true
         } completion: { completed in
-            if completed { self.errorButton.setTitle(nil, for: .normal) }
+            if completed { self.hideMessage() }
         }
+        
+        onHide?()
     }
 }

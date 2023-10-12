@@ -9,7 +9,7 @@ import UIKit
 import EssentialFeed
 
 public final class ListViewController: UITableViewController, UITableViewDataSourcePrefetching, ResourceLoadingView, ResourceErrorView {
-    @IBOutlet weak public var errorView: ErrorView!
+    public private(set) var errorView = ErrorView()
     
     private var onRefresh: (() -> ())?
     
@@ -30,6 +30,7 @@ public final class ListViewController: UITableViewController, UITableViewDataSou
     public override func viewDidLoad() {
         super.viewDidLoad()
         
+        configureErrorView()
         refresh()
     }
     
@@ -41,6 +42,28 @@ public final class ListViewController: UITableViewController, UITableViewDataSou
     
     @IBAction private func refresh() {
         onRefresh?()
+    }
+    
+    private func configureErrorView() {
+        let container = UIView()
+        container.backgroundColor = .clear
+        container.addSubview(errorView)
+        
+        errorView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            errorView.topAnchor.constraint(equalTo: container.topAnchor),
+            errorView.bottomAnchor.constraint(equalTo: container.bottomAnchor),
+            errorView.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+            errorView.trailingAnchor.constraint(equalTo: container.trailingAnchor),
+        ])
+        
+        tableView.tableHeaderView = container
+        
+        errorView.onHide = { [weak self] in
+            self?.tableView.beginUpdates()
+            self?.tableView.sizeTableHeaderToFit()
+            self?.tableView.endUpdates()
+        }
     }
     
     public func display(_ tableModel: [CellController]) {
