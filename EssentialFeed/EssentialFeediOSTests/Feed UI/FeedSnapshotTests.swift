@@ -65,7 +65,7 @@ private extension ListViewController {
             return controller
         }
         
-        display(cells.map { CellController($0) })
+        display(cells.map { CellController(id: UUID(),$0) })
     }
 }
 

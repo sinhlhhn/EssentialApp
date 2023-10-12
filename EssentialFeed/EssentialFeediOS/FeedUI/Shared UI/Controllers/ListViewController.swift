@@ -13,9 +13,8 @@ public final class ListViewController: UITableViewController, UITableViewDataSou
     
     public var onRefresh: (() -> ())?
     
-    private var loadingController = [IndexPath: CellController]()
-    private var tableModel = [CellController]() {
-        didSet { tableView.reloadData() }
+    private lazy var dataSource = UITableViewDiffableDataSource<Int, CellController>(tableView: tableView) { tableView, indexPath, controller in
+        controller.datasource.tableView(tableView, cellForRowAt: indexPath)
     }
     
     public override func viewDidLoad() {
@@ -58,8 +57,10 @@ public final class ListViewController: UITableViewController, UITableViewDataSou
     }
     
     public func display(_ tableModel: [CellController]) {
-        loadingController = [:]
-        self.tableModel = tableModel
+        var snapshot = NSDiffableDataSourceSnapshot<Int, CellController>()
+        snapshot.appendSections([0])
+        snapshot.appendItems(tableModel, toSection: 0)
+        dataSource.apply(snapshot)
     }
     
     public func display(_ viewModel: ResourceLoadingViewModel) {
@@ -70,48 +71,31 @@ public final class ListViewController: UITableViewController, UITableViewDataSou
         errorView.message = viewModel.message
     }
     
-    public override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return tableModel.count
-    }
-    
-    public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let ds = cellController(forRowAt: indexPath).datasource
-        return ds.tableView(tableView, cellForRowAt: indexPath)
-    }
-    
     public override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        let dl = cellController(forRowAt: indexPath).delegate
+        let dl = cellController(forRowAt: indexPath)?.delegate
         dl?.tableView?(tableView, willDisplay: cell, forRowAt: indexPath)
     }
     
     public override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        let dl = loadingController[indexPath]?.delegate
+        let dl = cellController(forRowAt: indexPath)?.delegate
         dl?.tableView?(tableView, didEndDisplaying: cell, forRowAt: indexPath)
-        removeLoadingController(forRowAt: indexPath)
     }
     
     public func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
         indexPaths.forEach { indexPath in
-            let dsp = cellController(forRowAt: indexPath).prefetching
+            let dsp = cellController(forRowAt: indexPath)?.prefetching
             dsp?.tableView(tableView, prefetchRowsAt: [indexPath])
         }
     }
     
     public func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {
         indexPaths.forEach { indexPath in
-            let dsp = loadingController[indexPath]?.prefetching
+            let dsp = cellController(forRowAt: indexPath)?.prefetching
             dsp?.tableView?(tableView, cancelPrefetchingForRowsAt: [indexPath])
-            removeLoadingController(forRowAt: indexPath)
         }
     }
     
-    private func cellController(forRowAt indexPath: IndexPath) -> CellController {
-        let cellController = tableModel[indexPath.row]
-        loadingController[indexPath] = cellController
-        return cellController
-    }
-    
-    private func removeLoadingController(forRowAt indexPath: IndexPath) {
-        loadingController[indexPath] = nil
+    private func cellController(forRowAt indexPath: IndexPath) -> CellController? {
+        return dataSource.itemIdentifier(for: indexPath)
     }
 }

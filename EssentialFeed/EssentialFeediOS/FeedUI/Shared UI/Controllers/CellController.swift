@@ -8,20 +8,34 @@
 import UIKit
 
 public struct CellController {
+    let id: AnyHashable
     let datasource: UITableViewDataSource
     let delegate: UITableViewDelegate?
     let prefetching: UITableViewDataSourcePrefetching?
     
-    public init(_ datasource: UITableViewDataSource & UITableViewDelegate & UITableViewDataSourcePrefetching) {
+    public init(id: AnyHashable, _ datasource: UITableViewDataSource & UITableViewDelegate & UITableViewDataSourcePrefetching) {
+        self.id = id
         self.datasource = datasource
         self.delegate = datasource
         self.prefetching = datasource
     }
     
-    public init(_ datasource: UITableViewDataSource) {
+    public init(id: AnyHashable, _ datasource: UITableViewDataSource) {
+        self.id = id
         self.datasource = datasource
         self.delegate = nil
         self.prefetching = nil
     }
+}
 
+extension CellController: Equatable {
+    public static func == (lhs: CellController, rhs: CellController) -> Bool {
+        lhs.id == rhs.id
+    }
+}
+
+extension CellController: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
 }
