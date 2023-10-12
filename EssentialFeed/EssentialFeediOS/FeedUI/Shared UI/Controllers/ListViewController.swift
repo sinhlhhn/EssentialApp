@@ -11,20 +11,11 @@ import EssentialFeed
 public final class ListViewController: UITableViewController, UITableViewDataSourcePrefetching, ResourceLoadingView, ResourceErrorView {
     public private(set) var errorView = ErrorView()
     
-    private var onRefresh: (() -> ())?
+    public var onRefresh: (() -> ())?
     
     private var loadingController = [IndexPath: CellController]()
     private var tableModel = [CellController]() {
         didSet { tableView.reloadData() }
-    }
-    
-    public init?(coder: NSCoder, onRefresh: (() -> ())?) {
-        self.onRefresh = onRefresh
-        super.init(coder: coder)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     public override func viewDidLoad() {

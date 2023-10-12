@@ -24,9 +24,7 @@ final class ImageCommentsSnapshotTests: XCTestCase {
     private func makeSUT() -> ListViewController {
         let bundle = Bundle(for: ListViewController.self)
         let sb = UIStoryboard(name: "ImageComments", bundle: bundle)
-        let sut = sb.instantiateViewController(identifier: "ImageCommentsViewController") { coder in
-            ListViewController(coder: coder, onRefresh: nil)
-        }
+        let sut = sb.instantiateViewController(identifier: "ImageCommentsViewController") as! ListViewController
         sut.loadViewIfNeeded()
         sut.tableView.showsVerticalScrollIndicator = false
         sut.tableView.showsHorizontalScrollIndicator = false

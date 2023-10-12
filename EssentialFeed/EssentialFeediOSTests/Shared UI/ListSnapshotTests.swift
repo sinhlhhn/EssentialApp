@@ -30,11 +30,7 @@ final class ListSnapshotTests: XCTestCase {
     //MARK: -Helpers
     
     private func makeSUT() -> ListViewController {
-        let bundle = Bundle(for: ListViewController.self)
-        let sb = UIStoryboard(name: "Feed", bundle: bundle)
-        let sut = sb.instantiateViewController(identifier: "FeedViewController") { coder in
-            ListViewController(coder: coder, onRefresh: nil)
-        }
+        let sut = ListViewController()
         sut.loadViewIfNeeded()
         sut.tableView.showsVerticalScrollIndicator = false
         sut.tableView.showsHorizontalScrollIndicator = false
