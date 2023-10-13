@@ -10,62 +10,36 @@ import EssentialFeediOS
 @testable import EssentialFeed
 
 final class FeedSnapshotTests: XCTestCase {
-//    func test_emptyFeed() {
-//        let sut = makeSUT()
-//        sut.display(emptyFeed())
-//        
-//        assert(snapshot: sut.snapshot(for: .iPhone8(style: .light)), name: "EMPTY_FEED_light")
-//        assert(snapshot: sut.snapshot(for: .iPhone8(style: .dark)), name: "EMPTY_FEED_dark")
-//    }
-//    
-//    func test_feedWithContent() {
-//        let sut = makeSUT()
-//        sut.display(feedWithContent())
-//        
-//        assert(snapshot: sut.snapshot(for: .iPhone8(style: .light)), name: "FEED_WITH_CONTENT_light")
-//        assert(snapshot: sut.snapshot(for: .iPhone8(style: .dark)), name: "FEED_WITH_CONTENT_dark")
-//    }
-//    
-//    func test_feedWithError() {
-//        let sut = makeSUT()
-//        sut.display(.error(message: "There is a\nmulti-line\nerror message"))
-//        
-//        assert(snapshot: sut.snapshot(for: .iPhone8(style: .light)), name: "FEED_WITH_ERROR_light")
-//        assert(snapshot: sut.snapshot(for: .iPhone8(style: .dark)), name: "FEED_WITH_ERROR_dark")
-//    }
-//
-//    
-//    func test_feedWithFailedImageLoading() {
-//        let sut = makeSUT()
-//        sut.display(feedWithFailedImageLoading())
-//        
-//        assert(snapshot: sut.snapshot(for: .iPhone8(style: .light)), name: "FEED_WITH_FAILED_IMAGE_LOADING_light")
-//        assert(snapshot: sut.snapshot(for: .iPhone8(style: .dark)), name: "FEED_WITH_FAILED_IMAGE_LOADING_dark")
-//    }
+    
+    func test_feedWithContent() {
+        let sut = makeSUT()
+        sut.display(feedWithContent())
+        
+        assert(snapshot: sut.snapshot(for: .iPhone14(style: .light)), name: "FEED_WITH_CONTENT_light")
+        assert(snapshot: sut.snapshot(for: .iPhone14(style: .dark)), name: "FEED_WITH_CONTENT_dark")
+        assert(snapshot: sut.snapshot(for: .iPhone14(style: .light, contentSize: .extraExtraExtraLarge)), name: "FEED_WITH_CONTENT_light_extraExtraExtraLarge")
+    }
+    
+    func test_feedWithFailedImageLoading() {
+        let sut = makeSUT()
+        sut.display(feedWithFailedImageLoading())
+        
+        assert(snapshot: sut.snapshot(for: .iPhone14(style: .light)), name: "FEED_WITH_FAILED_IMAGE_LOADING_light")
+        assert(snapshot: sut.snapshot(for: .iPhone14(style: .dark)), name: "FEED_WITH_FAILED_IMAGE_LOADING_dark")
+        assert(snapshot: sut.snapshot(for: .iPhone14(style: .light, contentSize: .extraExtraExtraLarge)), name: "FEED_WITH_FAILED_IMAGE_LOADING_light_extraExtraExtraLarge")
+    }
 
     //MARK: -Helpers
     
-    private func makeSUT() -> FeedViewController {
-        let bundle = Bundle(for: FeedViewController.self)
+    private func makeSUT() -> ListViewController {
+        let bundle = Bundle(for: ListViewController.self)
         let sb = UIStoryboard(name: "Feed", bundle: bundle)
-        let sut = sb.instantiateViewController(identifier: "FeedViewController") { coder in
-            FeedViewController(coder: coder, delegate: RefreshSpy())
-        }
+        let sut = sb.instantiateViewController(identifier: "FeedViewController") as! ListViewController
         sut.loadViewIfNeeded()
         sut.tableView.showsVerticalScrollIndicator = false
         sut.tableView.showsHorizontalScrollIndicator = false
         
         return sut
-    }
-    
-    private class RefreshSpy: FeedRefreshViewControllerDelegate {
-        func didRequestFeedRefresh() {
-            
-        }
-    }
-    
-    private func emptyFeed() -> [FeedImageCellController] {
-        return []
     }
     
     private func feedWithContent() -> [ImageStub] {
@@ -83,7 +57,7 @@ final class FeedSnapshotTests: XCTestCase {
     }
 }
 
-private extension FeedViewController {
+private extension ListViewController {
     func display(_ stubs: [ImageStub]) {
         let cells = stubs.map { stub in
             let controller = FeedImageCellController(viewModel: stub.viewModel, delegate: stub)
@@ -91,7 +65,7 @@ private extension FeedViewController {
             return controller
         }
         
-        display(cells)
+        display(cells.map { CellController(id: UUID(),$0) })
     }
 }
 
