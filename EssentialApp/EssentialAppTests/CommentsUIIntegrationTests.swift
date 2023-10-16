@@ -11,7 +11,7 @@ import EssentialFeed
 import EssentialFeediOS
 import EssentialApp
 
-class CommentsUIIntegrationTests: FeedUIIntegrationTests {
+class CommentsUIIntegrationTests: XCTestCase {
     
     func test_commentsView_hasTitle() {
         let (sut, _) = makeSUT()
@@ -109,14 +109,14 @@ class CommentsUIIntegrationTests: FeedUIIntegrationTests {
         wait(for: [exp], timeout: 1)
     }
     
-    override func test_errorView_doesNotRenderErrorOnLoadFeed() {
+    func test_errorView_doesNotRenderErrorOnLoadFeed() {
         let (sut, _) = makeSUT()
         sut.loadViewIfNeeded()
         
         XCTAssertEqual(sut.errorMessage, nil)
     }
     
-    override func test_errorView_rendersErrorOnLoadError() {
+    func test_errorView_rendersErrorOnLoadError() {
         let (sut, loader) = makeSUT()
         
         sut.loadViewIfNeeded()
@@ -125,7 +125,7 @@ class CommentsUIIntegrationTests: FeedUIIntegrationTests {
         XCTAssertEqual(sut.errorMessage, loadError)
     }
     
-    override func test_errorView_hideErrorOnReload() {
+    func test_errorView_hideErrorOnReload() {
         let (sut, loader) = makeSUT()
         
         sut.loadViewIfNeeded()
@@ -135,7 +135,7 @@ class CommentsUIIntegrationTests: FeedUIIntegrationTests {
         XCTAssertEqual(sut.errorMessage, nil)
     }
     
-    override func test_errorView_hideErrorOnTapError() {
+    func test_errorView_hideErrorOnTapError() {
         let (sut, loader) = makeSUT()
         
         sut.loadViewIfNeeded()
