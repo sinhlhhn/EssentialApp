@@ -19,19 +19,19 @@ class CommentsUIIntegrationTests: FeedUIIntegrationTests {
         XCTAssertEqual(sut.title, commentsTitle)
     }
     
-    override func test_loadFeedActions_requestFeedFromLoader() {
+    func test_loadCommentsActions_requestCommentsFromLoader() {
         let (sut, loader) = makeSUT()
         
-        XCTAssertEqual(loader.loadFeedCallCount, 0)
+        XCTAssertEqual(loader.loadCommentsCallCount, 0)
         
         sut.loadViewIfNeeded()
-        XCTAssertEqual(loader.loadFeedCallCount, 1)
+        XCTAssertEqual(loader.loadCommentsCallCount, 1)
         
-        sut.simulateUserInitiatedFeedReload()
-        XCTAssertEqual(loader.loadFeedCallCount, 2)
+        sut.simulateUserInitiatedReload()
+        XCTAssertEqual(loader.loadCommentsCallCount, 2)
         
-        sut.simulateUserInitiatedFeedReload()
-        XCTAssertEqual(loader.loadFeedCallCount, 3)
+        sut.simulateUserInitiatedReload()
+        XCTAssertEqual(loader.loadCommentsCallCount, 3)
     }
     
     override func test_loadingFeedIndicator_isVisibleWhileLoadingFeed() {
@@ -43,7 +43,7 @@ class CommentsUIIntegrationTests: FeedUIIntegrationTests {
         loader.completeLoading(at: 0)
         XCTAssertFalse(sut.isShowingLoadingIndicator)
         
-        sut.simulateUserInitiatedFeedReload()
+        sut.simulateUserInitiatedReload()
         XCTAssertTrue(sut.isShowingLoadingIndicator)
         
         loader.completeLoadingWithError(at: 1)
@@ -63,7 +63,7 @@ class CommentsUIIntegrationTests: FeedUIIntegrationTests {
         loader.completeLoading(with: [image0], at: 0)
         assertThat(sut, isRendering: [image0])
         
-        sut.simulateUserInitiatedFeedReload()
+        sut.simulateUserInitiatedReload()
         loader.completeLoading(with: [image0, image1, image2, image3], at: 1)
         assertThat(sut, isRendering: [image0, image1, image2, image3])
     }
@@ -77,7 +77,7 @@ class CommentsUIIntegrationTests: FeedUIIntegrationTests {
         loader.completeLoading(with: [image0, image1], at: 0)
         assertThat(sut, isRendering: [image0, image1])
         
-        sut.simulateUserInitiatedFeedReload()
+        sut.simulateUserInitiatedReload()
         loader.completeLoading(with: [], at: 1)
         assertThat(sut, isRendering: [])
     }
@@ -89,7 +89,7 @@ class CommentsUIIntegrationTests: FeedUIIntegrationTests {
         sut.loadViewIfNeeded()
         loader.completeLoading(with: [image], at: 0)
         
-        sut.simulateUserInitiatedFeedReload()
+        sut.simulateUserInitiatedReload()
         loader.completeLoadingWithError(at: 1)
         
         assertThat(sut, isRendering: [image])
@@ -132,7 +132,7 @@ class CommentsUIIntegrationTests: FeedUIIntegrationTests {
         
         sut.loadViewIfNeeded()
         loader.completeLoadingWithError(at: 0)
-        sut.simulateUserInitiatedFeedReload()
+        sut.simulateUserInitiatedReload()
         
         XCTAssertEqual(sut.errorMessage, nil)
     }

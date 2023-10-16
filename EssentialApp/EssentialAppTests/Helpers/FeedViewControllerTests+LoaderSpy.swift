@@ -24,7 +24,7 @@ extension FeedUIIntegrationTests {
             return publisher.eraseToAnyPublisher()
         }
         
-        var loadFeedCallCount: Int {
+        var loadCommentsCallCount: Int {
             feedRequests.count
         }
         
