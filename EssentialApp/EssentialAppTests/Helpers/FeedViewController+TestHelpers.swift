@@ -53,6 +53,14 @@ extension ListViewController {
         ds?.tableView?(tableView, cancelPrefetchingForRowsAt: [index])
     }
     
+    private var commentsSection: Int {
+        return 0
+    }
+    
+    func numberOfRenderedCommentsViews() -> Int {
+        tableView.numberOfSections == 0 ? 0 :  tableView.numberOfRows(inSection: commentsSection)
+    }
+    
     func numberOfRenderedFeedImageViews() -> Int {
         tableView.numberOfSections == 0 ? 0 :  tableView.numberOfRows(inSection: feedImageSection)
     }
