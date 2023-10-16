@@ -23,6 +23,17 @@ extension ListViewController {
         refreshControl?.simulatePullToRefresh()
     }
     
+    var errorMessage: String? {
+        errorView.message
+    }
+    
+    func simulateTapErrorMessage() {
+        errorView.errorButton.simulateTap()
+    }
+}
+
+extension ListViewController {
+    
     @discardableResult
     func simulateFeedImageViewVisible(at row: Int) -> FeedImageCell? {
         return feedImageView(at: row) as? FeedImageCell
@@ -53,13 +64,6 @@ extension ListViewController {
         ds?.tableView?(tableView, cancelPrefetchingForRowsAt: [index])
     }
     
-    private var commentsSection: Int {
-        return 0
-    }
-    
-    func numberOfRenderedCommentsViews() -> Int {
-        tableView.numberOfSections == 0 ? 0 :  tableView.numberOfRows(inSection: commentsSection)
-    }
     
     func numberOfRenderedFeedImageViews() -> Int {
         tableView.numberOfSections == 0 ? 0 :  tableView.numberOfRows(inSection: feedImageSection)
@@ -78,15 +82,38 @@ extension ListViewController {
         return ds?.tableView(tableView, cellForRowAt: index)
     }
     
-    var errorMessage: String? {
-        errorView.message
-    }
-    
-    func simulateTapErrorMessage() {
-        errorView.errorButton.simulateTap()
-    }
-    
     func renderedImage(at index: Int) -> Data? {
         simulateFeedImageViewVisible(at: index)?.renderedImage
+    }
+}
+
+extension ListViewController {
+    private var commentsSection: Int {
+        return 0
+    }
+    
+    func numberOfRenderedCommentsViews() -> Int {
+        tableView.numberOfSections == 0 ? 0 :  tableView.numberOfRows(inSection: commentsSection)
+    }
+    
+    private func commentsView(at row: Int) -> ImageCommentCell? {
+        guard numberOfRenderedCommentsViews() > row else {
+            return nil
+        }
+        let ds = tableView.dataSource
+        let index = IndexPath(row: row, section: commentsSection)
+        return ds?.tableView(tableView, cellForRowAt: index) as? ImageCommentCell
+    }
+    
+    func commentMessage(at row: Int) -> String? {
+        commentsView(at: row)?.messageLabel.text
+    }
+    
+    func commentUsername(at row: Int) -> String? {
+        commentsView(at: row)?.usernameLabel.text
+    }
+    
+    func commentDate(at row: Int) -> String? {
+        commentsView(at: row)?.dateLabel.text
     }
 }

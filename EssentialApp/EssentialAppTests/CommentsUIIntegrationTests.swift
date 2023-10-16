@@ -168,8 +168,12 @@ class CommentsUIIntegrationTests: FeedUIIntegrationTests {
             return
         }
         
-        comments.enumerated().forEach { index, comment in
+        let viewModel = ImageCommentsPresenter.map(comments)
         
+        viewModel.comments.enumerated().forEach { index, viewModel in
+            XCTAssertEqual(sut.commentMessage(at: index), viewModel.message)
+            XCTAssertEqual(sut.commentDate(at: index), viewModel.date)
+            XCTAssertEqual(sut.commentUsername(at: index), viewModel.username)
         }
     }
     
