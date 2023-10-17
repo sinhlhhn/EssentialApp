@@ -1,5 +1,5 @@
 //
-//  FeedViewController+TestHelpers.swift
+//  ListViewController+TestHelpers.swift
 //  EssentialFeediOSTests
 //
 //  Created by Sam on 08/09/2023.
@@ -29,6 +29,19 @@ extension ListViewController {
     
     func simulateTapErrorMessage() {
         errorView.errorButton.simulateTap()
+    }
+    
+    func numberOfRow(in section: Int) -> Int {
+        tableView.numberOfSections > section ? tableView.numberOfRows(inSection: section) : 0
+    }
+    
+    func cell(row: Int, section: Int) -> UITableViewCell? {
+        guard numberOfRow(in: section) > row else {
+            return nil
+        }
+        let ds = tableView.dataSource
+        let index = IndexPath(row: row, section: section)
+        return ds?.tableView(tableView, cellForRowAt: index)
     }
 }
 
@@ -66,7 +79,7 @@ extension ListViewController {
     
     
     func numberOfRenderedFeedImageViews() -> Int {
-        tableView.numberOfSections == 0 ? 0 :  tableView.numberOfRows(inSection: feedImageSection)
+        numberOfRow(in: feedImageSection)
     }
     
     private var feedImageSection: Int {
@@ -74,12 +87,7 @@ extension ListViewController {
     }
     
     func feedImageView(at row: Int) -> UITableViewCell? {
-        guard numberOfRenderedFeedImageViews() > row else {
-            return nil
-        }
-        let ds = tableView.dataSource
-        let index = IndexPath(row: row, section: feedImageSection)
-        return ds?.tableView(tableView, cellForRowAt: index)
+        cell(row: row, section: feedImageSection)
     }
     
     func renderedImage(at index: Int) -> Data? {
@@ -103,12 +111,7 @@ extension ListViewController {
     }
     
     private func commentsView(at row: Int) -> ImageCommentCell? {
-        guard numberOfRenderedCommentsViews() > row else {
-            return nil
-        }
-        let ds = tableView.dataSource
-        let index = IndexPath(row: row, section: commentsSection)
-        return ds?.tableView(tableView, cellForRowAt: index) as? ImageCommentCell
+        return cell(row: row, section: feedImageSection) as? ImageCommentCell
     }
     
     func commentMessage(at row: Int) -> String? {
@@ -124,6 +127,6 @@ extension ListViewController {
     }
     
     func numberOfRenderedComments() -> Int {
-        tableView.numberOfSections == 0 ? 0 :  tableView.numberOfRows(inSection: commentsSection)
+        numberOfRow(in: commentsSection)
     }
 }
