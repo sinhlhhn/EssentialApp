@@ -122,4 +122,8 @@ extension ListViewController {
     func commentDate(at row: Int) -> String? {
         commentsView(at: row)?.dateLabel.text
     }
+    
+    func numberOfRenderedComments() -> Int {
+        tableView.numberOfSections == 0 ? 0 :  tableView.numberOfRows(inSection: commentsSection)
+    }
 }
