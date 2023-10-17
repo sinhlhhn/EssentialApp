@@ -85,6 +85,12 @@ extension ListViewController {
     func renderedImage(at index: Int) -> Data? {
         simulateFeedImageViewVisible(at: index)?.renderedImage
     }
+    
+    func simulateTapFeedImage(at row: Int) {
+        let delegate = tableView.delegate
+        let index = IndexPath(row: row, section: feedImageSection)
+        delegate?.tableView?(tableView, didSelectRowAt: index)
+    }
 }
 
 extension ListViewController {

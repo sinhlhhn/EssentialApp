@@ -84,6 +84,11 @@ public final class ListViewController: UITableViewController, UITableViewDataSou
         }
     }
     
+    public override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let dl = cellController(forRowAt: indexPath)?.delegate
+        dl?.tableView?(tableView, didSelectRowAt: indexPath)
+    }
+    
     private func cellController(forRowAt indexPath: IndexPath) -> CellController? {
         return dataSource.itemIdentifier(for: indexPath)
     }

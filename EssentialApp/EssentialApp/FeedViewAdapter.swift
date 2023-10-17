@@ -13,12 +13,14 @@ import EssentialFeediOS
 public class FeedViewAdapter: ResourceView {
     private weak var controller: ListViewController?
     private let imageLoader: (URL) -> FeedImageDataLoader.Publisher
+    private let selection: (FeedImage) -> Void
     
     private typealias ImageDataPresentationAdapter = LoadResourcePresentationAdapter<Data, WeakRefVirtualProxy<FeedImageCellController>>
     
-    init(controller: ListViewController, loader: @escaping (URL) -> FeedImageDataLoader.Publisher) {
+    init(controller: ListViewController, loader: @escaping (URL) -> FeedImageDataLoader.Publisher, selection: @escaping (FeedImage) -> Void) {
         self.controller = controller
         self.imageLoader = loader
+        self.selection = selection
     }
     
     public func display(_ viewModel: FeedViewModel) {
@@ -30,7 +32,10 @@ public class FeedViewAdapter: ResourceView {
             
             let feedImageController = FeedImageCellController(
                 viewModel: FeedImagePresenter.map(model),
-                delegate: adapter)
+                delegate: adapter,
+                selection: { [selection] in
+                    selection(model)
+                })
             
             adapter.loadPresenter = LoadResourcePresenter(
                 loadingView: WeakRefVirtualProxy(feedImageController),
