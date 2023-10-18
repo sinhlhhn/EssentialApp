@@ -10,7 +10,7 @@ import EssentialFeed
 import EssentialFeediOS
 import EssentialApp
 
-final class FeedUIIntegrationTests: XCTestCase {
+class FeedUIIntegrationTests: XCTestCase {
     
     func test_feedView_hasTitle() {
         let (sut, _) = makeSUT()
@@ -19,19 +19,35 @@ final class FeedUIIntegrationTests: XCTestCase {
         XCTAssertEqual(sut.title, feedTitle)
     }
     
+    func test_imageSelection_notifiesHandler() {
+        let image0 = makeImage()
+        let image1 = makeImage()
+        var selectedImages = [FeedImage]()
+        let (sut, loader) = makeSUT(selection: { selectedImages.append($0) })
+        
+        sut.loadViewIfNeeded()
+        loader.completeLoading(with: [image0, image1], at: 0)
+        
+        sut.simulateTapFeedImage(at: 0)
+        XCTAssertEqual(selectedImages, [image0])
+        
+        sut.simulateTapFeedImage(at: 1)
+        XCTAssertEqual(selectedImages, [image0, image1])
+    }
+    
     func test_loadFeedActions_requestFeedFromLoader() {
         let (sut, loader) = makeSUT()
         
-        XCTAssertEqual(loader.loadFeedCallCount, 0)
+        XCTAssertEqual(loader.loadCommentsCallCount, 0)
         
         sut.loadViewIfNeeded()
-        XCTAssertEqual(loader.loadFeedCallCount, 1)
+        XCTAssertEqual(loader.loadCommentsCallCount, 1)
         
-        sut.simulateUserInitiatedFeedReload()
-        XCTAssertEqual(loader.loadFeedCallCount, 2)
+        sut.simulateUserInitiatedReload()
+        XCTAssertEqual(loader.loadCommentsCallCount, 2)
         
-        sut.simulateUserInitiatedFeedReload()
-        XCTAssertEqual(loader.loadFeedCallCount, 3)
+        sut.simulateUserInitiatedReload()
+        XCTAssertEqual(loader.loadCommentsCallCount, 3)
     }
     
     func test_loadingFeedIndicator_isVisibleWhileLoadingFeed() {
@@ -43,7 +59,7 @@ final class FeedUIIntegrationTests: XCTestCase {
         loader.completeLoading(at: 0)
         XCTAssertFalse(sut.isShowingLoadingIndicator)
         
-        sut.simulateUserInitiatedFeedReload()
+        sut.simulateUserInitiatedReload()
         XCTAssertTrue(sut.isShowingLoadingIndicator)
         
         loader.completeLoadingWithError(at: 1)
@@ -63,7 +79,7 @@ final class FeedUIIntegrationTests: XCTestCase {
         loader.completeLoading(with: [image0], at: 0)
         assertThat(sut, isRendering: [image0])
         
-        sut.simulateUserInitiatedFeedReload()
+        sut.simulateUserInitiatedReload()
         loader.completeLoading(with: [image0, image1, image2, image3], at: 1)
         assertThat(sut, isRendering: [image0, image1, image2, image3])
     }
@@ -77,7 +93,7 @@ final class FeedUIIntegrationTests: XCTestCase {
         loader.completeLoading(with: [image0, image1], at: 0)
         assertThat(sut, isRendering: [image0, image1])
         
-        sut.simulateUserInitiatedFeedReload()
+        sut.simulateUserInitiatedReload()
         loader.completeLoading(with: [], at: 1)
         assertThat(sut, isRendering: [])
     }
@@ -89,7 +105,7 @@ final class FeedUIIntegrationTests: XCTestCase {
         sut.loadViewIfNeeded()
         loader.completeLoading(with: [image], at: 0)
         
-        sut.simulateUserInitiatedFeedReload()
+        sut.simulateUserInitiatedReload()
         loader.completeLoadingWithError(at: 1)
         
         assertThat(sut, isRendering: [image])
@@ -351,7 +367,7 @@ final class FeedUIIntegrationTests: XCTestCase {
         
         sut.loadViewIfNeeded()
         loader.completeLoadingWithError(at: 0)
-        sut.simulateUserInitiatedFeedReload()
+        sut.simulateUserInitiatedReload()
         
         XCTAssertEqual(sut.errorMessage, nil)
     }
@@ -368,9 +384,16 @@ final class FeedUIIntegrationTests: XCTestCase {
     
     //MARK: -Helpers
     
-    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (ListViewController, LoaderSpy) {
+    private func makeSUT(
+        selection: @escaping (FeedImage) -> Void = { _ in },
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> (ListViewController, LoaderSpy) {
         let loader = LoaderSpy()
-        let sut = FeedUIComposer.feedComposedWith(loader: loader.loadPublisher, imageLoader: loader.loadImageDataPublisher)
+        let sut = FeedUIComposer.feedComposedWith(
+            loader: loader.loadPublisher,
+            imageLoader: loader.loadImageDataPublisher,
+            selection: selection)
         
         trackForMemoryLeak(sut, file: file, line: line)
         trackForMemoryLeak(loader, file: file, line: line)

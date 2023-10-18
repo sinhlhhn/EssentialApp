@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ImageCommentCell: UITableViewCell {
+public class ImageCommentCell: UITableViewCell {
     
     @IBOutlet public var usernameLabel: UILabel!
     @IBOutlet public var messageLabel: UILabel!

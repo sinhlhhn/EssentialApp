@@ -36,7 +36,7 @@ class InMemoryFeedStore: FeedStore & FeedImageDataStore {
     }
     
     func insert(_ data: Data, for url: URL, completion: @escaping (InsertionResult) -> ()) {
-        feedImageDataCache = [url: data]
+        feedImageDataCache[url] = data
         completion(.success(()))
     }
     
