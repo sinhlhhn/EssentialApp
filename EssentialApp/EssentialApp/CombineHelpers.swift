@@ -11,6 +11,19 @@ import EssentialFeed
 
 extension Paginated<FeedImage> {
     
+    public init(items: [Item], loadMorePublisher: (() -> AnyPublisher<Paginated<FeedImage>, Error>)?) {
+        self.init(items: items, loadMore: loadMorePublisher.map { publisher in
+            return { completion in
+                publisher().subscribe(Subscribers.Sink(receiveCompletion: { result in
+                    if case let .failure(error) = result {
+                        completion(.failure(error))
+                    }
+                }, receiveValue: { result in
+                    completion(.success(result))
+                }))
+            }})
+    }
+    
     var loadMorePublisher: (() -> AnyPublisher<Paginated<FeedImage>, Error>)? {
         guard let loadMore = loadMore else { return nil }
         return {
