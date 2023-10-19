@@ -24,7 +24,7 @@ public class FeedViewAdapter: ResourceView {
     }
     
     public func display(_ viewModel: Paginated<FeedImage>) {
-        controller?.display(viewModel.items.map { model in
+        let feed: [CellController] = viewModel.items.map { model in
             
             let adapter = ImageDataPresentationAdapter { [imageLoader] in
                 imageLoader(model.imageURL)
@@ -44,7 +44,17 @@ public class FeedViewAdapter: ResourceView {
                 mapper: UIImage.tryMake)
             
             return CellController(id: model, feedImageController)
-        })
+        }
+        
+        let loadMoreCellController = LoadMoreCellController {
+            viewModel.loadMore?({ _ in })
+        }
+        
+        let loadMore: [CellController] = [
+            CellController(id: UUID(), loadMoreCellController)
+        ]
+        
+        controller?.display(feed, loadMore)
     }
 }
 

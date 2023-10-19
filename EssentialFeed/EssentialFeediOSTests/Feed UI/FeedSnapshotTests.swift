@@ -67,14 +67,14 @@ final class FeedSnapshotTests: XCTestCase {
     }
     
     private func feedWithLoadMoreIndicator() -> [CellController] {
-        let loadMoreCell = LoadMoreCellController()
+        let loadMoreCell = LoadMoreCellController(callback: {})
         loadMoreCell.display(ResourceLoadingViewModel(isLoading: true))
         
         return feedWith(loadMore: loadMoreCell)
     }
     
     private func feedWithLoadMoreMessage() -> [CellController] {
-        let loadMoreCell = LoadMoreCellController()
+        let loadMoreCell = LoadMoreCellController(callback: {})
         loadMoreCell.display(ResourceErrorViewModel(message: "a message"))
         
         return feedWith(loadMore: loadMoreCell)
