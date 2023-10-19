@@ -7,7 +7,7 @@
 
 import UIKit
 
-class LoadMoreCell: UITableViewCell {
+public class LoadMoreCell: UITableViewCell {
     private lazy var spinner: UIActivityIndicatorView = {
         let spinner = UIActivityIndicatorView(style: .medium)
         contentView.addSubview(spinner)
@@ -43,7 +43,7 @@ class LoadMoreCell: UITableViewCell {
         return messageLabel
     }()
     
-    var isLoading: Bool {
+    public var isLoading: Bool {
         get { spinner.isAnimating }
         set {
             if newValue {
