@@ -126,9 +126,13 @@ class FeedUIIntegrationTests: XCTestCase {
         loader.completeLoading(with: [image0], at: 0)
         assertThat(sut, isRendering: [image0])
         
+        sut.simulateLoadMoreFeedAction()
+        loader.completeLoadMore(with: [image0, image1, image2], at: 0)
+        assertThat(sut, isRendering: [image0, image1, image2])
+        
         sut.simulateUserInitiatedReload()
-        loader.completeLoading(with: [image0, image1, image2, image3], at: 1)
-        assertThat(sut, isRendering: [image0, image1, image2, image3])
+        loader.completeLoading(with: [image0, image1, image3], at: 1)
+        assertThat(sut, isRendering: [image0, image1, image3])
     }
     
     func test_loadFeedCompletion_rendersSuccessfullyLoadedEmptyFeedAfterLoadedNonEmptyFeed() {
@@ -137,7 +141,11 @@ class FeedUIIntegrationTests: XCTestCase {
         let (sut, loader) = makeSUT()
         
         sut.loadViewIfNeeded()
-        loader.completeLoading(with: [image0, image1], at: 0)
+        loader.completeLoading(with: [image0], at: 0)
+        assertThat(sut, isRendering: [image0])
+        
+        sut.simulateLoadMoreFeedAction()
+        loader.completeLoadMore(with: [image0, image1], at: 0)
         assertThat(sut, isRendering: [image0, image1])
         
         sut.simulateUserInitiatedReload()
@@ -154,7 +162,10 @@ class FeedUIIntegrationTests: XCTestCase {
         
         sut.simulateUserInitiatedReload()
         loader.completeLoadingWithError(at: 1)
+        assertThat(sut, isRendering: [image])
         
+        sut.simulateLoadMoreFeedAction()
+        loader.completeLoadMoreWithError(at: 0)
         assertThat(sut, isRendering: [image])
     }
     
@@ -371,6 +382,22 @@ class FeedUIIntegrationTests: XCTestCase {
             exp.fulfill()
         }
         
+        
+        wait(for: [exp], timeout: 1)
+    }
+    
+    func test_loadMoreCompletion_dispatchFromBackgroundThreadToMainThread() {
+        let (sut, loader) = makeSUT()
+        
+        sut.loadViewIfNeeded()
+        loader.completeLoading(at: 0)
+        sut.simulateLoadMoreFeedAction()
+        
+        let exp = expectation(description: "wait for completion")
+        DispatchQueue.global().async {
+            loader.completeLoadMore(at: 0)
+            exp.fulfill()
+        }
         
         wait(for: [exp], timeout: 1)
     }
