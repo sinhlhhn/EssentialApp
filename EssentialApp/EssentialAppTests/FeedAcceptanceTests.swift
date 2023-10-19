@@ -15,8 +15,8 @@ final class FeedAcceptanceTests: XCTestCase {
         let feed = launch(store: .empty, client: .online(makeSuccessfulResponse))
         
         XCTAssertEqual(feed.numberOfRenderedFeedImageViews(), 2)
-        XCTAssertEqual(feed.renderedImage(at: 0), makeImageData())
-        XCTAssertEqual(feed.renderedImage(at: 1), makeImageData())
+        XCTAssertEqual(feed.renderedImage(at: 0), makeImageData1())
+        XCTAssertEqual(feed.renderedImage(at: 1), makeImageData2())
     }
     
     func test_onLaunch_displaysCachedFeedWhenCustomerHasNoConnectivity() {
@@ -27,8 +27,8 @@ final class FeedAcceptanceTests: XCTestCase {
         
         let offlineFeed = launch(store: sharedStore, client: .offline)
         XCTAssertEqual(offlineFeed.numberOfRenderedFeedImageViews(), 2)
-        XCTAssertEqual(offlineFeed.renderedImage(at: 0), makeImageData())
-        XCTAssertEqual(offlineFeed.renderedImage(at: 1), makeImageData())
+        XCTAssertEqual(offlineFeed.renderedImage(at: 0), makeImageData1())
+        XCTAssertEqual(offlineFeed.renderedImage(at: 1), makeImageData2())
     }
     
     func test_onLaunch_displaysEmptyWhenCustomerHasNoConnectivityAndNoCached() {
@@ -102,8 +102,10 @@ final class FeedAcceptanceTests: XCTestCase {
     
     private func makeData(for url: URL) -> Data {
         switch url.path {
-        case "/image-1", "/image-2":
-            return makeImageData()
+        case "/image-1":
+            return makeImageData1()
+        case "/image-2":
+            return makeImageData2()
         case "/essential-feed/v1/feed":
             return makeFeedData()
         case "/essential-feed/v1/image/2AB2AE66-A4B7-4A16-B374-51BBAC8DB086/comments":
@@ -133,8 +135,12 @@ final class FeedAcceptanceTests: XCTestCase {
         ]])
     }
     
-    private func makeImageData() -> Data {
+    private func makeImageData1() -> Data {
         UIImage.make(with: .red).pngData()!
+    }
+    
+    private func makeImageData2() -> Data {
+        UIImage.make(with: .green).pngData()!
     }
     
     private func makeCommentMessage() -> String {
