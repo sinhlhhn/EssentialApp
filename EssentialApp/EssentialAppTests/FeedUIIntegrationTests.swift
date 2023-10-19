@@ -169,6 +169,94 @@ class FeedUIIntegrationTests: XCTestCase {
         assertThat(sut, isRendering: [image])
     }
     
+    func test_loadFeedCompletion_dispatchFromBackgroundThreadToMainThread() {
+        let image = makeImage()
+        let (sut, loader) = makeSUT()
+        
+        sut.loadViewIfNeeded()
+        
+        let exp = expectation(description: "wait for completion")
+        DispatchQueue.global().async {
+            loader.completeLoading(with: [image], at: 0)
+            exp.fulfill()
+        }
+        
+        
+        wait(for: [exp], timeout: 1)
+    }
+    
+    func test_loadMoreCompletion_dispatchFromBackgroundThreadToMainThread() {
+        let (sut, loader) = makeSUT()
+        
+        sut.loadViewIfNeeded()
+        loader.completeLoading(at: 0)
+        sut.simulateLoadMoreFeedAction()
+        
+        let exp = expectation(description: "wait for completion")
+        DispatchQueue.global().async {
+            loader.completeLoadMore(at: 0)
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 1)
+    }
+    
+    func test_loadImageCompletion_dispatchFromBackgroundThreadToMainThread() {
+        let image = makeImage()
+        let imageData = anyImageData()
+        let (sut, loader) = makeSUT()
+        
+        sut.loadViewIfNeeded()
+        loader.completeLoading(with: [image], at: 0)
+        sut.simulateFeedImageViewVisible(at: 0)
+        
+        let exp = expectation(description: "wait for completion")
+        DispatchQueue.global().async {
+            loader.completeLoadingImage(with: imageData, at: 0)
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 1)
+    }
+    
+    func test_errorView_doesNotRenderErrorOnLoadFeed() {
+        let (sut, _) = makeSUT()
+        sut.loadViewIfNeeded()
+        
+        XCTAssertEqual(sut.errorMessage, nil)
+    }
+    
+    func test_errorView_rendersErrorOnLoadError() {
+        let (sut, loader) = makeSUT()
+        
+        sut.loadViewIfNeeded()
+        loader.completeLoadingWithError(at: 0)
+        
+        XCTAssertEqual(sut.errorMessage, loadError)
+    }
+    
+    func test_errorView_hideErrorOnReload() {
+        let (sut, loader) = makeSUT()
+        
+        sut.loadViewIfNeeded()
+        loader.completeLoadingWithError(at: 0)
+        sut.simulateUserInitiatedReload()
+        
+        XCTAssertEqual(sut.errorMessage, nil)
+    }
+    
+    func test_errorView_hideErrorOnTapError() {
+        let (sut, loader) = makeSUT()
+        
+        sut.loadViewIfNeeded()
+        loader.completeLoadingWithError(at: 0)
+        sut.simulateTapErrorMessage()
+        
+        XCTAssertEqual(sut.errorMessage, nil)
+    }
+    
+    // MARK: - Image View Tests
+    
     func test_feedImageView_loadsImageURLWhenVisible() {
         let image = makeImage(url: URL(string: "http://url-0.com")!)
         let image1 = makeImage(url: URL(string: "http://url-1.com")!)
@@ -368,92 +456,6 @@ class FeedUIIntegrationTests: XCTestCase {
         loader.completeLoadingImage(with: imageData0, at: 0)
         
         XCTAssertEqual(view0.renderedImage, .none, "Expected no image state change for reused view once image loading completes successfully")
-    }
-    
-    func test_loadFeedCompletion_dispatchFromBackgroundThreadToMainThread() {
-        let image = makeImage()
-        let (sut, loader) = makeSUT()
-        
-        sut.loadViewIfNeeded()
-        
-        let exp = expectation(description: "wait for completion")
-        DispatchQueue.global().async {
-            loader.completeLoading(with: [image], at: 0)
-            exp.fulfill()
-        }
-        
-        
-        wait(for: [exp], timeout: 1)
-    }
-    
-    func test_loadMoreCompletion_dispatchFromBackgroundThreadToMainThread() {
-        let (sut, loader) = makeSUT()
-        
-        sut.loadViewIfNeeded()
-        loader.completeLoading(at: 0)
-        sut.simulateLoadMoreFeedAction()
-        
-        let exp = expectation(description: "wait for completion")
-        DispatchQueue.global().async {
-            loader.completeLoadMore(at: 0)
-            exp.fulfill()
-        }
-        
-        wait(for: [exp], timeout: 1)
-    }
-    
-    func test_loadImageCompletion_dispatchFromBackgroundThreadToMainThread() {
-        let image = makeImage()
-        let imageData = anyImageData()
-        let (sut, loader) = makeSUT()
-        
-        sut.loadViewIfNeeded()
-        loader.completeLoading(with: [image], at: 0)
-        sut.simulateFeedImageViewVisible(at: 0)
-        
-        let exp = expectation(description: "wait for completion")
-        DispatchQueue.global().async {
-            loader.completeLoadingImage(with: imageData, at: 0)
-            exp.fulfill()
-        }
-        
-        wait(for: [exp], timeout: 1)
-    }
-    
-    func test_errorView_doesNotRenderErrorOnLoadFeed() {
-        let (sut, _) = makeSUT()
-        sut.loadViewIfNeeded()
-        
-        XCTAssertEqual(sut.errorMessage, nil)
-    }
-    
-    func test_errorView_rendersErrorOnLoadError() {
-        let (sut, loader) = makeSUT()
-        
-        sut.loadViewIfNeeded()
-        loader.completeLoadingWithError(at: 0)
-        
-        XCTAssertEqual(sut.errorMessage, loadError)
-    }
-    
-    func test_errorView_hideErrorOnReload() {
-        let (sut, loader) = makeSUT()
-        
-        sut.loadViewIfNeeded()
-        loader.completeLoadingWithError(at: 0)
-        sut.simulateUserInitiatedReload()
-        
-        XCTAssertEqual(sut.errorMessage, nil)
-    }
-    
-    func test_errorView_hideErrorOnTapError() {
-        let (sut, loader) = makeSUT()
-        
-        sut.loadViewIfNeeded()
-        loader.completeLoadingWithError(at: 0)
-        sut.simulateTapErrorMessage()
-        
-        XCTAssertEqual(sut.errorMessage, nil)
     }
     
     //MARK: -Helpers
