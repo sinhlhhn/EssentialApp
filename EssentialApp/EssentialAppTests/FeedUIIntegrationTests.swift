@@ -38,16 +38,16 @@ class FeedUIIntegrationTests: XCTestCase {
     func test_loadFeedActions_requestFeedFromLoader() {
         let (sut, loader) = makeSUT()
         
-        XCTAssertEqual(loader.loadCommentsCallCount, 0)
+        XCTAssertEqual(loader.loadFeedCallCount, 0)
         
         sut.loadViewIfNeeded()
-        XCTAssertEqual(loader.loadCommentsCallCount, 1)
+        XCTAssertEqual(loader.loadFeedCallCount, 1)
         
         sut.simulateUserInitiatedReload()
-        XCTAssertEqual(loader.loadCommentsCallCount, 2)
+        XCTAssertEqual(loader.loadFeedCallCount, 2)
         
         sut.simulateUserInitiatedReload()
-        XCTAssertEqual(loader.loadCommentsCallCount, 3)
+        XCTAssertEqual(loader.loadFeedCallCount, 3)
     }
     
     func test_loadingFeedIndicator_isVisibleWhileLoadingFeed() {
