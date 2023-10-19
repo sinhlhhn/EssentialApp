@@ -16,10 +16,10 @@ extension FeedUIIntegrationTests {
         
         //MARK: - FeedLoader
         
-        private var feedRequests: [PassthroughSubject<[FeedImage], Error>] = []
+        private var feedRequests: [PassthroughSubject<Paginated<FeedImage>, Error>] = []
         
-        func loadPublisher() -> AnyPublisher<[FeedImage], Error> {
-            let publisher = PassthroughSubject<[FeedImage], Error>()
+        func loadPublisher() -> AnyPublisher<Paginated<FeedImage>, Error> {
+            let publisher = PassthroughSubject<Paginated<FeedImage>, Error>()
             feedRequests.append(publisher)
             return publisher.eraseToAnyPublisher()
         }
@@ -29,7 +29,7 @@ extension FeedUIIntegrationTests {
         }
         
         func completeLoading(with images: [FeedImage] = [], at index: Int) {
-            feedRequests[index].send(images)
+            feedRequests[index].send(Paginated<FeedImage>(items: images))
         }
         
         func completeLoadingWithError(at index: Int) {
