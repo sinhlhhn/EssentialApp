@@ -16,6 +16,7 @@ public class FeedViewAdapter: ResourceView {
     private let selection: (FeedImage) -> Void
     
     private typealias ImageDataPresentationAdapter = LoadResourcePresentationAdapter<Data, WeakRefVirtualProxy<FeedImageCellController>>
+    private typealias LoadMorePresentationAdapter = LoadResourcePresentationAdapter<Paginated<FeedImage>, FeedViewAdapter>
     
     init(controller: ListViewController, loader: @escaping (URL) -> FeedImageDataLoader.Publisher, selection: @escaping (FeedImage) -> Void) {
         self.controller = controller
@@ -23,8 +24,8 @@ public class FeedViewAdapter: ResourceView {
         self.selection = selection
     }
     
-    public func display(_ viewModel: FeedViewModel) {
-        controller?.display(viewModel.feed.map { model in
+    public func display(_ viewModel: Paginated<FeedImage>) {
+        let feed: [CellController] = viewModel.items.map { model in
             
             let adapter = ImageDataPresentationAdapter { [imageLoader] in
                 imageLoader(model.imageURL)
@@ -44,7 +45,29 @@ public class FeedViewAdapter: ResourceView {
                 mapper: UIImage.tryMake)
             
             return CellController(id: model, feedImageController)
-        })
+        }
+        
+        guard let loadMorePublisher = viewModel.loadMorePublisher else {
+            controller?.display(feed)
+            return
+        }
+        
+        let loadMoreAdapter = LoadMorePresentationAdapter {
+            loadMorePublisher()
+        }
+        
+        let loadMoreCellController = LoadMoreCellController(callback: loadMoreAdapter.loadResource)
+        
+        loadMoreAdapter.loadPresenter = LoadResourcePresenter(
+            loadingView: WeakRefVirtualProxy(loadMoreCellController),
+            resourceView: self,
+            errorView: WeakRefVirtualProxy(loadMoreCellController))
+        
+        let loadMore: [CellController] = [
+            CellController(id: UUID(), loadMoreCellController)
+        ]
+        
+        controller?.display(feed, loadMore)
     }
 }
 

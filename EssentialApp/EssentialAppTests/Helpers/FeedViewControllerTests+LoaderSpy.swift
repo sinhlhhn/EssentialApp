@@ -16,20 +16,24 @@ extension FeedUIIntegrationTests {
         
         //MARK: - FeedLoader
         
-        private var feedRequests: [PassthroughSubject<[FeedImage], Error>] = []
+        private var feedRequests: [PassthroughSubject<Paginated<FeedImage>, Error>] = []
         
-        func loadPublisher() -> AnyPublisher<[FeedImage], Error> {
-            let publisher = PassthroughSubject<[FeedImage], Error>()
+        func loadPublisher() -> AnyPublisher<Paginated<FeedImage>, Error> {
+            let publisher = PassthroughSubject<Paginated<FeedImage>, Error>()
             feedRequests.append(publisher)
             return publisher.eraseToAnyPublisher()
         }
         
-        var loadCommentsCallCount: Int {
+        var loadFeedCallCount: Int {
             feedRequests.count
         }
         
         func completeLoading(with images: [FeedImage] = [], at index: Int) {
-            feedRequests[index].send(images)
+            feedRequests[index].send(Paginated<FeedImage>(items: images, loadMorePublisher: { [weak self] in
+                let publisher = PassthroughSubject<Paginated<FeedImage>, Error>()
+                self?.loadMoreRequests.append(publisher)
+                return publisher.eraseToAnyPublisher()
+            }))
         }
         
         func completeLoadingWithError(at index: Int) {
@@ -69,6 +73,27 @@ extension FeedUIIntegrationTests {
         func completeLoadingImageWithError(at index: Int) {
             let error = NSError(domain: "", code: 0)
             imageRequests[index].completion(.failure(error))
+        }
+        
+        //MARK: - LoadMoreFeedLoader
+        
+        private var loadMoreRequests: [PassthroughSubject<Paginated<FeedImage>, Error>] = []
+        
+        var loadMoreCallCount: Int {
+            loadMoreRequests.count
+        }
+        
+        func completeLoadMore(with images: [FeedImage] = [], isLastPage: Bool = false, at index: Int) {
+            loadMoreRequests[index].send(Paginated<FeedImage>(items: images, loadMorePublisher: { [weak self] in
+                let publisher = PassthroughSubject<Paginated<FeedImage>, Error>()
+                self?.loadMoreRequests.append(publisher)
+                return publisher.eraseToAnyPublisher()
+            }))
+        }
+        
+        func completeLoadMoreWithError(at index: Int) {
+            let error = NSError(domain: "", code: 1)
+            loadMoreRequests[index].send(completion: .failure(error))
         }
     }
 }

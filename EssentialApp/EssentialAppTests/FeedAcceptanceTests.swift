@@ -15,8 +15,23 @@ final class FeedAcceptanceTests: XCTestCase {
         let feed = launch(store: .empty, client: .online(makeSuccessfulResponse))
         
         XCTAssertEqual(feed.numberOfRenderedFeedImageViews(), 2)
-        XCTAssertEqual(feed.renderedImage(at: 0), makeImageData())
-        XCTAssertEqual(feed.renderedImage(at: 1), makeImageData())
+        XCTAssertEqual(feed.renderedImage(at: 0), makeImageData1())
+        XCTAssertEqual(feed.renderedImage(at: 1), makeImageData2())
+        XCTAssertTrue(feed.canLoadMoreFeed)
+        
+        feed.simulateLoadMoreFeedAction()
+        XCTAssertEqual(feed.numberOfRenderedFeedImageViews(), 3)
+        XCTAssertEqual(feed.renderedImage(at: 0), makeImageData1())
+        XCTAssertEqual(feed.renderedImage(at: 1), makeImageData2())
+        XCTAssertEqual(feed.renderedImage(at: 2), makeImageData3())
+        XCTAssertTrue(feed.canLoadMoreFeed)
+        
+        feed.simulateLoadMoreFeedAction()
+        XCTAssertEqual(feed.numberOfRenderedFeedImageViews(), 3)
+        XCTAssertEqual(feed.renderedImage(at: 0), makeImageData1())
+        XCTAssertEqual(feed.renderedImage(at: 1), makeImageData2())
+        XCTAssertEqual(feed.renderedImage(at: 2), makeImageData3())
+        XCTAssertFalse(feed.canLoadMoreFeed)
     }
     
     func test_onLaunch_displaysCachedFeedWhenCustomerHasNoConnectivity() {
@@ -25,10 +40,14 @@ final class FeedAcceptanceTests: XCTestCase {
         onlineFeed.simulateFeedImageViewVisible(at: 0)
         onlineFeed.simulateFeedImageViewVisible(at: 1)
         
+        onlineFeed.simulateLoadMoreFeedAction()
+        onlineFeed.simulateFeedImageViewVisible(at: 2)
+        
         let offlineFeed = launch(store: sharedStore, client: .offline)
-        XCTAssertEqual(offlineFeed.numberOfRenderedFeedImageViews(), 2)
-        XCTAssertEqual(offlineFeed.renderedImage(at: 0), makeImageData())
-        XCTAssertEqual(offlineFeed.renderedImage(at: 1), makeImageData())
+        XCTAssertEqual(offlineFeed.numberOfRenderedFeedImageViews(), 3)
+        XCTAssertEqual(offlineFeed.renderedImage(at: 0), makeImageData1())
+        XCTAssertEqual(offlineFeed.renderedImage(at: 1), makeImageData2())
+        XCTAssertEqual(offlineFeed.renderedImage(at: 2), makeImageData3())
     }
     
     func test_onLaunch_displaysEmptyWhenCustomerHasNoConnectivityAndNoCached() {
@@ -102,10 +121,19 @@ final class FeedAcceptanceTests: XCTestCase {
     
     private func makeData(for url: URL) -> Data {
         switch url.path {
-        case "/image-1", "/image-2":
-            return makeImageData()
-        case "/essential-feed/v1/feed":
-            return makeFeedData()
+        case "/image-1": return makeImageData1()
+        case "/image-2": return makeImageData2()
+        case "/image-3": return makeImageData3()
+            
+        case "/essential-feed/v1/feed" where url.query()?.contains("after_id") == false:
+            return makeFirstFeedDataPage()
+            
+        case "/essential-feed/v1/feed" where url.query()?.contains("after_id=A28F5FE3-27A7-44E9-8DF5-53742D0E4A5A") == true:
+            return makeSecondFeedDataPage()
+            
+        case "/essential-feed/v1/feed" where url.query()?.contains("after_id=99CCBA00-7187-11EE-B962-0242AC120002") == true:
+            return makeLastEmptyFeedDataPage()
+            
         case "/essential-feed/v1/image/2AB2AE66-A4B7-4A16-B374-51BBAC8DB086/comments":
             return makeCommentsData()
         default:
@@ -113,11 +141,21 @@ final class FeedAcceptanceTests: XCTestCase {
         }
     }
 
-    private func makeFeedData() -> Data {
+    private func makeFirstFeedDataPage() -> Data {
         return try! JSONSerialization.data(withJSONObject: ["items": [
             ["id": "2AB2AE66-A4B7-4A16-B374-51BBAC8DB086", "image": "http://feed.com/image-1"],
             ["id": "A28F5FE3-27A7-44E9-8DF5-53742D0E4A5A", "image": "http://feed.com/image-2"]
         ]])
+    }
+    
+    private func makeSecondFeedDataPage() -> Data {
+        return try! JSONSerialization.data(withJSONObject: ["items": [
+            ["id": "99CCBA00-7187-11EE-B962-0242AC120002", "image": "http://feed.com/image-3"]
+        ]])
+    }
+    
+    private func makeLastEmptyFeedDataPage() -> Data {
+        return try! JSONSerialization.data(withJSONObject: ["items": [[String: Any]]()])
     }
     
     private func makeCommentsData() -> Data {
@@ -133,8 +171,16 @@ final class FeedAcceptanceTests: XCTestCase {
         ]])
     }
     
-    private func makeImageData() -> Data {
+    private func makeImageData1() -> Data {
         UIImage.make(with: .red).pngData()!
+    }
+    
+    private func makeImageData2() -> Data {
+        UIImage.make(with: .green).pngData()!
+    }
+    
+    private func makeImageData3() -> Data {
+        UIImage.make(with: .blue).pngData()!
     }
     
     private func makeCommentMessage() -> String {

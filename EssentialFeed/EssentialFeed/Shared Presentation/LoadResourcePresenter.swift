@@ -27,6 +27,13 @@ public final class LoadResourcePresenter<Resource, View: ResourceView> {
         self.mapper = mapper
     }
     
+    public init(loadingView: ResourceLoadingView, resourceView: View, errorView: ResourceErrorView) where Resource == View.ResourceViewModel {
+        self.loadingView = loadingView
+        self.resourceView = resourceView
+        self.errorView = errorView
+        self.mapper = { $0 }
+    }
+    
     private var loadError: String {
         return NSLocalizedString("GENERIC_CONNECTION_ERROR",tableName: "Shared", bundle: Bundle(for: Self.self), comment: "Error message display when we can't get the resource from server")
     }
