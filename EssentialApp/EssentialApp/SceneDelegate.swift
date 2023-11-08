@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import os
 import Combine
 import CoreData
 import EssentialFeed
@@ -15,6 +16,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
     
+    private lazy var logger = Logger(subsystem: "com.sinhlh.essentialFeed", category: "main")
+    
     private lazy var client: HTTPClient = URLSessionHTTPClient(session: URLSession(configuration: .ephemeral))
     
     private lazy var store: (FeedStore & FeedImageDataStore) = {
@@ -22,7 +25,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         do {
             return try CoreDataFeedStore(storeURL: localStoreURL)
         } catch {
-            assertionFailure("Failed to instantiate CoreData store with error: \(error)")
+            assertionFailure("Failed to instantiate CoreData store with error: \(error.localizedDescription)")
+            logger.fault("Failed to instantiate CoreData store with error: \(error.localizedDescription)")
             return NullStore()
         }
     }()
