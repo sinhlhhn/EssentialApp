@@ -87,7 +87,7 @@ final class FeedAcceptanceTests: XCTestCase {
     ) -> ListViewController {
         
         let sut = SceneDelegate(client: client, store: store)
-        sut.window = UIWindow()
+        sut.window = UIWindow(frame: CGRect(x: 0, y: 0, width: 390, height: 1))
         sut.configureWindow()
         
         let nav = sut.window?.rootViewController as? UINavigationController

@@ -28,9 +28,11 @@ class CommentsUIIntegrationTests: XCTestCase {
         sut.loadViewIfNeeded()
         XCTAssertEqual(loader.loadCommentsCallCount, 1)
         
+        loader.completeLoading(at: 0)
         sut.simulateUserInitiatedReload()
         XCTAssertEqual(loader.loadCommentsCallCount, 2)
         
+        loader.completeLoading(at: 1)
         sut.simulateUserInitiatedReload()
         XCTAssertEqual(loader.loadCommentsCallCount, 3)
     }
@@ -215,6 +217,7 @@ class CommentsUIIntegrationTests: XCTestCase {
         
         func completeLoading(with images: [ImageComment] = [], at index: Int) {
             requests[index].send(images)
+            requests[index].send(completion: .finished)
         }
         
         func completeLoadingWithError(at index: Int) {
