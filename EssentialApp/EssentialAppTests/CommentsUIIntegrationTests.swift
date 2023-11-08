@@ -67,7 +67,7 @@ class CommentsUIIntegrationTests: XCTestCase {
         assertThat(sut, isRendering: [comment0, comment1])
     }
     
-    func test_loadCommentsCompletion_rendersSuccessfullyLoadedEmptyCommentsAfterLoadedNonEmptyFeed() {
+    func test_loadCommentsCompletion_rendersSuccessfullyLoadedEmptyCommentsAfterLoadedNonEmptyComment() {
         let comment0 = makeComment()
         let (sut, loader) = makeSUT()
         
@@ -109,7 +109,7 @@ class CommentsUIIntegrationTests: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
     
-    func test_errorView_doesNotRenderErrorOnLoadFeed() {
+    func test_errorView_doesNotRenderErrorOnLoadComment() {
         let (sut, _) = makeSUT()
         sut.loadViewIfNeeded()
         
