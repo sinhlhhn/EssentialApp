@@ -22,6 +22,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         do {
             return try CoreDataFeedStore(storeURL: localStoreURL)
         } catch {
+            assertionFailure("Failed to instantiate CoreData store with error: \(error)")
             return NullStore()
         }
     }()
