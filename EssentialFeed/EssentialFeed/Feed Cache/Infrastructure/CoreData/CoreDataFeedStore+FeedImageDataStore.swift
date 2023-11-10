@@ -9,7 +9,7 @@ import Foundation
 
 extension CoreDataFeedStore: FeedImageDataStore {
     public func retrieve(dataFroURL url: URL, completion: @escaping (FeedImageDataStore.RetrievalResult) -> ()) {
-        perform { context in
+        performAsync { context in
             completion(Result {
                 return try ManagedFeedImage.data(with: url, in: context)
             })
@@ -17,7 +17,7 @@ extension CoreDataFeedStore: FeedImageDataStore {
     }
     
     public func insert(_ data: Data, for url: URL, completion: @escaping (FeedImageDataStore.InsertionResult) -> ()) {
-        perform { context in
+        performAsync { context in
             completion(Result {
                 try ManagedFeedImage.first(with: url, in: context)
                     .map { $0.data = data }
