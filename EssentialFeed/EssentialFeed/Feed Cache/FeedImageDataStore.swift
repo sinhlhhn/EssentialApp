@@ -48,4 +48,5 @@ public extension FeedImageDataStore {
     }
     
     func insert(_ data: Data, for url: URL, completion: @escaping (InsertionResult) -> ()) {}
+    func retrieve(dataFroURL url: URL, completion: @escaping (RetrievalResult) -> ()) {}
 }

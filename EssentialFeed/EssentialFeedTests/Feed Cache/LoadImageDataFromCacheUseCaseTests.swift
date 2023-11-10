@@ -50,41 +50,6 @@ final class LoadImageDataFromCacheUseCaseTests: XCTestCase {
         }
     }
     
-    func test_loadImageDataFromURL_doesNotDeliverResultAfterCancelingTask() {
-        let (sut, store) = makeSUT()
-        
-        var capturedResult = [FeedImageDataLoader.Result]()
-        let task = sut.loadImageData(from: anyURL()) { result in
-            capturedResult.append(result)
-        }
-        
-        task.cancel()
-        
-        store.completeRetrieval(with: anyData())
-        store.completeRetrieval(with: anyNSError())
-        store.completeRetrieval(with: .none)
-        
-        XCTAssertEqual(capturedResult.isEmpty, true)
-    }
-    
-    func test_loadImageDataFromURL_doesNotDeliverResultAfterInstanceHasBeenDeallocated() {
-        let store = FeedImageDataStoreSpy()
-        var sut: LocalFeedImageDataLoader? = LocalFeedImageDataLoader(store: store)
-        
-        var capturedResult = [FeedImageDataLoader.Result]()
-        _ = sut?.loadImageData(from: anyURL()) { result in
-            capturedResult.append(result)
-        }
-        
-        sut = nil
-        
-        store.completeRetrieval(with: anyData())
-        store.completeRetrieval(with: anyNSError())
-        store.completeRetrieval(with: .none)
-        
-        XCTAssertEqual(capturedResult.isEmpty, true)
-    }
-    
     //MARK: -Helpers
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (LocalFeedImageDataLoader, FeedImageDataStoreSpy) {
@@ -107,6 +72,8 @@ final class LoadImageDataFromCacheUseCaseTests: XCTestCase {
     private func expect(_ sut: LocalFeedImageDataLoader, completeWithResult expectedResult: FeedImageDataStore.RetrievalResult, action: () -> Void, file: StaticString = #filePath, line: UInt = #line) {
         let exp = expectation(description: "wait for request")
         
+        action()
+        
         _ = sut.loadImageData(from: anyURL()) { result in
             switch (result, expectedResult) {
             case let (.failure(error as LocalFeedImageDataLoader.LoadError), .failure(expectedError as LocalFeedImageDataLoader.LoadError)):
@@ -118,8 +85,6 @@ final class LoadImageDataFromCacheUseCaseTests: XCTestCase {
             }
             exp.fulfill()
         }
-        
-        action()
         
         wait(for: [exp], timeout: 1)
     }
