@@ -16,47 +16,21 @@ public final class LocalFeedImageDataLoader {
 }
 
 extension LocalFeedImageDataLoader: FeedImageDataLoader {
-    private class LocalFeedImageDataLoaderTask: FeedImageDataLoaderTask {
-        private var completion: ((FeedImageDataLoader.Result) -> ())?
-        
-        init(completion: @escaping (FeedImageDataLoader.Result) -> Void) {
-            self.completion = completion
-        }
-        
-        func complete(with result: FeedImageDataLoader.Result) {
-            completion?(result)
-        }
-        
-        func cancel() {
-            preventFurtherCompletions()
-        }
-        
-        private func preventFurtherCompletions() {
-            completion = nil
-        }
-    }
-    
     public enum LoadError: Swift.Error {
         case failed
         case notFound
     }
     
-    public typealias LoadResult = FeedImageDataLoader.Result
-    
-    public func loadImageData(from url: URL, completion: @escaping (LoadResult) -> ()) -> FeedImageDataLoaderTask {
-        let task = LocalFeedImageDataLoaderTask(completion: completion)
-        
-        
-        task.complete(with: Swift.Result {
-            try store.retrieve(dataFroURL: url)
+    public func loadImageData(from url: URL) throws -> Data {
+        do {
+            if let data =  try store.retrieve(dataFroURL: url) {
+                return data
+            }
+        } catch {
+            throw LoadError.failed
         }
-            .mapError { _ in LoadError.failed }
-            .flatMap { data in
-                data.map { .success($0) } ?? .failure(LoadError.notFound)
-            })
         
-        
-        return task
+        throw LoadError.notFound
     }
 }
 
