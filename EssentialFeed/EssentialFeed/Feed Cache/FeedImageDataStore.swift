@@ -46,4 +46,6 @@ public extension FeedImageDataStore {
         
         group.wait()
     }
+    
+    func insert(_ data: Data, for url: URL, completion: @escaping (InsertionResult) -> ()) {}
 }
