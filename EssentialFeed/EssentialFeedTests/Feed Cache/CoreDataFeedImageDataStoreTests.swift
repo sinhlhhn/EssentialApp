@@ -47,28 +47,6 @@ final class CoreDataFeedImageDataStoreTests: XCTestCase {
         expect(sut, completionWithResult: found(lastData), for: url)
     }
     
-    func test_sideEffects_runSerially() {
-        let sut = makeSUT()
-        let url = anyURL()
-        
-        let op1 = expectation(description: "operation 1")
-        sut.insert([localFeedImage(url: url)], currentDate: Date()) { _ in
-            op1.fulfill()
-        }
-        
-        let op2 = expectation(description: "operation 2")
-        sut.insert(anyData(), for: url) { _ in
-            op2.fulfill()
-        }
-        
-        let op3 = expectation(description: "operation 3")
-        sut.insert(anyData(), for: url) { _ in
-            op3.fulfill()
-        }
-        
-        wait(for: [op1, op2, op3], timeout: 5, enforceOrder: true)
-    }
-    
     //MARK: -Helpers
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> CoreDataFeedStore {
@@ -79,7 +57,7 @@ final class CoreDataFeedImageDataStoreTests: XCTestCase {
         return sut
     }
     
-    private func notFound() -> FeedImageDataStore.RetrievalResult {
+    private func notFound() -> Result<Data?, Error> {
         return .success(.none)
     }
     
@@ -87,11 +65,11 @@ final class CoreDataFeedImageDataStoreTests: XCTestCase {
         return LocalFeedImage(id: UUID(), description: nil, location: nil, url: url)
     }
     
-    private func found(_ data: Data) -> FeedImageDataStore.RetrievalResult {
+    private func found(_ data: Data) -> Result<Data?, Error> {
         return .success(data)
     }
     
-    private func expect(_ sut: CoreDataFeedStore, completionWithResult expectedResult: FeedImageDataStore.RetrievalResult, for url: URL, file: StaticString = #filePath, line: UInt = #line) {
+    private func expect(_ sut: CoreDataFeedStore, completionWithResult expectedResult: Result<Data?, Error>, for url: URL, file: StaticString = #filePath, line: UInt = #line) {
         
         let receivedResult = Result { try sut.retrieve(dataFroURL: url) }
         
