@@ -8,6 +8,7 @@
 import Foundation
 import EssentialFeed
 
+/*
 final class FeedImageViewModelDeleted<Image> {
     typealias Observer<T> = (T) -> ()
     
@@ -81,3 +82,5 @@ final class FeedImageViewModelDeleted<Image> {
         onImageLoadingStateChange?(false)
     }
 }
+
+*/
