@@ -102,7 +102,7 @@ extension Publisher {
 
 private extension FeedImageDataCache {
     func saveIgnoringResult(with data: Data, from url: URL) {
-        save(data, for: url) { _ in }
+        try? save(data, for: url)
     }
 }
 
