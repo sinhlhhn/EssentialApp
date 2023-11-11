@@ -33,17 +33,14 @@ extension LocalFeedLoader {
     
     private struct InvalidCache: Error {}
     
-    public func validateCache(completion: @escaping (ValidationResult) -> Void) {
-        completion(ValidationResult {
-            do {
-                if let result = try store.retrieve(), !FeedCachePolicy.validate(result.timestamp, against: currentDate()) {
-                    throw InvalidCache()
-                }
-            } catch {
-                try store.deleteCacheFeed()
+    public func validateCache() throws {
+        do {
+            if let result = try store.retrieve(), !FeedCachePolicy.validate(result.timestamp, against: currentDate()) {
+                throw InvalidCache()
             }
-        })
-        
+        } catch {
+            try store.deleteCacheFeed()
+        }
     }
 }
 

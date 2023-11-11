@@ -168,18 +168,14 @@ final class EssentialFeedCacheIntegrationTests: XCTestCase {
     }
     
     private func validateCache(with sut: LocalFeedLoader, file: StaticString = #filePath, line: UInt = #line) {
-        let exp = expectation(description: "wait for validate")
-        sut.validateCache { validationResult in
-            switch validationResult {
-            case .success:
-                break
-            case let .failure(error):
-                XCTFail("Expected successful validate result, got \(error) instead")
-            }
-            exp.fulfill()
-        }
         
-        wait(for: [exp], timeout: 1)
+        let validationResult = Result { try sut.validateCache() }
+        switch validationResult {
+        case .success:
+            break
+        case let .failure(error):
+            XCTFail("Expected successful validate result, got \(error) instead")
+        }
     }
     
     private func testSpecificStoreURL() -> URL {
