@@ -13,15 +13,9 @@ class NullStore: FeedStore & FeedImageDataStore {
     
     func retrieve(dataFroURL url: URL) throws -> Data? { return .none }
     
-    func deleteCacheFeed(completion: @escaping DeletionCompletion) {
-        completion(.success(()))
-    }
+    func deleteCacheFeed() throws { }
     
-    func insert(_ feed: [EssentialFeed.LocalFeedImage], currentDate: Date, completion: @escaping InsertionCompletion) {
-        completion(.success(()))
-    }
+    func insert(_ feed: [LocalFeedImage], currentDate: Date) throws { }
     
-    func retrieve(completion: @escaping RetrievalCompletion) {
-        completion(.success(.none))
-    }
+    func retrieve() throws -> CachedFeed? { return .none }
 }
