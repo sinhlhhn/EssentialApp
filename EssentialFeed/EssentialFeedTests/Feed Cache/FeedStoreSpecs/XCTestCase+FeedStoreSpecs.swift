@@ -98,87 +98,47 @@ extension FeedStoreSpecs where Self: XCTestCase {
         expect(sut, toRetrieveWithResult: .success(.none))
     }
     
-    func assertThatStoreSideEffectRunSerially(on sut: FeedStore, file: StaticString = #filePath, line: UInt = #line) {
-        var capturedExpectations = [XCTestExpectation]()
-        
-        let op1 = expectation(description: "Wait for op1")
-        sut.insert(uniqueImageFeed().locals, currentDate: Date()) { _ in
-            capturedExpectations.append(op1)
-            op1.fulfill()
-        }
-        
-        let op2 = expectation(description: "Wait for op2")
-        sut.deleteCacheFeed { _ in
-            capturedExpectations.append(op2)
-            op2.fulfill()
-        }
-        
-        let op3 = expectation(description: "Wait for op3")
-        sut.insert(uniqueImageFeed().locals, currentDate: Date()) { _ in
-            capturedExpectations.append(op3)
-            op3.fulfill()
-        }
-        
-        waitForExpectations(timeout: 5)
-        
-        XCTAssertEqual(capturedExpectations, [op1, op2, op3], "Expected side-effects run in serially but operation finished in the wrong oder")
-    }
-    
     func expect(_ sut: FeedStore, toRetrieveWithResult expectedResult: FeedStore.RetrievalResult, file: StaticString = #filePath, line: UInt = #line) {
-        let exp = expectation(description: "wait for retrieval")
-        sut.retrieve { receivedResult in
-            switch (receivedResult, expectedResult) {
-            case let (.success(.some((receivedImages, receivedTimestamp))), .success(.some((expectedImages, expectedTimestamp)))):
-                XCTAssertEqual(receivedImages, expectedImages)
-                XCTAssertEqual(receivedTimestamp, expectedTimestamp)
-                
-            case (.success(.none), .success(.none)), (.failure, .failure): break
-                
-            default:
-                XCTFail("Expected retrieving \(expectedResult), got \(receivedResult) instead", file: file, line: line)
-            }
-            
-            exp.fulfill()
-        }
         
-        wait(for: [exp], timeout: 1)
+        let receivedResult = Result { try sut.retrieve() }
+        switch (receivedResult, expectedResult) {
+        case let (.success(.some((receivedImages, receivedTimestamp))), .success(.some((expectedImages, expectedTimestamp)))):
+            XCTAssertEqual(receivedImages, expectedImages)
+            XCTAssertEqual(receivedTimestamp, expectedTimestamp)
+            
+        case (.success(.none), .success(.none)), (.failure, .failure): break
+            
+        default:
+            XCTFail("Expected retrieving \(expectedResult), got \(receivedResult) instead", file: file, line: line)
+        }
     }
     
     @discardableResult
     func delete(from sut: FeedStore) -> Error? {
-        let exp = expectation(description: "wait for deletion")
-        var deletionError: Error?
-        sut.deleteCacheFeed { result in
-            switch result {
-            case let .failure(receivedError):
-                deletionError = receivedError
-            default:
-                break
-            }
-            exp.fulfill()
-        }
         
-        wait(for: [exp], timeout: 1)
+        var deletionError: Error?
+        let result = Result { try sut.deleteCacheFeed() }
+        switch result {
+        case let .failure(receivedError):
+            deletionError = receivedError
+        default:
+            break
+        }
         
         return deletionError
     }
     
     @discardableResult
     func insert(_ feed: [LocalFeedImage], timestamp: Date, to sut: FeedStore) -> Error? {
-        let exp = expectation(description: "wait for insertion")
         
         var insertionError: Error?
-        sut.insert(feed, currentDate: timestamp) { result in
-            switch result {
-            case let .failure(receivedError):
-                insertionError = receivedError
-            default:
-                break
-            }
-            exp.fulfill()
+        let result = Result { try sut.insert(feed, currentDate: timestamp) }
+        switch result {
+        case let .failure(receivedError):
+            insertionError = receivedError
+        default:
+            break
         }
-        
-        wait(for: [exp], timeout: 1)
         
         return insertionError
     }
