@@ -98,7 +98,7 @@ extension FeedStoreSpecs where Self: XCTestCase {
         expect(sut, toRetrieveWithResult: .success(.none))
     }
     
-    func expect(_ sut: FeedStore, toRetrieveWithResult expectedResult: FeedStore.RetrievalResult, file: StaticString = #filePath, line: UInt = #line) {
+    func expect(_ sut: FeedStore, toRetrieveWithResult expectedResult: Result<CachedFeed?, Error>, file: StaticString = #filePath, line: UInt = #line) {
         
         let receivedResult = Result { try sut.retrieve() }
         switch (receivedResult, expectedResult) {
@@ -143,7 +143,7 @@ extension FeedStoreSpecs where Self: XCTestCase {
         return insertionError
     }
     
-    func expect(_ sut: FeedStore, toRetrieveWithResultTwice expectedResult: FeedStore.RetrievalResult) {
+    func expect(_ sut: FeedStore, toRetrieveWithResultTwice expectedResult: Result<CachedFeed?, Error>) {
         expect(sut, toRetrieveWithResult: expectedResult)
         expect(sut, toRetrieveWithResult: expectedResult)
     }
