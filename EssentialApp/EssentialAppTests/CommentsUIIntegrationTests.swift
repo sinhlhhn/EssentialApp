@@ -28,9 +28,11 @@ class CommentsUIIntegrationTests: XCTestCase {
         sut.loadViewIfNeeded()
         XCTAssertEqual(loader.loadCommentsCallCount, 1)
         
+        loader.completeLoading(at: 0)
         sut.simulateUserInitiatedReload()
         XCTAssertEqual(loader.loadCommentsCallCount, 2)
         
+        loader.completeLoading(at: 1)
         sut.simulateUserInitiatedReload()
         XCTAssertEqual(loader.loadCommentsCallCount, 3)
     }
@@ -67,7 +69,7 @@ class CommentsUIIntegrationTests: XCTestCase {
         assertThat(sut, isRendering: [comment0, comment1])
     }
     
-    func test_loadCommentsCompletion_rendersSuccessfullyLoadedEmptyCommentsAfterLoadedNonEmptyFeed() {
+    func test_loadCommentsCompletion_rendersSuccessfullyLoadedEmptyCommentsAfterLoadedNonEmptyComment() {
         let comment0 = makeComment()
         let (sut, loader) = makeSUT()
         
@@ -109,7 +111,7 @@ class CommentsUIIntegrationTests: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
     
-    func test_errorView_doesNotRenderErrorOnLoadFeed() {
+    func test_errorView_doesNotRenderErrorOnLoadComment() {
         let (sut, _) = makeSUT()
         sut.loadViewIfNeeded()
         
@@ -215,6 +217,7 @@ class CommentsUIIntegrationTests: XCTestCase {
         
         func completeLoading(with images: [ImageComment] = [], at index: Int) {
             requests[index].send(images)
+            requests[index].send(completion: .finished)
         }
         
         func completeLoadingWithError(at index: Int) {

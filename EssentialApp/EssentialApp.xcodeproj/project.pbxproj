@@ -46,6 +46,7 @@
 		22E5DF822AC18AD80085A614 /* MainQueueDispatchDecorator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22E5DF772AC18AD80085A614 /* MainQueueDispatchDecorator.swift */; };
 		22E5DF842AC195A20085A614 /* FeedAcceptanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22E5DF832AC195A20085A614 /* FeedAcceptanceTests.swift */; };
 		22F234DD2ABC4D4300EF4F09 /* EssentialApp.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 22F234DC2ABC4D4300EF4F09 /* EssentialApp.xctestplan */; };
+		22F352CA2AFB82AE00709A5B /* NullStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F352C92AFB82AE00709A5B /* NullStore.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -130,6 +131,7 @@
 		22E5DF7C2AC18AD80085A614 /* FeedUIComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedUIComposer.swift; sourceTree = "<group>"; };
 		22E5DF832AC195A20085A614 /* FeedAcceptanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedAcceptanceTests.swift; sourceTree = "<group>"; };
 		22F234DC2ABC4D4300EF4F09 /* EssentialApp.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EssentialApp.xctestplan; sourceTree = "<group>"; };
+		22F352C92AFB82AE00709A5B /* NullStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NullStore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -223,6 +225,7 @@
 				22E5DF772AC18AD80085A614 /* MainQueueDispatchDecorator.swift */,
 				22E44EF62ABBFEDD00D3F10A /* AppDelegate.swift */,
 				22E44EF82ABBFEDD00D3F10A /* SceneDelegate.swift */,
+				22F352C92AFB82AE00709A5B /* NullStore.swift */,
 				22E44EFA2ABBFEDD00D3F10A /* ViewController.swift */,
 				22E44EFF2ABBFEDE00D3F10A /* Assets.xcassets */,
 				22E44F012ABBFEDE00D3F10A /* LaunchScreen.storyboard */,
@@ -449,6 +452,7 @@
 				22E5DF7E2AC18AD80085A614 /* LoadResourcePresentationAdapter.swift in Sources */,
 				22E5DF7D2AC18AD80085A614 /* FeedViewAdapter.swift in Sources */,
 				220ED63C2ADD4130003CA467 /* CommentsUIComposer.swift in Sources */,
+				22F352CA2AFB82AE00709A5B /* NullStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
