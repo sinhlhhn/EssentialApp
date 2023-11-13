@@ -19,9 +19,9 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
     func test_validateCache_deletesCacheOnRetrievalError() {
         let (sut, store) = makeSUT()
         
-        sut.validateCache { _ in }
-        
         store.completeRetrieve(with: anyNSError())
+        try? sut.validateCache()
+        
         
         XCTAssertEqual(store.receivedMessage, [.retrieve, .deleteCacheFeed])
     }
@@ -29,7 +29,7 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
     func test_validateCache_doesNotDeleteCacheWhenCacheIsAlreadyEmpty() {
         let (sut, store) = makeSUT()
         
-        sut.validateCache { _ in }
+        try? sut.validateCache()
         
         store.completeRetrievalWithEmptyCache()
         
@@ -42,7 +42,7 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
         let feed = uniqueImageFeed()
         let nonExpiredTimestamp = fixCurrentDate.minusFeedCacheMaxAge().adding(seconds: 1)
 
-        sut.validateCache { _ in }
+        try? sut.validateCache()
 
         store.completeRetrieval(with: feed.locals, timestamp: nonExpiredTimestamp)
 
@@ -55,9 +55,9 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
         let feed = uniqueImageFeed()
         let cacheExpirationTimestamp = fixCurrentDate.minusFeedCacheMaxAge()
         
-        sut.validateCache { _ in }
-
         store.completeRetrieval(with: feed.locals, timestamp: cacheExpirationTimestamp)
+        
+        try? sut.validateCache()
         
         XCTAssertEqual(store.receivedMessage, [.retrieve, .deleteCacheFeed])
     }
@@ -68,25 +68,11 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
         let feed = uniqueImageFeed()
         let expiredTimestamp = fixCurrentDate.minusFeedCacheMaxAge().adding(seconds: -1)
 
-        sut.validateCache { _ in }
-
         store.completeRetrieval(with: feed.locals, timestamp: expiredTimestamp)
+        
+        try? sut.validateCache()
 
         XCTAssertEqual(store.receivedMessage, [.retrieve, .deleteCacheFeed])
-    }
-    
-    func test_validateCache_doesNotDeleteInvalidateCacheAfterSUTInstanceHasBeenDeallocated() {
-        let store = FeedStoreSpy()
-        var sut: LocalFeedLoader? = LocalFeedLoader(store: store, currentDate: Date.init)
-        
-        sut?.validateCache { _ in }
-        
-        sut = nil
-        
-        store.completeRetrieve(with: anyNSError())
-        
-        XCTAssertEqual(store.receivedMessage, [.retrieve])
-        
     }
     
     func test_validateCache_failsOnDeletionErrorOfFailedRetrieval() {
@@ -163,22 +149,18 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
     }
     
     private func expect(_ sut: LocalFeedLoader, completionWithResult expectedResult: LocalFeedLoader.ValidationResult, action: () -> Void, file: StaticString = #filePath, line: UInt = #line) {
-        let exp = expectation(description: "wait for validate")
-        sut.validateCache { receivedResult in
-            switch (receivedResult, expectedResult) {
-            case (.success(()), .success(())):
-                break
-            case let (.failure(receivedError as NSError), .failure(expectedError as NSError)):
-                XCTAssertEqual(receivedError.code, expectedError.code)
-                XCTAssertEqual(receivedError.domain, expectedError.domain)
-            default:
-                XCTFail("Expected \(expectedResult) got \(receivedResult) instead", file: file, line: line)
-            }
-            exp.fulfill()
-        }
         
         action()
         
-        wait(for: [exp], timeout: 1)
+        let receivedResult = Result { try sut.validateCache() }
+        switch (receivedResult, expectedResult) {
+        case (.success(()), .success(())):
+            break
+        case let (.failure(receivedError as NSError), .failure(expectedError as NSError)):
+            XCTAssertEqual(receivedError.code, expectedError.code)
+            XCTAssertEqual(receivedError.domain, expectedError.domain)
+        default:
+            XCTFail("Expected \(expectedResult) got \(receivedResult) instead", file: file, line: line)
+        }
     }
 }

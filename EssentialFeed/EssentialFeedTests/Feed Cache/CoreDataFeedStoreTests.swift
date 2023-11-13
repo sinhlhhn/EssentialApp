@@ -76,12 +76,6 @@ final class CoreDataFeedStoreTests: XCTestCase, FeedStoreSpecs {
         assertThatDeleteEmptiesPreviouslyInsertedCached(on: sut)
     }
     
-    func test_storeSideEffect_runSerially() {
-        let sut = makeSUT()
-        
-        assertThatStoreSideEffectRunSerially(on: sut)
-    }
-    
     //MARK: -Helpers
     
     private func makeSUT() -> FeedStore {
