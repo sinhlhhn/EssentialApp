@@ -87,6 +87,9 @@
 
 /* Begin PBXFileReference section */
 		220ED63B2ADD4130003CA467 /* CommentsUIComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsUIComposer.swift; sourceTree = "<group>"; };
+		221E17322B021E2800A6EE41 /* EssentialFeed */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = EssentialFeed; path = ../EssentialFeed; sourceTree = "<group>"; };
+		221E17332B021E3500A6EE41 /* EssentialFeediOS */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = EssentialFeediOS; path = ../EssentialFeediOS; sourceTree = "<group>"; };
+		221E17342B02206000A6EE41 /* CI_iOS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = CI_iOS.xctestplan; path = "/Users/sam/Documents/MyCode/Essential/EssentialApp/Test Plan/CI_iOS.xctestplan"; sourceTree = "<absolute>"; };
 		2288C1D42AC19E3300BDA013 /* HTTClientStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTClientStub.swift; sourceTree = "<group>"; };
 		2288C1D62AC19E7C00BDA013 /* InMemoryFeedStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InMemoryFeedStore.swift; sourceTree = "<group>"; };
 		228BA3392ABE9817006D1476 /* EssentialAppUIAcceptanceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EssentialAppUIAcceptanceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -162,6 +165,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		221E17302B021D5C00A6EE41 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				221E17322B021E2800A6EE41 /* EssentialFeed */,
+				221E17332B021E3500A6EE41 /* EssentialFeediOS */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
 		22DE94862ABCA553005BA3E7 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -186,6 +198,7 @@
 		22E44EEA2ABBFEDD00D3F10A = {
 			isa = PBXGroup;
 			children = (
+				221E17302B021D5C00A6EE41 /* Packages */,
 				22F234DB2ABC4D3100EF4F09 /* Test Plan */,
 				22E44EF52ABBFEDD00D3F10A /* EssentialApp */,
 				22E44F0C2ABBFEDE00D3F10A /* EssentialAppTests */,
@@ -259,6 +272,7 @@
 		22F234DB2ABC4D3100EF4F09 /* Test Plan */ = {
 			isa = PBXGroup;
 			children = (
+				221E17342B02206000A6EE41 /* CI_iOS.xctestplan */,
 				22F234DC2ABC4D4300EF4F09 /* EssentialApp.xctestplan */,
 			);
 			path = "Test Plan";
