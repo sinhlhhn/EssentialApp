@@ -35,7 +35,7 @@ public final class LoadResourcePresenter<Resource, View: ResourceView> {
     }
     
     private var loadError: String {
-        return NSLocalizedString("GENERIC_CONNECTION_ERROR",tableName: "Shared", bundle: Bundle(for: Self.self), comment: "Error message display when we can't get the resource from server")
+        return NSLocalizedString("GENERIC_CONNECTION_ERROR",tableName: "Shared", bundle: Bundle.module, comment: "Error message display when we can't get the resource from server")
     }
     
     public func didStartLoading() {

@@ -8,12 +8,13 @@
 import Foundation
 import XCTest
 import EssentialFeed
+import TestHelpers
 
 final class ImageCommentsLocalizationTests: XCTestCase {
     
     func test_localizedStrings_haveKeysAndValuesForAllSupportedLocalizations() {
         let table = "ImageComments"
-        let bundle = Bundle(for: ImageCommentsPresenter.self)
+        let bundle = EssentialFeed.bundle
         
         assertLocalizationKeysAndValuesExist(in: bundle, table)
     }

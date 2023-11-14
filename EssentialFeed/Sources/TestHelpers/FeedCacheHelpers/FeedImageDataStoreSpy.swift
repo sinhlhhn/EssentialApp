@@ -8,39 +8,41 @@
 import Foundation
 import EssentialFeed
 
-class FeedImageDataStoreSpy: FeedImageDataStore {
-    enum Message: Equatable {
+public class FeedImageDataStoreSpy: FeedImageDataStore {
+    public init() {}
+    
+    public enum Message: Equatable {
         case retrieve(dataForURL: URL)
         case insert(_ data: Data, for: URL)
     }
     
     private var retrievalResult: Result<Data?, Error>?
     private var insertionResult: Result<Void, Error>?
-    private(set) var receivedMessage = [Message]()
+    public private(set) var receivedMessage = [Message]()
     
-    func retrieve(dataFroURL url: URL) throws -> Data? {
+    public func retrieve(dataFroURL url: URL) throws -> Data? {
         receivedMessage.append(.retrieve(dataForURL: url))
         return try retrievalResult?.get()
     }
     
-    func insert(_ data: Data, for url: URL) throws {
+    public func insert(_ data: Data, for url: URL) throws {
         receivedMessage.append(.insert(data, for: url))
         try insertionResult?.get()
     }
     
-    func completeRetrieval(with error: Error, at index: Int = 0) {
+    public func completeRetrieval(with error: Error, at index: Int = 0) {
         retrievalResult = .failure(error)
     }
     
-    func completeRetrieval(with data: Data?, at index: Int = 0) {
+    public func completeRetrieval(with data: Data?, at index: Int = 0) {
         retrievalResult = .success(data)
     }
     
-    func completeInsertion(with error: Error, at index: Int = 0) {
+    public func completeInsertion(with error: Error, at index: Int = 0) {
         insertionResult = .failure(error)
     }
     
-    func completeInsertionSuccessfully(at index: Int = 0) {
+    public func completeInsertionSuccessfully(at index: Int = 0) {
         insertionResult = .success(())
     }
 }

@@ -8,12 +8,13 @@
 import Foundation
 import XCTest
 import EssentialFeed
+import TestHelpers
 
 final class FeedLocalizationTests: XCTestCase {
     
     func test_localizedStrings_haveKeysAndValuesForAllSupportedLocalizations() {
         let table = "Feed"
-        let bundle = Bundle(for: FeedPresenter.self)
+        let bundle = EssentialFeed.bundle
         
         assertLocalizationKeysAndValuesExist(in: bundle, table)
     }

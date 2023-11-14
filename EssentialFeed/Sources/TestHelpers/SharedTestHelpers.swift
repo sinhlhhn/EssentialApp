@@ -7,34 +7,34 @@
 
 import Foundation
 
-func anyNSError() -> NSError {
+public func anyNSError() -> NSError {
     NSError(domain: "any-error", code: 1)
 }
 
-func anyURL() -> URL {
+public func anyURL() -> URL {
     URL(string: "http://any-url")!
 }
 
-func anyData() -> Data {
+public func anyData() -> Data {
     Data("any-data".utf8)
 }
 
-func makeItemJSON(_ items: [[String: Any]]) -> Data {
+public func makeItemJSON(_ items: [[String: Any]]) -> Data {
     let json = [
         "items": items
     ]
     return try! JSONSerialization.data(withJSONObject: json)
 }
 
-func response(with statusCode: Int) -> HTTPURLResponse {
+public func response(with statusCode: Int) -> HTTPURLResponse {
     return HTTPURLResponse(url: anyURL(), statusCode: statusCode, httpVersion: nil, headerFields: nil)!
 }
 
-func anyHTTPURLResponse() -> HTTPURLResponse {
+public func anyHTTPURLResponse() -> HTTPURLResponse {
     HTTPURLResponse(url: anyURL(), mimeType: nil, expectedContentLength: 0, textEncodingName: nil)
 }
 
-extension Date {
+public extension Date {
     func adding(seconds: TimeInterval) -> Date {
         self + seconds
     }

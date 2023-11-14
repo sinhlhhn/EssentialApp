@@ -7,6 +7,7 @@
 
 import XCTest
 import EssentialFeed
+import TestHelpers
 
 extension FailableInsertFeedStoreSpecs where Self: XCTestCase {
     func assertThatInsertDeliversFailureOnInsertionError(on sut: FeedStore, file: StaticString = #filePath, line: UInt = #line) {

@@ -7,6 +7,7 @@
 
 import XCTest
 import EssentialFeed
+import TestHelpers
 
 final class FeedEndpointTests: XCTestCase {
     func test_feed_endpointURL() {

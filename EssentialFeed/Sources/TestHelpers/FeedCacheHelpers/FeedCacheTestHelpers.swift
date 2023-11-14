@@ -8,17 +8,17 @@
 import Foundation
 import EssentialFeed
 
-func uniqueImage() -> FeedImage {
+public func uniqueImage() -> FeedImage {
     FeedImage(id: UUID(), description: "any des", location: nil, url: URL(string: "https://any-url")!)
 }
 
-func uniqueImageFeed() -> (models: [FeedImage], locals: [LocalFeedImage]) {
+public func uniqueImageFeed() -> (models: [FeedImage], locals: [LocalFeedImage]) {
     let feed = [uniqueImage(), uniqueImage()]
     let locals = feed.map { LocalFeedImage(id: $0.id, description: $0.description, location: $0.location, url: $0.imageURL) }
     return (feed, locals)
 }
 
-extension Date {
+public extension Date {
     private var feedCacheMaxAgeInDays: Int {
         7
     }

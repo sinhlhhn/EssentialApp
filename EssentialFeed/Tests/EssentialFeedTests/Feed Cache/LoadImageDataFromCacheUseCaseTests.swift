@@ -8,6 +8,7 @@
 import Foundation
 import XCTest
 import EssentialFeed
+import TestHelpers
 
 final class LoadImageDataFromCacheUseCaseTests: XCTestCase {
     func test_init_doesNotMessageStore() {

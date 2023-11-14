@@ -7,6 +7,7 @@
 
 import XCTest
 import EssentialFeed
+import TestHelpers
 
 final class CoreDataFeedImageDataStoreTests: XCTestCase {
     func test_retrieveImage_deliverImageDataNotFoundErrorOnEmptyData() {
