@@ -49,7 +49,7 @@ final class FeedSnapshotTests: XCTestCase {
     //MARK: -Helpers
     
     private func makeSUT() -> ListViewController {
-        let bundle = Bundle(for: ListViewController.self)
+        let bundle = EssentialFeediOS.bundle
         let sb = UIStoryboard(name: "Feed", bundle: bundle)
         let sut = sb.instantiateViewController(identifier: "FeedViewController") as! ListViewController
         sut.loadViewIfNeeded()

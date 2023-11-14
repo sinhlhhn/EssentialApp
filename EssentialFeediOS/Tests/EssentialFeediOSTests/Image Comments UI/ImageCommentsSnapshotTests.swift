@@ -23,7 +23,7 @@ final class ImageCommentsSnapshotTests: XCTestCase {
     //MARK: -Helpers
     
     private func makeSUT() -> ListViewController {
-        let bundle = Bundle(for: ListViewController.self)
+        let bundle = EssentialFeediOS.bundle
         let sb = UIStoryboard(name: "ImageComments", bundle: bundle)
         let sut = sb.instantiateViewController(identifier: "ImageCommentsViewController") as! ListViewController
         sut.loadViewIfNeeded()
