@@ -14,7 +14,7 @@ public class URLSessionHTTPClient: HTTPClient {
         self.session = session
     }
     
-    private class UnexpectedValuesRepresentation: Error {}
+    private final class UnexpectedValuesRepresentation: Error {}
     
     private class URLSessionHTTPClientTask: HTTPClientTask {
         let wrapped: URLSessionTask
@@ -28,7 +28,7 @@ public class URLSessionHTTPClient: HTTPClient {
         }
     }
     
-    public func get(from url: URL, completion: @escaping (HTTPClient.Result) -> Void) -> HTTPClientTask {
+    public func get(from url: URL, completion: @escaping @Sendable (HTTPClient.Result) -> Void) -> HTTPClientTask {
         let task = session.dataTask(with: url) { data, response, error in
             completion(Result(catching: {
                 if let error = error {
