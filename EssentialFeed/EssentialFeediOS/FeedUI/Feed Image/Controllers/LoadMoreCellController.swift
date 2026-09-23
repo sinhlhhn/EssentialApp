@@ -8,6 +8,7 @@
 import UIKit
 import EssentialFeed
 
+@MainActor
 public class LoadMoreCellController: NSObject, UITableViewDataSource, UITableViewDelegate {
     private let cell = LoadMoreCell()
     private let callback: () -> Void
@@ -30,8 +31,13 @@ public class LoadMoreCellController: NSObject, UITableViewDataSource, UITableVie
         reloadIfNeeded()
         
         offsetObserver = tableView.observe(\.contentOffset, options: .new) { [weak self] tableView, _ in
-            guard tableView.isDragging else { return }
-            self?.reloadIfNeeded()
+            // KVO change notifications for UIScrollView/UITableView properties are always
+            // delivered synchronously on the main thread, so it's safe to assert main actor
+            // isolation here rather than hopping asynchronously with Task { @MainActor in }.
+            MainActor.assumeIsolated {
+                guard tableView.isDragging else { return }
+                self?.reloadIfNeeded()
+            }
         }
     }
     
