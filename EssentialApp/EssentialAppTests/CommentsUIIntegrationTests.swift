@@ -11,6 +11,7 @@ import EssentialFeed
 import EssentialFeediOS
 import EssentialApp
 
+@MainActor
 class CommentsUIIntegrationTests: XCTestCase {
     
     func test_commentsView_hasTitle() {
@@ -201,7 +202,7 @@ class CommentsUIIntegrationTests: XCTestCase {
         }
     }
     
-    private class LoaderSpy {
+    private final class LoaderSpy: Sendable {
         
         private var requests: [PassthroughSubject<[ImageComment], Error>] = []
         

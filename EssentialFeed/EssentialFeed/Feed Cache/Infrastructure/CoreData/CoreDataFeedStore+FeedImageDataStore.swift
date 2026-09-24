@@ -7,7 +7,8 @@
 
 import Foundation
 
-extension CoreDataFeedStore: FeedImageDataStore {
+// FeedImageDataStore conformance
+extension CoreDataFeedStore {
     
     public func retrieve(dataFroURL url: URL) throws -> Data? {
         try performSync { context in

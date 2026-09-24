@@ -8,7 +8,7 @@
 import Foundation
 import EssentialFeed
 
-class HTTPClientStub: HTTPClient {
+final class HTTPClientStub: HTTPClient {
     private class Task: HTTPClientTask {
         func cancel() { }
     }
