@@ -7,7 +7,7 @@
 
 @preconcurrency import CoreData
 
-public final class CoreDataFeedStore {
+public final class CoreDataFeedStore: FeedImageDataStore {
     private static let modelName = "FeedStore"
     private static let model = NSManagedObjectModel(name: modelName, in: Bundle(for: CoreDataFeedStore.self))
     

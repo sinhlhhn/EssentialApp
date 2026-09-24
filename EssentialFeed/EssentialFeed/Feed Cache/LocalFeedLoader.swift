@@ -7,11 +7,11 @@
 
 import Foundation
 
-public final class LocalFeedLoader {
+public final class LocalFeedLoader: Sendable {
     private let store: FeedStore
-    private let currentDate: () -> Date
+    private let currentDate: @Sendable () -> Date
     
-    public init(store: FeedStore, currentDate: @escaping () -> Date) {
+    public init(store: FeedStore, currentDate: @escaping @Sendable () -> Date) {
         self.store = store
         self.currentDate = currentDate
     }

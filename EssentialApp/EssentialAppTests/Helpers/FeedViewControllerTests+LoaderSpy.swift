@@ -12,7 +12,7 @@ import Combine
 
 extension FeedUIIntegrationTests {
     
-    class LoaderSpy {
+    final class LoaderSpy: Sendable {
         
         //MARK: - FeedLoader
         
