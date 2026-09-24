@@ -45,12 +45,23 @@ extension HTTPClient {
         
         return Deferred {
             Future { completion in
-                task = self.get(from: url, completion: completion)
+                // Combine's `Future.Promise` isn't marked `@Sendable` in the SDK yet, even
+                // though it's safe to invoke from any thread (invoked at most once, and the
+                // `Result` payload is `Sendable`). Box it to bridge to `HTTPClient`'s
+                // `@Sendable` completion requirement.
+                let completion = UncheckedSendableBox(value: completion)
+                task = self.get(from: url) { result in
+                    completion.value(result)
+                }
             }
         }
         .handleEvents(receiveCancel: { task?.cancel() })
         .eraseToAnyPublisher()
     }
+}
+
+private struct UncheckedSendableBox<T>: @unchecked Sendable {
+    let value: T
 }
 
 extension FeedImageDataLoader {
@@ -134,7 +145,7 @@ extension DispatchQueue {
         return ImmediateWhenOnMainQueueScheduler.shared
     }
     
-    class ImmediateWhenOnMainQueueScheduler: Scheduler {
+    final class ImmediateWhenOnMainQueueScheduler: Scheduler, Sendable {
         typealias SchedulerTimeType = DispatchQueue.SchedulerTimeType
         typealias SchedulerOptions = DispatchQueue.SchedulerOptions
         

@@ -11,6 +11,7 @@ import Combine
 import EssentialFeed
 import EssentialFeediOS
 
+@MainActor
 public final class CommentsUIComposer {
     private init() {}
     
@@ -45,6 +46,7 @@ public final class CommentsUIComposer {
     }
 }
 
+@MainActor
 public class CommentsViewAdapter: ResourceView {
     private weak var controller: ListViewController?
     

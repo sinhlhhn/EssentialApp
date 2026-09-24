@@ -11,6 +11,7 @@ import Combine
 import EssentialFeed
 import EssentialFeediOS
 
+@MainActor
 public final class FeedUIComposer {
     private init() {}
     
@@ -19,7 +20,7 @@ public final class FeedUIComposer {
     public static func feedComposedWith(
         loader: @escaping () -> AnyPublisher<Paginated<FeedImage>, Error>,
         imageLoader: @escaping (URL) -> FeedImageDataLoader.Publisher,
-        selection: @escaping (FeedImage) -> Void = { _ in }
+        selection: @escaping @MainActor (FeedImage) -> Void = { _ in }
     ) -> ListViewController {
         
         let adapterComposer = FeedPresentationAdapter(
